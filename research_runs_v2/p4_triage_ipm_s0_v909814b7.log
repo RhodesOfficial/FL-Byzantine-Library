@@ -1,0 +1,1322 @@
+E:\fl-experiment\.venv\Lib\site-packages\torch\cuda\__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2026-09-24 23:30:59,571 fflow.py init [line:848] INFO PROCESS ID:	24376
+2026-09-24 23:30:59,571 fflow.py init [line:849] INFO Initializing devices: cuda:0 will be used for this running.
+2026-09-24 23:30:59,571 fflow.py init [line:852] INFO BENCHMARK:	flgo.benchmark.mnist_classification
+2026-09-24 23:30:59,571 fflow.py init [line:853] INFO TASK:			E:\Federated Machine Learning\FL-Byzantine-Library\mnist_dir20
+2026-09-24 23:30:59,580 fflow.py init [line:854] INFO MODEL:		flgo.benchmark.mnist_classification.model.cnn
+2026-09-24 23:30:59,580 fflow.py init [line:855] INFO ALGORITHM:	research_algorithm
+2026-09-24 23:31:00,598 fflow.py init [line:901] INFO SCENE:		horizontal FL with 1 <class 'flgo_byzantine.research_algorithm.Server'>, 20 <class 'flgo_byzantine.research_algorithm.Client'>
+2026-09-24 23:31:00,683 fflow.py init [line:918] INFO SIMULATOR:	<class 'flgo.simulator.default_simulator.Simulator'>
+2026-09-24 23:31:05,114 fflow.py init [line:931] INFO Ready to start.
+2026-09-24 23:31:05,114 fedbase.py run [line:300] INFO --------------Initial Evaluation--------------
+2026-09-24 23:31:05,114 simple_logger.py log_once [line:14] INFO Current_time:0
+2026-09-24 23:31:06,736 simple_logger.py log_once [line:28] INFO test_accuracy                 0.0875
+2026-09-24 23:31:06,736 simple_logger.py log_once [line:28] INFO test_loss                     2.3101
+2026-09-24 23:31:06,736 simple_logger.py log_once [line:28] INFO val_accuracy                  0.0866
+2026-09-24 23:31:06,736 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.0874
+2026-09-24 23:31:06,736 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2312
+2026-09-24 23:31:06,736 simple_logger.py log_once [line:28] INFO val_loss                      2.3109
+2026-09-24 23:31:06,736 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.3111
+2026-09-24 23:31:06,737 simple_logger.py log_once [line:28] INFO std_val_loss                  0.0785
+2026-09-24 23:31:06,737 fedbase.py run [line:303] INFO Eval Time Cost:               1.6225s
+2026-09-24 23:31:06,747 asyncbase.py iterate [line:68] INFO Select clients [np.int64(7), np.int64(16), np.int64(18), np.int64(1), np.int64(9), np.int64(19)] at time 1.
+2026-09-24 23:31:08,671 asyncbase.py iterate [line:73] INFO Receive new models from clients [16] at time 1
+2026-09-24 23:31:08,709 fedbase.py run [line:311] INFO --------------Round 1--------------
+2026-09-24 23:31:08,709 simple_logger.py log_once [line:14] INFO Current_time:1
+2026-09-24 23:31:10,216 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1815
+2026-09-24 23:31:10,216 simple_logger.py log_once [line:28] INFO test_loss                     5.7238
+2026-09-24 23:31:10,216 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1865
+2026-09-24 23:31:10,216 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1861
+2026-09-24 23:31:10,216 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3511
+2026-09-24 23:31:10,216 simple_logger.py log_once [line:28] INFO val_loss                      5.6893
+2026-09-24 23:31:10,216 simple_logger.py log_once [line:28] INFO mean_val_loss                 5.6927
+2026-09-24 23:31:10,216 simple_logger.py log_once [line:28] INFO std_val_loss                  3.3021
+2026-09-24 23:31:10,217 fedbase.py run [line:316] INFO Eval Time Cost:               1.5077s
+2026-09-24 23:31:10,226 asyncbase.py iterate [line:68] INFO Select clients [np.int64(15)] at time 2.
+2026-09-24 23:31:10,541 asyncbase.py iterate [line:73] INFO Receive new models from clients [7] at time 2
+2026-09-24 23:31:10,566 fedbase.py run [line:311] INFO --------------Round 2--------------
+2026-09-24 23:31:10,566 simple_logger.py log_once [line:14] INFO Current_time:2
+2026-09-24 23:31:12,038 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1691
+2026-09-24 23:31:12,038 simple_logger.py log_once [line:28] INFO test_loss                     5.7444
+2026-09-24 23:31:12,038 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1737
+2026-09-24 23:31:12,038 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1735
+2026-09-24 23:31:12,038 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2962
+2026-09-24 23:31:12,038 simple_logger.py log_once [line:28] INFO val_loss                      5.7111
+2026-09-24 23:31:12,038 simple_logger.py log_once [line:28] INFO mean_val_loss                 5.7205
+2026-09-24 23:31:12,038 simple_logger.py log_once [line:28] INFO std_val_loss                  3.7978
+2026-09-24 23:31:12,038 fedbase.py run [line:316] INFO Eval Time Cost:               1.4720s
+2026-09-24 23:31:12,047 asyncbase.py iterate [line:73] INFO Receive new models from clients [1, 19, 18] at time 3
+2026-09-24 23:31:12,107 fedbase.py run [line:311] INFO --------------Round 3--------------
+2026-09-24 23:31:12,107 simple_logger.py log_once [line:14] INFO Current_time:3
+2026-09-24 23:31:13,616 simple_logger.py log_once [line:28] INFO test_accuracy                 0.2238
+2026-09-24 23:31:13,616 simple_logger.py log_once [line:28] INFO test_loss                     6.5200
+2026-09-24 23:31:13,616 simple_logger.py log_once [line:28] INFO val_accuracy                  0.2314
+2026-09-24 23:31:13,616 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.2316
+2026-09-24 23:31:13,616 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3422
+2026-09-24 23:31:13,616 simple_logger.py log_once [line:28] INFO val_loss                      6.4492
+2026-09-24 23:31:13,616 simple_logger.py log_once [line:28] INFO mean_val_loss                 6.4652
+2026-09-24 23:31:13,616 simple_logger.py log_once [line:28] INFO std_val_loss                  4.7427
+2026-09-24 23:31:13,616 fedbase.py run [line:316] INFO Eval Time Cost:               1.5094s
+2026-09-24 23:31:13,625 asyncbase.py iterate [line:68] INFO Select clients [np.int64(2), np.int64(7), np.int64(11), np.int64(12)] at time 4.
+2026-09-24 23:31:14,896 asyncbase.py iterate [line:73] INFO Receive new models from clients [9, 12, 15] at time 4
+2026-09-24 23:31:14,945 fedbase.py run [line:311] INFO --------------Round 4--------------
+2026-09-24 23:31:14,945 simple_logger.py log_once [line:14] INFO Current_time:4
+2026-09-24 23:31:16,425 simple_logger.py log_once [line:28] INFO test_accuracy                 0.0892
+2026-09-24 23:31:16,425 simple_logger.py log_once [line:28] INFO test_loss                     2.9157
+2026-09-24 23:31:16,425 simple_logger.py log_once [line:28] INFO val_accuracy                  0.0907
+2026-09-24 23:31:16,425 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.0904
+2026-09-24 23:31:16,425 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2536
+2026-09-24 23:31:16,425 simple_logger.py log_once [line:28] INFO val_loss                      2.9100
+2026-09-24 23:31:16,426 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.9115
+2026-09-24 23:31:16,426 simple_logger.py log_once [line:28] INFO std_val_loss                  1.0646
+2026-09-24 23:31:16,426 fedbase.py run [line:316] INFO Eval Time Cost:               1.4801s
+2026-09-24 23:31:16,434 asyncbase.py iterate [line:68] INFO Select clients [np.int64(16), np.int64(12), np.int64(0)] at time 5.
+2026-09-24 23:31:17,391 asyncbase.py iterate [line:73] INFO Receive new models from clients [2, 11, 12] at time 6
+2026-09-24 23:31:17,438 fedbase.py run [line:311] INFO --------------Round 5--------------
+2026-09-24 23:31:17,438 simple_logger.py log_once [line:14] INFO Current_time:6
+2026-09-24 23:31:18,919 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1140
+2026-09-24 23:31:18,919 simple_logger.py log_once [line:28] INFO test_loss                     2.4908
+2026-09-24 23:31:18,919 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1150
+2026-09-24 23:31:18,919 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1150
+2026-09-24 23:31:18,919 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2645
+2026-09-24 23:31:18,919 simple_logger.py log_once [line:28] INFO val_loss                      2.4885
+2026-09-24 23:31:18,919 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.4881
+2026-09-24 23:31:18,919 simple_logger.py log_once [line:28] INFO std_val_loss                  0.6410
+2026-09-24 23:31:18,919 fedbase.py run [line:316] INFO Eval Time Cost:               1.4812s
+2026-09-24 23:31:18,929 asyncbase.py iterate [line:68] INFO Select clients [np.int64(6)] at time 7.
+2026-09-24 23:31:19,245 asyncbase.py iterate [line:73] INFO Receive new models from clients [7, 16, 6] at time 7
+2026-09-24 23:31:19,298 fedbase.py run [line:311] INFO --------------Round 6--------------
+2026-09-24 23:31:19,298 simple_logger.py log_once [line:14] INFO Current_time:7
+2026-09-24 23:31:20,787 simple_logger.py log_once [line:28] INFO test_accuracy                 0.0946
+2026-09-24 23:31:20,787 simple_logger.py log_once [line:28] INFO test_loss                     2.3038
+2026-09-24 23:31:20,787 simple_logger.py log_once [line:28] INFO val_accuracy                  0.0935
+2026-09-24 23:31:20,787 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.0933
+2026-09-24 23:31:20,787 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2546
+2026-09-24 23:31:20,787 simple_logger.py log_once [line:28] INFO val_loss                      2.3012
+2026-09-24 23:31:20,787 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.3012
+2026-09-24 23:31:20,787 simple_logger.py log_once [line:28] INFO std_val_loss                  0.2434
+2026-09-24 23:31:20,787 fedbase.py run [line:316] INFO Eval Time Cost:               1.4888s
+2026-09-24 23:31:20,798 asyncbase.py iterate [line:68] INFO Select clients [np.int64(1), np.int64(16), np.int64(13), np.int64(14), np.int64(19)] at time 8.
+2026-09-24 23:31:22,374 asyncbase.py iterate [line:73] INFO Receive new models from clients [0] at time 8
+2026-09-24 23:31:22,404 fedbase.py run [line:311] INFO --------------Round 7--------------
+2026-09-24 23:31:22,404 simple_logger.py log_once [line:14] INFO Current_time:8
+2026-09-24 23:31:23,886 simple_logger.py log_once [line:28] INFO test_accuracy                 0.2080
+2026-09-24 23:31:23,886 simple_logger.py log_once [line:28] INFO test_loss                     2.2157
+2026-09-24 23:31:23,886 simple_logger.py log_once [line:28] INFO val_accuracy                  0.2115
+2026-09-24 23:31:23,886 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.2115
+2026-09-24 23:31:23,886 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3316
+2026-09-24 23:31:23,886 simple_logger.py log_once [line:28] INFO val_loss                      2.2167
+2026-09-24 23:31:23,886 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.2163
+2026-09-24 23:31:23,886 simple_logger.py log_once [line:28] INFO std_val_loss                  0.2512
+2026-09-24 23:31:23,886 fedbase.py run [line:316] INFO Eval Time Cost:               1.4826s
+2026-09-24 23:31:23,896 asyncbase.py iterate [line:68] INFO Select clients [np.int64(7)] at time 9.
+2026-09-24 23:31:24,204 asyncbase.py iterate [line:73] INFO Receive new models from clients [19, 7] at time 9
+2026-09-24 23:31:24,250 fedbase.py run [line:311] INFO --------------Round 8--------------
+2026-09-24 23:31:24,250 simple_logger.py log_once [line:14] INFO Current_time:9
+2026-09-24 23:31:25,734 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1921
+2026-09-24 23:31:25,734 simple_logger.py log_once [line:28] INFO test_loss                     2.8080
+2026-09-24 23:31:25,734 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1879
+2026-09-24 23:31:25,734 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1883
+2026-09-24 23:31:25,734 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3262
+2026-09-24 23:31:25,734 simple_logger.py log_once [line:28] INFO val_loss                      2.8087
+2026-09-24 23:31:25,734 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.8072
+2026-09-24 23:31:25,734 simple_logger.py log_once [line:28] INFO std_val_loss                  1.4144
+2026-09-24 23:31:25,735 fedbase.py run [line:316] INFO Eval Time Cost:               1.4847s
+2026-09-24 23:31:25,743 asyncbase.py iterate [line:68] INFO Select clients [np.int64(19), np.int64(4)] at time 10.
+2026-09-24 23:31:26,359 asyncbase.py iterate [line:73] INFO Receive new models from clients [1] at time 10
+2026-09-24 23:31:26,385 fedbase.py run [line:311] INFO --------------Round 9--------------
+2026-09-24 23:31:26,385 simple_logger.py log_once [line:14] INFO Current_time:10
+2026-09-24 23:31:27,868 simple_logger.py log_once [line:28] INFO test_accuracy                 0.0969
+2026-09-24 23:31:27,869 simple_logger.py log_once [line:28] INFO test_loss                     10.5414
+2026-09-24 23:31:27,869 simple_logger.py log_once [line:28] INFO val_accuracy                  0.0989
+2026-09-24 23:31:27,869 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.0991
+2026-09-24 23:31:27,869 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2829
+2026-09-24 23:31:27,869 simple_logger.py log_once [line:28] INFO val_loss                      10.4716
+2026-09-24 23:31:27,869 simple_logger.py log_once [line:28] INFO mean_val_loss                 10.4703
+2026-09-24 23:31:27,869 simple_logger.py log_once [line:28] INFO std_val_loss                  5.3102
+2026-09-24 23:31:27,869 fedbase.py run [line:316] INFO Eval Time Cost:               1.4835s
+2026-09-24 23:31:27,878 asyncbase.py iterate [line:68] INFO Select clients [np.int64(0)] at time 11.
+2026-09-24 23:31:28,186 asyncbase.py iterate [line:73] INFO Receive new models from clients [16, 14, 13] at time 11
+2026-09-24 23:31:28,242 fedbase.py run [line:311] INFO --------------Round 10--------------
+2026-09-24 23:31:28,242 simple_logger.py log_once [line:14] INFO Current_time:11
+2026-09-24 23:31:29,724 simple_logger.py log_once [line:28] INFO test_accuracy                 0.0958
+2026-09-24 23:31:29,725 simple_logger.py log_once [line:28] INFO test_loss                     26.6575
+2026-09-24 23:31:29,725 simple_logger.py log_once [line:28] INFO val_accuracy                  0.0981
+2026-09-24 23:31:29,725 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.0983
+2026-09-24 23:31:29,725 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2826
+2026-09-24 23:31:29,725 simple_logger.py log_once [line:28] INFO val_loss                      26.5082
+2026-09-24 23:31:29,725 simple_logger.py log_once [line:28] INFO mean_val_loss                 26.5176
+2026-09-24 23:31:29,725 simple_logger.py log_once [line:28] INFO std_val_loss                  12.4013
+2026-09-24 23:31:29,725 fedbase.py run [line:316] INFO Eval Time Cost:               1.4825s
+2026-09-24 23:31:29,733 asyncbase.py iterate [line:68] INFO Select clients [np.int64(3), np.int64(7), np.int64(2)] at time 12.
+2026-09-24 23:31:30,674 asyncbase.py iterate [line:73] INFO Receive new models from clients [0, 2] at time 12
+2026-09-24 23:31:30,719 fedbase.py run [line:311] INFO --------------Round 11--------------
+2026-09-24 23:31:30,719 simple_logger.py log_once [line:14] INFO Current_time:12
+2026-09-24 23:31:32,193 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1960
+2026-09-24 23:31:32,193 simple_logger.py log_once [line:28] INFO test_loss                     3.1308
+2026-09-24 23:31:32,193 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1944
+2026-09-24 23:31:32,193 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1945
+2026-09-24 23:31:32,193 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3043
+2026-09-24 23:31:32,193 simple_logger.py log_once [line:28] INFO val_loss                      3.1369
+2026-09-24 23:31:32,193 simple_logger.py log_once [line:28] INFO mean_val_loss                 3.1353
+2026-09-24 23:31:32,193 simple_logger.py log_once [line:28] INFO std_val_loss                  1.5983
+2026-09-24 23:31:32,193 fedbase.py run [line:316] INFO Eval Time Cost:               1.4741s
+2026-09-24 23:31:32,204 asyncbase.py iterate [line:68] INFO Select clients [np.int64(13), np.int64(12)] at time 13.
+2026-09-24 23:31:32,824 asyncbase.py iterate [line:73] INFO Receive new models from clients [4, 19] at time 13
+2026-09-24 23:31:32,871 fedbase.py run [line:311] INFO --------------Round 12--------------
+2026-09-24 23:31:32,871 simple_logger.py log_once [line:14] INFO Current_time:13
+2026-09-24 23:31:34,349 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1942
+2026-09-24 23:31:34,349 simple_logger.py log_once [line:28] INFO test_loss                     4.3528
+2026-09-24 23:31:34,349 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1929
+2026-09-24 23:31:34,349 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1924
+2026-09-24 23:31:34,349 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3504
+2026-09-24 23:31:34,349 simple_logger.py log_once [line:28] INFO val_loss                      4.3501
+2026-09-24 23:31:34,349 simple_logger.py log_once [line:28] INFO mean_val_loss                 4.3482
+2026-09-24 23:31:34,349 simple_logger.py log_once [line:28] INFO std_val_loss                  2.4172
+2026-09-24 23:31:34,349 fedbase.py run [line:316] INFO Eval Time Cost:               1.4782s
+2026-09-24 23:31:34,357 asyncbase.py iterate [line:68] INFO Select clients [np.int64(5), np.int64(16)] at time 14.
+2026-09-24 23:31:34,982 asyncbase.py iterate [line:73] INFO Receive new models from clients [3, 12, 7] at time 14
+2026-09-24 23:31:35,040 fedbase.py run [line:311] INFO --------------Round 13--------------
+2026-09-24 23:31:35,040 simple_logger.py log_once [line:14] INFO Current_time:14
+2026-09-24 23:31:36,517 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1699
+2026-09-24 23:31:36,517 simple_logger.py log_once [line:28] INFO test_loss                     2.2222
+2026-09-24 23:31:36,517 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1717
+2026-09-24 23:31:36,517 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1715
+2026-09-24 23:31:36,517 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2330
+2026-09-24 23:31:36,517 simple_logger.py log_once [line:28] INFO val_loss                      2.2258
+2026-09-24 23:31:36,517 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.2257
+2026-09-24 23:31:36,517 simple_logger.py log_once [line:28] INFO std_val_loss                  0.3801
+2026-09-24 23:31:36,517 fedbase.py run [line:316] INFO Eval Time Cost:               1.4778s
+2026-09-24 23:31:36,526 asyncbase.py iterate [line:68] INFO Select clients [np.int64(17), np.int64(3)] at time 15.
+2026-09-24 23:31:37,148 asyncbase.py iterate [line:73] INFO Receive new models from clients [5, 13] at time 15
+2026-09-24 23:31:37,194 fedbase.py run [line:311] INFO --------------Round 14--------------
+2026-09-24 23:31:37,200 simple_logger.py log_once [line:14] INFO Current_time:15
+2026-09-24 23:31:38,686 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1735
+2026-09-24 23:31:38,686 simple_logger.py log_once [line:28] INFO test_loss                     6.2556
+2026-09-24 23:31:38,686 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1698
+2026-09-24 23:31:38,686 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1697
+2026-09-24 23:31:38,686 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3174
+2026-09-24 23:31:38,686 simple_logger.py log_once [line:28] INFO val_loss                      6.2798
+2026-09-24 23:31:38,686 simple_logger.py log_once [line:28] INFO mean_val_loss                 6.2791
+2026-09-24 23:31:38,686 simple_logger.py log_once [line:28] INFO std_val_loss                  5.5074
+2026-09-24 23:31:38,686 fedbase.py run [line:316] INFO Eval Time Cost:               1.4858s
+2026-09-24 23:31:38,696 asyncbase.py iterate [line:68] INFO Select clients [np.int64(7), np.int64(14), np.int64(12)] at time 16.
+2026-09-24 23:31:39,622 asyncbase.py iterate [line:73] INFO Receive new models from clients [3] at time 16
+2026-09-24 23:31:39,646 fedbase.py run [line:311] INFO --------------Round 15--------------
+2026-09-24 23:31:39,646 simple_logger.py log_once [line:14] INFO Current_time:16
+2026-09-24 23:31:41,134 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1836
+2026-09-24 23:31:41,134 simple_logger.py log_once [line:28] INFO test_loss                     10.1656
+2026-09-24 23:31:41,134 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1824
+2026-09-24 23:31:41,134 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1820
+2026-09-24 23:31:41,134 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2984
+2026-09-24 23:31:41,135 simple_logger.py log_once [line:28] INFO val_loss                      10.2080
+2026-09-24 23:31:41,135 simple_logger.py log_once [line:28] INFO mean_val_loss                 10.2221
+2026-09-24 23:31:41,135 simple_logger.py log_once [line:28] INFO std_val_loss                  9.7206
+2026-09-24 23:31:41,135 fedbase.py run [line:316] INFO Eval Time Cost:               1.4885s
+2026-09-24 23:31:41,145 asyncbase.py iterate [line:73] INFO Receive new models from clients [7, 14, 16] at time 17
+2026-09-24 23:31:41,200 fedbase.py run [line:311] INFO --------------Round 16--------------
+2026-09-24 23:31:41,200 simple_logger.py log_once [line:14] INFO Current_time:17
+2026-09-24 23:31:42,683 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1529
+2026-09-24 23:31:42,683 simple_logger.py log_once [line:28] INFO test_loss                     10.3141
+2026-09-24 23:31:42,683 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1540
+2026-09-24 23:31:42,683 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1530
+2026-09-24 23:31:42,683 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3090
+2026-09-24 23:31:42,683 simple_logger.py log_once [line:28] INFO val_loss                      10.3851
+2026-09-24 23:31:42,683 simple_logger.py log_once [line:28] INFO mean_val_loss                 10.4122
+2026-09-24 23:31:42,683 simple_logger.py log_once [line:28] INFO std_val_loss                  9.2491
+2026-09-24 23:31:42,683 fedbase.py run [line:316] INFO Eval Time Cost:               1.4824s
+2026-09-24 23:31:42,692 asyncbase.py iterate [line:68] INFO Select clients [np.int64(19), np.int64(13), np.int64(2)] at time 18.
+2026-09-24 23:31:43,614 asyncbase.py iterate [line:73] INFO Receive new models from clients [12, 17, 13] at time 18
+2026-09-24 23:31:43,671 fedbase.py run [line:311] INFO --------------Round 17--------------
+2026-09-24 23:31:43,672 simple_logger.py log_once [line:14] INFO Current_time:18
+2026-09-24 23:31:45,140 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1011
+2026-09-24 23:31:45,140 simple_logger.py log_once [line:28] INFO test_loss                     9.6675
+2026-09-24 23:31:45,140 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1020
+2026-09-24 23:31:45,140 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1016
+2026-09-24 23:31:45,140 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2730
+2026-09-24 23:31:45,140 simple_logger.py log_once [line:28] INFO val_loss                      9.6234
+2026-09-24 23:31:45,140 simple_logger.py log_once [line:28] INFO mean_val_loss                 9.6280
+2026-09-24 23:31:45,140 simple_logger.py log_once [line:28] INFO std_val_loss                  4.1880
+2026-09-24 23:31:45,141 fedbase.py run [line:316] INFO Eval Time Cost:               1.4689s
+2026-09-24 23:31:45,150 asyncbase.py iterate [line:68] INFO Select clients [np.int64(5), np.int64(11), np.int64(9), np.int64(15)] at time 19.
+2026-09-24 23:31:46,371 asyncbase.py iterate [line:73] INFO Receive new models from clients [2, 11] at time 19
+2026-09-24 23:31:46,420 fedbase.py run [line:311] INFO --------------Round 18--------------
+2026-09-24 23:31:46,420 simple_logger.py log_once [line:14] INFO Current_time:19
+2026-09-24 23:31:47,931 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1010
+2026-09-24 23:31:47,931 simple_logger.py log_once [line:28] INFO test_loss                     120.3346
+2026-09-24 23:31:47,931 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1020
+2026-09-24 23:31:47,931 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1016
+2026-09-24 23:31:47,931 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2730
+2026-09-24 23:31:47,931 simple_logger.py log_once [line:28] INFO val_loss                      119.1466
+2026-09-24 23:31:47,932 simple_logger.py log_once [line:28] INFO mean_val_loss                 119.1494
+2026-09-24 23:31:47,932 simple_logger.py log_once [line:28] INFO std_val_loss                  61.4578
+2026-09-24 23:31:47,932 fedbase.py run [line:316] INFO Eval Time Cost:               1.5116s
+2026-09-24 23:31:47,940 asyncbase.py iterate [line:68] INFO Select clients [np.int64(6)] at time 20.
+2026-09-24 23:31:48,245 asyncbase.py iterate [line:73] INFO Receive new models from clients [19] at time 20
+2026-09-24 23:31:48,269 fedbase.py run [line:311] INFO --------------Round 19--------------
+2026-09-24 23:31:48,269 simple_logger.py log_once [line:14] INFO Current_time:20
+2026-09-24 23:31:49,744 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1812
+2026-09-24 23:31:49,744 simple_logger.py log_once [line:28] INFO test_loss                     67.6226
+2026-09-24 23:31:49,744 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1828
+2026-09-24 23:31:49,744 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1827
+2026-09-24 23:31:49,744 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3363
+2026-09-24 23:31:49,744 simple_logger.py log_once [line:28] INFO val_loss                      66.9421
+2026-09-24 23:31:49,745 simple_logger.py log_once [line:28] INFO mean_val_loss                 66.9204
+2026-09-24 23:31:49,745 simple_logger.py log_once [line:28] INFO std_val_loss                  44.7998
+2026-09-24 23:31:49,745 fedbase.py run [line:316] INFO Eval Time Cost:               1.4753s
+2026-09-24 23:31:49,753 asyncbase.py iterate [line:68] INFO Select clients [np.int64(12), np.int64(7)] at time 21.
+2026-09-24 23:31:50,374 asyncbase.py iterate [line:73] INFO Receive new models from clients [15, 7] at time 21
+2026-09-24 23:31:50,419 fedbase.py run [line:311] INFO --------------Round 20--------------
+2026-09-24 23:31:50,419 simple_logger.py log_once [line:14] INFO Current_time:21
+2026-09-24 23:31:51,894 simple_logger.py log_once [line:28] INFO test_accuracy                 0.0993
+2026-09-24 23:31:51,894 simple_logger.py log_once [line:28] INFO test_loss                     2.3804
+2026-09-24 23:31:51,894 simple_logger.py log_once [line:28] INFO val_accuracy                  0.0997
+2026-09-24 23:31:51,894 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1001
+2026-09-24 23:31:51,894 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2791
+2026-09-24 23:31:51,894 simple_logger.py log_once [line:28] INFO val_loss                      2.3760
+2026-09-24 23:31:51,894 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.3756
+2026-09-24 23:31:51,894 simple_logger.py log_once [line:28] INFO std_val_loss                  0.4639
+2026-09-24 23:31:51,894 fedbase.py run [line:316] INFO Eval Time Cost:               1.4754s
+2026-09-24 23:31:51,904 asyncbase.py iterate [line:68] INFO Select clients [np.int64(3), np.int64(2)] at time 22.
+2026-09-24 23:31:52,522 asyncbase.py iterate [line:73] INFO Receive new models from clients [9, 2, 5, 6] at time 22
+2026-09-24 23:31:52,589 fedbase.py run [line:311] INFO --------------Round 21--------------
+2026-09-24 23:31:52,589 simple_logger.py log_once [line:14] INFO Current_time:22
+2026-09-24 23:31:54,070 simple_logger.py log_once [line:28] INFO test_accuracy                 0.0983
+2026-09-24 23:31:54,070 simple_logger.py log_once [line:28] INFO test_loss                     2.4056
+2026-09-24 23:31:54,070 simple_logger.py log_once [line:28] INFO val_accuracy                  0.0989
+2026-09-24 23:31:54,070 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.0993
+2026-09-24 23:31:54,070 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2797
+2026-09-24 23:31:54,070 simple_logger.py log_once [line:28] INFO val_loss                      2.4074
+2026-09-24 23:31:54,070 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.4064
+2026-09-24 23:31:54,070 simple_logger.py log_once [line:28] INFO std_val_loss                  0.4781
+2026-09-24 23:31:54,071 fedbase.py run [line:316] INFO Eval Time Cost:               1.4813s
+2026-09-24 23:31:54,079 asyncbase.py iterate [line:68] INFO Select clients [np.int64(15), np.int64(5), np.int64(14), np.int64(9)] at time 23.
+2026-09-24 23:31:55,309 asyncbase.py iterate [line:73] INFO Receive new models from clients [15, 9] at time 23
+2026-09-24 23:31:55,360 fedbase.py run [line:311] INFO --------------Round 22--------------
+2026-09-24 23:31:55,360 simple_logger.py log_once [line:14] INFO Current_time:23
+2026-09-24 23:31:56,839 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1067
+2026-09-24 23:31:56,839 simple_logger.py log_once [line:28] INFO test_loss                     3.9063
+2026-09-24 23:31:56,839 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1084
+2026-09-24 23:31:56,839 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1085
+2026-09-24 23:31:56,839 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2835
+2026-09-24 23:31:56,839 simple_logger.py log_once [line:28] INFO val_loss                      3.8842
+2026-09-24 23:31:56,839 simple_logger.py log_once [line:28] INFO mean_val_loss                 3.8845
+2026-09-24 23:31:56,839 simple_logger.py log_once [line:28] INFO std_val_loss                  2.3017
+2026-09-24 23:31:56,839 fedbase.py run [line:316] INFO Eval Time Cost:               1.4789s
+2026-09-24 23:31:56,849 asyncbase.py iterate [line:68] INFO Select clients [np.int64(9), np.int64(4)] at time 24.
+2026-09-24 23:31:57,458 asyncbase.py iterate [line:73] INFO Receive new models from clients [14, 3, 12] at time 24
+2026-09-24 23:31:57,516 fedbase.py run [line:311] INFO --------------Round 23--------------
+2026-09-24 23:31:57,516 simple_logger.py log_once [line:14] INFO Current_time:24
+2026-09-24 23:31:59,000 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1897
+2026-09-24 23:31:59,000 simple_logger.py log_once [line:28] INFO test_loss                     2.2654
+2026-09-24 23:31:59,000 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1872
+2026-09-24 23:31:59,000 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1876
+2026-09-24 23:31:59,000 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3094
+2026-09-24 23:31:59,000 simple_logger.py log_once [line:28] INFO val_loss                      2.2557
+2026-09-24 23:31:59,000 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.2549
+2026-09-24 23:31:59,000 simple_logger.py log_once [line:28] INFO std_val_loss                  0.4977
+2026-09-24 23:31:59,000 fedbase.py run [line:316] INFO Eval Time Cost:               1.4835s
+2026-09-24 23:31:59,010 asyncbase.py iterate [line:68] INFO Select clients [np.int64(19), np.int64(11)] at time 25.
+2026-09-24 23:31:59,625 asyncbase.py iterate [line:73] INFO Receive new models from clients [4, 5, 9] at time 25
+2026-09-24 23:31:59,682 fedbase.py run [line:311] INFO --------------Round 24--------------
+2026-09-24 23:31:59,682 simple_logger.py log_once [line:14] INFO Current_time:25
+2026-09-24 23:32:01,161 simple_logger.py log_once [line:28] INFO test_accuracy                 0.0983
+2026-09-24 23:32:01,161 simple_logger.py log_once [line:28] INFO test_loss                     2.4245
+2026-09-24 23:32:01,161 simple_logger.py log_once [line:28] INFO val_accuracy                  0.0989
+2026-09-24 23:32:01,161 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.0993
+2026-09-24 23:32:01,161 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2797
+2026-09-24 23:32:01,161 simple_logger.py log_once [line:28] INFO val_loss                      2.4196
+2026-09-24 23:32:01,161 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.4185
+2026-09-24 23:32:01,161 simple_logger.py log_once [line:28] INFO std_val_loss                  0.5078
+2026-09-24 23:32:01,161 fedbase.py run [line:316] INFO Eval Time Cost:               1.4787s
+2026-09-24 23:32:01,171 asyncbase.py iterate [line:68] INFO Select clients [np.int64(9), np.int64(18), np.int64(14), np.int64(1)] at time 26.
+2026-09-24 23:32:02,396 asyncbase.py iterate [line:73] INFO Receive new models from clients [19, 9, 1, 14] at time 26
+2026-09-24 23:32:02,465 fedbase.py run [line:311] INFO --------------Round 25--------------
+2026-09-24 23:32:02,465 simple_logger.py log_once [line:14] INFO Current_time:26
+2026-09-24 23:32:03,935 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1086
+2026-09-24 23:32:03,935 simple_logger.py log_once [line:28] INFO test_loss                     6.7715
+2026-09-24 23:32:03,935 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1106
+2026-09-24 23:32:03,935 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1107
+2026-09-24 23:32:03,935 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2804
+2026-09-24 23:32:03,935 simple_logger.py log_once [line:28] INFO val_loss                      6.5635
+2026-09-24 23:32:03,935 simple_logger.py log_once [line:28] INFO mean_val_loss                 6.5593
+2026-09-24 23:32:03,935 simple_logger.py log_once [line:28] INFO std_val_loss                  4.2702
+2026-09-24 23:32:03,935 fedbase.py run [line:316] INFO Eval Time Cost:               1.4702s
+2026-09-24 23:32:03,944 asyncbase.py iterate [line:68] INFO Select clients [np.int64(9), np.int64(14), np.int64(13), np.int64(6)] at time 27.
+2026-09-24 23:32:05,181 asyncbase.py iterate [line:73] INFO Receive new models from clients [13] at time 27
+2026-09-24 23:32:05,207 fedbase.py run [line:311] INFO --------------Round 26--------------
+2026-09-24 23:32:05,207 simple_logger.py log_once [line:14] INFO Current_time:27
+2026-09-24 23:32:06,684 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1010
+2026-09-24 23:32:06,684 simple_logger.py log_once [line:28] INFO test_loss                     3.6753
+2026-09-24 23:32:06,684 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1020
+2026-09-24 23:32:06,684 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1016
+2026-09-24 23:32:06,684 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2730
+2026-09-24 23:32:06,684 simple_logger.py log_once [line:28] INFO val_loss                      3.6710
+2026-09-24 23:32:06,684 simple_logger.py log_once [line:28] INFO mean_val_loss                 3.6682
+2026-09-24 23:32:06,685 simple_logger.py log_once [line:28] INFO std_val_loss                  1.7150
+2026-09-24 23:32:06,685 fedbase.py run [line:316] INFO Eval Time Cost:               1.4779s
+2026-09-24 23:32:06,693 asyncbase.py iterate [line:68] INFO Select clients [np.int64(0)] at time 28.
+2026-09-24 23:32:07,007 asyncbase.py iterate [line:73] INFO Receive new models from clients [18, 0, 14, 11] at time 28
+2026-09-24 23:32:07,073 fedbase.py run [line:311] INFO --------------Round 27--------------
+2026-09-24 23:32:07,074 simple_logger.py log_once [line:14] INFO Current_time:28
+2026-09-24 23:32:08,554 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1010
+2026-09-24 23:32:08,554 simple_logger.py log_once [line:28] INFO test_loss                     3.4834
+2026-09-24 23:32:08,554 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1020
+2026-09-24 23:32:08,554 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1016
+2026-09-24 23:32:08,554 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2730
+2026-09-24 23:32:08,554 simple_logger.py log_once [line:28] INFO val_loss                      3.4802
+2026-09-24 23:32:08,554 simple_logger.py log_once [line:28] INFO mean_val_loss                 3.4777
+2026-09-24 23:32:08,554 simple_logger.py log_once [line:28] INFO std_val_loss                  1.6134
+2026-09-24 23:32:08,554 fedbase.py run [line:316] INFO Eval Time Cost:               1.4803s
+2026-09-24 23:32:08,564 asyncbase.py iterate [line:68] INFO Select clients [np.int64(7), np.int64(1), np.int64(8), np.int64(13)] at time 29.
+2026-09-24 23:32:09,799 asyncbase.py iterate [line:73] INFO Receive new models from clients [9, 13, 6] at time 29
+2026-09-24 23:32:09,858 fedbase.py run [line:311] INFO --------------Round 28--------------
+2026-09-24 23:32:09,858 simple_logger.py log_once [line:14] INFO Current_time:29
+2026-09-24 23:32:11,352 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1135
+2026-09-24 23:32:11,353 simple_logger.py log_once [line:28] INFO test_loss                     2.4492
+2026-09-24 23:32:11,353 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1119
+2026-09-24 23:32:11,353 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1111
+2026-09-24 23:32:11,353 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2974
+2026-09-24 23:32:11,353 simple_logger.py log_once [line:28] INFO val_loss                      2.4510
+2026-09-24 23:32:11,353 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.4506
+2026-09-24 23:32:11,353 simple_logger.py log_once [line:28] INFO std_val_loss                  0.6230
+2026-09-24 23:32:11,353 fedbase.py run [line:316] INFO Eval Time Cost:               1.4948s
+2026-09-24 23:32:11,362 asyncbase.py iterate [line:68] INFO Select clients [np.int64(3), np.int64(9), np.int64(17)] at time 30.
+2026-09-24 23:32:12,284 asyncbase.py iterate [line:73] INFO Receive new models from clients [1, 7, 3] at time 30
+2026-09-24 23:32:12,344 fedbase.py run [line:311] INFO --------------Round 29--------------
+2026-09-24 23:32:12,344 simple_logger.py log_once [line:14] INFO Current_time:30
+2026-09-24 23:32:13,830 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1141
+2026-09-24 23:32:13,830 simple_logger.py log_once [line:28] INFO test_loss                     2.2738
+2026-09-24 23:32:13,830 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1087
+2026-09-24 23:32:13,830 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1082
+2026-09-24 23:32:13,830 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2526
+2026-09-24 23:32:13,830 simple_logger.py log_once [line:28] INFO val_loss                      2.2809
+2026-09-24 23:32:13,830 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.2817
+2026-09-24 23:32:13,830 simple_logger.py log_once [line:28] INFO std_val_loss                  0.3926
+2026-09-24 23:32:13,830 fedbase.py run [line:316] INFO Eval Time Cost:               1.4868s
+2026-09-24 23:32:13,841 asyncbase.py iterate [line:68] INFO Select clients [np.int64(2), np.int64(3), np.int64(18)] at time 31.
+2026-09-24 23:32:14,815 asyncbase.py iterate [line:73] INFO Receive new models from clients [3, 18] at time 31
+2026-09-24 23:32:14,866 fedbase.py run [line:311] INFO --------------Round 30--------------
+2026-09-24 23:32:14,866 simple_logger.py log_once [line:14] INFO Current_time:31
+2026-09-24 23:32:16,351 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1668
+2026-09-24 23:32:16,351 simple_logger.py log_once [line:28] INFO test_loss                     4.4163
+2026-09-24 23:32:16,351 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1685
+2026-09-24 23:32:16,351 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1675
+2026-09-24 23:32:16,351 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3217
+2026-09-24 23:32:16,351 simple_logger.py log_once [line:28] INFO val_loss                      4.4548
+2026-09-24 23:32:16,351 simple_logger.py log_once [line:28] INFO mean_val_loss                 4.4629
+2026-09-24 23:32:16,351 simple_logger.py log_once [line:28] INFO std_val_loss                  2.4588
+2026-09-24 23:32:16,352 fedbase.py run [line:316] INFO Eval Time Cost:               1.4854s
+2026-09-24 23:32:16,360 asyncbase.py iterate [line:68] INFO Select clients [np.int64(10)] at time 32.
+2026-09-24 23:32:16,668 asyncbase.py iterate [line:73] INFO Receive new models from clients [2, 8, 17] at time 32
+2026-09-24 23:32:16,731 fedbase.py run [line:311] INFO --------------Round 31--------------
+2026-09-24 23:32:16,731 simple_logger.py log_once [line:14] INFO Current_time:32
+2026-09-24 23:32:18,206 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1807
+2026-09-24 23:32:18,206 simple_logger.py log_once [line:28] INFO test_loss                     3.6242
+2026-09-24 23:32:18,206 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1742
+2026-09-24 23:32:18,206 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1731
+2026-09-24 23:32:18,206 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3278
+2026-09-24 23:32:18,206 simple_logger.py log_once [line:28] INFO val_loss                      3.6516
+2026-09-24 23:32:18,206 simple_logger.py log_once [line:28] INFO mean_val_loss                 3.6582
+2026-09-24 23:32:18,206 simple_logger.py log_once [line:28] INFO std_val_loss                  1.8546
+2026-09-24 23:32:18,206 fedbase.py run [line:316] INFO Eval Time Cost:               1.4752s
+2026-09-24 23:32:18,215 asyncbase.py iterate [line:68] INFO Select clients [np.int64(4), np.int64(5), np.int64(17), np.int64(19)] at time 33.
+2026-09-24 23:32:19,453 asyncbase.py iterate [line:73] INFO Receive new models from clients [9, 17] at time 33
+2026-09-24 23:32:19,507 fedbase.py run [line:311] INFO --------------Round 32--------------
+2026-09-24 23:32:19,507 simple_logger.py log_once [line:14] INFO Current_time:33
+2026-09-24 23:32:21,000 simple_logger.py log_once [line:28] INFO test_accuracy                 0.3674
+2026-09-24 23:32:21,000 simple_logger.py log_once [line:28] INFO test_loss                     2.4872
+2026-09-24 23:32:21,000 simple_logger.py log_once [line:28] INFO val_accuracy                  0.3689
+2026-09-24 23:32:21,000 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.3685
+2026-09-24 23:32:21,000 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.4144
+2026-09-24 23:32:21,000 simple_logger.py log_once [line:28] INFO val_loss                      2.4752
+2026-09-24 23:32:21,000 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.4737
+2026-09-24 23:32:21,000 simple_logger.py log_once [line:28] INFO std_val_loss                  1.3355
+2026-09-24 23:32:21,000 fedbase.py run [line:316] INFO Eval Time Cost:               1.4933s
+2026-09-24 23:32:21,010 asyncbase.py iterate [line:68] INFO Select clients [np.int64(8), np.int64(17)] at time 34.
+2026-09-24 23:32:21,630 asyncbase.py iterate [line:73] INFO Receive new models from clients [5, 8] at time 34
+2026-09-24 23:32:21,680 fedbase.py run [line:311] INFO --------------Round 33--------------
+2026-09-24 23:32:21,680 simple_logger.py log_once [line:14] INFO Current_time:34
+2026-09-24 23:32:23,175 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1508
+2026-09-24 23:32:23,175 simple_logger.py log_once [line:28] INFO test_loss                     5.2466
+2026-09-24 23:32:23,175 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1524
+2026-09-24 23:32:23,175 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1521
+2026-09-24 23:32:23,175 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3037
+2026-09-24 23:32:23,175 simple_logger.py log_once [line:28] INFO val_loss                      5.2677
+2026-09-24 23:32:23,175 simple_logger.py log_once [line:28] INFO mean_val_loss                 5.2672
+2026-09-24 23:32:23,175 simple_logger.py log_once [line:28] INFO std_val_loss                  2.4066
+2026-09-24 23:32:23,175 fedbase.py run [line:316] INFO Eval Time Cost:               1.4947s
+2026-09-24 23:32:23,183 asyncbase.py iterate [line:68] INFO Select clients [np.int64(14)] at time 35.
+2026-09-24 23:32:23,503 asyncbase.py iterate [line:73] INFO Receive new models from clients [4, 10, 19] at time 35
+2026-09-24 23:32:23,563 fedbase.py run [line:311] INFO --------------Round 34--------------
+2026-09-24 23:32:23,563 simple_logger.py log_once [line:14] INFO Current_time:35
+2026-09-24 23:32:25,040 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1639
+2026-09-24 23:32:25,041 simple_logger.py log_once [line:28] INFO test_loss                     3.1531
+2026-09-24 23:32:25,041 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1681
+2026-09-24 23:32:25,041 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1692
+2026-09-24 23:32:25,041 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2610
+2026-09-24 23:32:25,041 simple_logger.py log_once [line:28] INFO val_loss                      3.1148
+2026-09-24 23:32:25,041 simple_logger.py log_once [line:28] INFO mean_val_loss                 3.1085
+2026-09-24 23:32:25,041 simple_logger.py log_once [line:28] INFO std_val_loss                  2.4925
+2026-09-24 23:32:25,041 fedbase.py run [line:316] INFO Eval Time Cost:               1.4781s
+2026-09-24 23:32:25,050 asyncbase.py iterate [line:68] INFO Select clients [np.int64(9), np.int64(5), np.int64(8)] at time 36.
+2026-09-24 23:32:25,962 asyncbase.py iterate [line:73] INFO Receive new models from clients [17, 9, 8, 5] at time 36
+2026-09-24 23:32:26,030 fedbase.py run [line:311] INFO --------------Round 35--------------
+2026-09-24 23:32:26,030 simple_logger.py log_once [line:14] INFO Current_time:36
+2026-09-24 23:32:27,508 simple_logger.py log_once [line:28] INFO test_accuracy                 0.3441
+2026-09-24 23:32:27,509 simple_logger.py log_once [line:28] INFO test_loss                     2.8601
+2026-09-24 23:32:27,509 simple_logger.py log_once [line:28] INFO val_accuracy                  0.3418
+2026-09-24 23:32:27,509 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.3420
+2026-09-24 23:32:27,509 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3722
+2026-09-24 23:32:27,509 simple_logger.py log_once [line:28] INFO val_loss                      2.8331
+2026-09-24 23:32:27,509 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.8287
+2026-09-24 23:32:27,509 simple_logger.py log_once [line:28] INFO std_val_loss                  2.2953
+2026-09-24 23:32:27,509 fedbase.py run [line:316] INFO Eval Time Cost:               1.4789s
+2026-09-24 23:32:27,518 asyncbase.py iterate [line:68] INFO Select clients [np.int64(11), np.int64(9), np.int64(2), np.int64(10), np.int64(3)] at time 37.
+2026-09-24 23:32:29,045 asyncbase.py iterate [line:73] INFO Receive new models from clients [11, 9] at time 37
+2026-09-24 23:32:29,096 fedbase.py run [line:311] INFO --------------Round 36--------------
+2026-09-24 23:32:29,096 simple_logger.py log_once [line:14] INFO Current_time:37
+2026-09-24 23:32:30,581 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1010
+2026-09-24 23:32:30,581 simple_logger.py log_once [line:28] INFO test_loss                     20.2487
+2026-09-24 23:32:30,581 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1020
+2026-09-24 23:32:30,581 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1016
+2026-09-24 23:32:30,581 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2730
+2026-09-24 23:32:30,581 simple_logger.py log_once [line:28] INFO val_loss                      20.1527
+2026-09-24 23:32:30,581 simple_logger.py log_once [line:28] INFO mean_val_loss                 20.1123
+2026-09-24 23:32:30,581 simple_logger.py log_once [line:28] INFO std_val_loss                  18.2975
+2026-09-24 23:32:30,581 fedbase.py run [line:316] INFO Eval Time Cost:               1.4854s
+2026-09-24 23:32:30,591 asyncbase.py iterate [line:68] INFO Select clients [np.int64(13), np.int64(0)] at time 38.
+2026-09-24 23:32:31,223 asyncbase.py iterate [line:73] INFO Receive new models from clients [2, 0, 14] at time 38
+2026-09-24 23:32:31,281 fedbase.py run [line:311] INFO --------------Round 37--------------
+2026-09-24 23:32:31,281 simple_logger.py log_once [line:14] INFO Current_time:38
+2026-09-24 23:32:32,768 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1621
+2026-09-24 23:32:32,768 simple_logger.py log_once [line:28] INFO test_loss                     21.6754
+2026-09-24 23:32:32,768 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1595
+2026-09-24 23:32:32,768 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1594
+2026-09-24 23:32:32,768 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3076
+2026-09-24 23:32:32,768 simple_logger.py log_once [line:28] INFO val_loss                      21.5666
+2026-09-24 23:32:32,768 simple_logger.py log_once [line:28] INFO mean_val_loss                 21.5353
+2026-09-24 23:32:32,768 simple_logger.py log_once [line:28] INFO std_val_loss                  18.5294
+2026-09-24 23:32:32,768 fedbase.py run [line:316] INFO Eval Time Cost:               1.4868s
+2026-09-24 23:32:32,777 asyncbase.py iterate [line:68] INFO Select clients [np.int64(2), np.int64(12), np.int64(9)] at time 39.
+2026-09-24 23:32:33,701 asyncbase.py iterate [line:73] INFO Receive new models from clients [10, 3, 13] at time 39
+2026-09-24 23:32:33,759 fedbase.py run [line:311] INFO --------------Round 38--------------
+2026-09-24 23:32:33,759 simple_logger.py log_once [line:14] INFO Current_time:39
+2026-09-24 23:32:35,239 simple_logger.py log_once [line:28] INFO test_accuracy                 0.3938
+2026-09-24 23:32:35,239 simple_logger.py log_once [line:28] INFO test_loss                     2.1935
+2026-09-24 23:32:35,239 simple_logger.py log_once [line:28] INFO val_accuracy                  0.3936
+2026-09-24 23:32:35,239 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.3938
+2026-09-24 23:32:35,239 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3790
+2026-09-24 23:32:35,239 simple_logger.py log_once [line:28] INFO val_loss                      2.1852
+2026-09-24 23:32:35,239 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.1826
+2026-09-24 23:32:35,239 simple_logger.py log_once [line:28] INFO std_val_loss                  0.9809
+2026-09-24 23:32:35,239 fedbase.py run [line:316] INFO Eval Time Cost:               1.4798s
+2026-09-24 23:32:35,248 asyncbase.py iterate [line:68] INFO Select clients [np.int64(7), np.int64(6), np.int64(5)] at time 40.
+2026-09-24 23:32:36,184 asyncbase.py iterate [line:73] INFO Receive new models from clients [6, 2] at time 41
+2026-09-24 23:32:36,233 fedbase.py run [line:311] INFO --------------Round 39--------------
+2026-09-24 23:32:36,233 simple_logger.py log_once [line:14] INFO Current_time:41
+2026-09-24 23:32:37,714 simple_logger.py log_once [line:28] INFO test_accuracy                 0.2294
+2026-09-24 23:32:37,714 simple_logger.py log_once [line:28] INFO test_loss                     2.8843
+2026-09-24 23:32:37,714 simple_logger.py log_once [line:28] INFO val_accuracy                  0.2307
+2026-09-24 23:32:37,714 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.2311
+2026-09-24 23:32:37,714 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3761
+2026-09-24 23:32:37,714 simple_logger.py log_once [line:28] INFO val_loss                      2.8550
+2026-09-24 23:32:37,714 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.8531
+2026-09-24 23:32:37,714 simple_logger.py log_once [line:28] INFO std_val_loss                  1.8048
+2026-09-24 23:32:37,714 fedbase.py run [line:316] INFO Eval Time Cost:               1.4814s
+2026-09-24 23:32:37,723 asyncbase.py iterate [line:68] INFO Select clients [np.int64(15)] at time 42.
+2026-09-24 23:32:38,034 asyncbase.py iterate [line:73] INFO Receive new models from clients [5, 9, 12, 15] at time 42
+2026-09-24 23:32:38,101 fedbase.py run [line:311] INFO --------------Round 40--------------
+2026-09-24 23:32:38,101 simple_logger.py log_once [line:14] INFO Current_time:42
+2026-09-24 23:32:39,575 simple_logger.py log_once [line:28] INFO test_accuracy                 0.2226
+2026-09-24 23:32:39,575 simple_logger.py log_once [line:28] INFO test_loss                     2.2808
+2026-09-24 23:32:39,575 simple_logger.py log_once [line:28] INFO val_accuracy                  0.2215
+2026-09-24 23:32:39,575 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.2217
+2026-09-24 23:32:39,575 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3292
+2026-09-24 23:32:39,575 simple_logger.py log_once [line:28] INFO val_loss                      2.2803
+2026-09-24 23:32:39,575 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.2799
+2026-09-24 23:32:39,575 simple_logger.py log_once [line:28] INFO std_val_loss                  0.5869
+2026-09-24 23:32:39,575 fedbase.py run [line:316] INFO Eval Time Cost:               1.4743s
+2026-09-24 23:32:39,585 asyncbase.py iterate [line:68] INFO Select clients [np.int64(14), np.int64(8), np.int64(0), np.int64(12), np.int64(11)] at time 43.
+2026-09-24 23:32:41,113 asyncbase.py iterate [line:73] INFO Receive new models from clients [7] at time 43
+2026-09-24 23:32:41,139 fedbase.py run [line:311] INFO --------------Round 41--------------
+2026-09-24 23:32:41,139 simple_logger.py log_once [line:14] INFO Current_time:43
+2026-09-24 23:32:42,624 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1647
+2026-09-24 23:32:42,624 simple_logger.py log_once [line:28] INFO test_loss                     7.8762
+2026-09-24 23:32:42,624 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1645
+2026-09-24 23:32:42,624 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1638
+2026-09-24 23:32:42,624 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3222
+2026-09-24 23:32:42,624 simple_logger.py log_once [line:28] INFO val_loss                      7.8709
+2026-09-24 23:32:42,624 simple_logger.py log_once [line:28] INFO mean_val_loss                 7.8748
+2026-09-24 23:32:42,624 simple_logger.py log_once [line:28] INFO std_val_loss                  3.9530
+2026-09-24 23:32:42,624 fedbase.py run [line:316] INFO Eval Time Cost:               1.4850s
+2026-09-24 23:32:42,634 asyncbase.py iterate [line:68] INFO Select clients [np.int64(3)] at time 44.
+2026-09-24 23:32:42,942 asyncbase.py iterate [line:73] INFO Receive new models from clients [0, 3, 12, 8] at time 44
+2026-09-24 23:32:43,013 fedbase.py run [line:311] INFO --------------Round 42--------------
+2026-09-24 23:32:43,013 simple_logger.py log_once [line:14] INFO Current_time:44
+2026-09-24 23:32:44,498 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1546
+2026-09-24 23:32:44,498 simple_logger.py log_once [line:28] INFO test_loss                     13.5018
+2026-09-24 23:32:44,498 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1531
+2026-09-24 23:32:44,498 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1524
+2026-09-24 23:32:44,498 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3074
+2026-09-24 23:32:44,498 simple_logger.py log_once [line:28] INFO val_loss                      13.4791
+2026-09-24 23:32:44,498 simple_logger.py log_once [line:28] INFO mean_val_loss                 13.4710
+2026-09-24 23:32:44,498 simple_logger.py log_once [line:28] INFO std_val_loss                  8.9412
+2026-09-24 23:32:44,498 fedbase.py run [line:316] INFO Eval Time Cost:               1.4847s
+2026-09-24 23:32:44,507 asyncbase.py iterate [line:68] INFO Select clients [np.int64(0), np.int64(17), np.int64(7)] at time 45.
+2026-09-24 23:32:45,459 asyncbase.py iterate [line:73] INFO Receive new models from clients [11, 14, 7] at time 45
+2026-09-24 23:32:45,523 fedbase.py run [line:311] INFO --------------Round 43--------------
+2026-09-24 23:32:45,523 simple_logger.py log_once [line:14] INFO Current_time:45
+2026-09-24 23:32:47,001 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1890
+2026-09-24 23:32:47,002 simple_logger.py log_once [line:28] INFO test_loss                     2.9091
+2026-09-24 23:32:47,002 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1900
+2026-09-24 23:32:47,002 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1895
+2026-09-24 23:32:47,002 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3654
+2026-09-24 23:32:47,002 simple_logger.py log_once [line:28] INFO val_loss                      2.9122
+2026-09-24 23:32:47,002 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.9121
+2026-09-24 23:32:47,002 simple_logger.py log_once [line:28] INFO std_val_loss                  1.4963
+2026-09-24 23:32:47,002 fedbase.py run [line:316] INFO Eval Time Cost:               1.4789s
+2026-09-24 23:32:47,011 asyncbase.py iterate [line:68] INFO Select clients [np.int64(8), np.int64(15), np.int64(1), np.int64(10)] at time 46.
+2026-09-24 23:32:48,239 asyncbase.py iterate [line:73] INFO Receive new models from clients [17, 8, 1] at time 46
+2026-09-24 23:32:48,298 fedbase.py run [line:311] INFO --------------Round 44--------------
+2026-09-24 23:32:48,298 simple_logger.py log_once [line:14] INFO Current_time:46
+2026-09-24 23:32:49,763 simple_logger.py log_once [line:28] INFO test_accuracy                 0.4112
+2026-09-24 23:32:49,763 simple_logger.py log_once [line:28] INFO test_loss                     2.1449
+2026-09-24 23:32:49,763 simple_logger.py log_once [line:28] INFO val_accuracy                  0.4143
+2026-09-24 23:32:49,763 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.4155
+2026-09-24 23:32:49,763 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3918
+2026-09-24 23:32:49,763 simple_logger.py log_once [line:28] INFO val_loss                      2.1293
+2026-09-24 23:32:49,763 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.1257
+2026-09-24 23:32:49,764 simple_logger.py log_once [line:28] INFO std_val_loss                  1.0647
+2026-09-24 23:32:49,764 fedbase.py run [line:316] INFO Eval Time Cost:               1.4657s
+2026-09-24 23:32:49,772 asyncbase.py iterate [line:68] INFO Select clients [np.int64(18), np.int64(4), np.int64(1)] at time 47.
+2026-09-24 23:32:50,712 asyncbase.py iterate [line:73] INFO Receive new models from clients [15, 10, 1, 0] at time 47
+2026-09-24 23:32:50,777 fedbase.py run [line:311] INFO --------------Round 45--------------
+2026-09-24 23:32:50,777 simple_logger.py log_once [line:14] INFO Current_time:47
+2026-09-24 23:32:52,263 simple_logger.py log_once [line:28] INFO test_accuracy                 0.2714
+2026-09-24 23:32:52,263 simple_logger.py log_once [line:28] INFO test_loss                     3.0802
+2026-09-24 23:32:52,263 simple_logger.py log_once [line:28] INFO val_accuracy                  0.2773
+2026-09-24 23:32:52,263 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.2776
+2026-09-24 23:32:52,263 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3468
+2026-09-24 23:32:52,263 simple_logger.py log_once [line:28] INFO val_loss                      3.0243
+2026-09-24 23:32:52,263 simple_logger.py log_once [line:28] INFO mean_val_loss                 3.0165
+2026-09-24 23:32:52,263 simple_logger.py log_once [line:28] INFO std_val_loss                  2.3891
+2026-09-24 23:32:52,263 fedbase.py run [line:316] INFO Eval Time Cost:               1.4867s
+2026-09-24 23:32:52,273 asyncbase.py iterate [line:68] INFO Select clients [np.int64(9), np.int64(14), np.int64(10)] at time 48.
+2026-09-24 23:32:53,202 asyncbase.py iterate [line:73] INFO Receive new models from clients [9] at time 48
+2026-09-24 23:32:53,227 fedbase.py run [line:311] INFO --------------Round 46--------------
+2026-09-24 23:32:53,227 simple_logger.py log_once [line:14] INFO Current_time:48
+2026-09-24 23:32:54,699 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1128
+2026-09-24 23:32:54,699 simple_logger.py log_once [line:28] INFO test_loss                     6.1515
+2026-09-24 23:32:54,699 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1184
+2026-09-24 23:32:54,699 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1187
+2026-09-24 23:32:54,699 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2825
+2026-09-24 23:32:54,700 simple_logger.py log_once [line:28] INFO val_loss                      6.0631
+2026-09-24 23:32:54,700 simple_logger.py log_once [line:28] INFO mean_val_loss                 6.0484
+2026-09-24 23:32:54,700 simple_logger.py log_once [line:28] INFO std_val_loss                  4.2526
+2026-09-24 23:32:54,700 fedbase.py run [line:316] INFO Eval Time Cost:               1.4729s
+2026-09-24 23:32:54,709 asyncbase.py iterate [line:68] INFO Select clients [np.int64(16), np.int64(1)] at time 49.
+2026-09-24 23:32:55,338 asyncbase.py iterate [line:73] INFO Receive new models from clients [10] at time 49
+2026-09-24 23:32:55,365 fedbase.py run [line:311] INFO --------------Round 47--------------
+2026-09-24 23:32:55,365 simple_logger.py log_once [line:14] INFO Current_time:49
+2026-09-24 23:32:56,833 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1908
+2026-09-24 23:32:56,833 simple_logger.py log_once [line:28] INFO test_loss                     4.2849
+2026-09-24 23:32:56,833 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1938
+2026-09-24 23:32:56,833 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1941
+2026-09-24 23:32:56,833 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3269
+2026-09-24 23:32:56,833 simple_logger.py log_once [line:28] INFO val_loss                      4.2111
+2026-09-24 23:32:56,833 simple_logger.py log_once [line:28] INFO mean_val_loss                 4.2004
+2026-09-24 23:32:56,833 simple_logger.py log_once [line:28] INFO std_val_loss                  3.1863
+2026-09-24 23:32:56,833 fedbase.py run [line:316] INFO Eval Time Cost:               1.4687s
+2026-09-24 23:32:56,843 asyncbase.py iterate [line:68] INFO Select clients [np.int64(10)] at time 50.
+2026-09-24 23:32:57,157 asyncbase.py iterate [line:73] INFO Receive new models from clients [18, 4] at time 50
+2026-09-24 23:32:57,203 fedbase.py run [line:311] INFO --------------Round 48--------------
+2026-09-24 23:32:57,203 simple_logger.py log_once [line:14] INFO Current_time:50
+2026-09-24 23:32:58,682 simple_logger.py log_once [line:28] INFO test_accuracy                 0.2449
+2026-09-24 23:32:58,683 simple_logger.py log_once [line:28] INFO test_loss                     8.2229
+2026-09-24 23:32:58,683 simple_logger.py log_once [line:28] INFO val_accuracy                  0.2460
+2026-09-24 23:32:58,683 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.2456
+2026-09-24 23:32:58,683 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3624
+2026-09-24 23:32:58,683 simple_logger.py log_once [line:28] INFO val_loss                      8.0642
+2026-09-24 23:32:58,683 simple_logger.py log_once [line:28] INFO mean_val_loss                 8.0390
+2026-09-24 23:32:58,683 simple_logger.py log_once [line:28] INFO std_val_loss                  7.9688
+2026-09-24 23:32:58,683 fedbase.py run [line:316] INFO Eval Time Cost:               1.4796s
+2026-09-24 23:32:58,692 asyncbase.py iterate [line:68] INFO Select clients [np.int64(3), np.int64(2)] at time 51.
+2026-09-24 23:32:59,308 asyncbase.py iterate [line:73] INFO Receive new models from clients [16, 2, 14] at time 51
+2026-09-24 23:32:59,365 fedbase.py run [line:311] INFO --------------Round 49--------------
+2026-09-24 23:32:59,365 simple_logger.py log_once [line:14] INFO Current_time:51
+2026-09-24 23:33:00,839 simple_logger.py log_once [line:28] INFO test_accuracy                 0.2762
+2026-09-24 23:33:00,839 simple_logger.py log_once [line:28] INFO test_loss                     2.4516
+2026-09-24 23:33:00,839 simple_logger.py log_once [line:28] INFO val_accuracy                  0.2734
+2026-09-24 23:33:00,839 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.2729
+2026-09-24 23:33:00,839 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3925
+2026-09-24 23:33:00,839 simple_logger.py log_once [line:28] INFO val_loss                      2.4515
+2026-09-24 23:33:00,839 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.4491
+2026-09-24 23:33:00,839 simple_logger.py log_once [line:28] INFO std_val_loss                  1.2348
+2026-09-24 23:33:00,839 fedbase.py run [line:316] INFO Eval Time Cost:               1.4739s
+2026-09-24 23:33:00,847 asyncbase.py iterate [line:68] INFO Select clients [np.int64(16), np.int64(17)] at time 52.
+2026-09-24 23:33:01,466 asyncbase.py iterate [line:73] INFO Receive new models from clients [1] at time 52
+2026-09-24 23:33:01,490 fedbase.py run [line:311] INFO --------------Round 50--------------
+2026-09-24 23:33:01,490 simple_logger.py log_once [line:14] INFO Current_time:52
+2026-09-24 23:33:02,980 simple_logger.py log_once [line:28] INFO test_accuracy                 0.2939
+2026-09-24 23:33:02,980 simple_logger.py log_once [line:28] INFO test_loss                     2.8927
+2026-09-24 23:33:02,980 simple_logger.py log_once [line:28] INFO val_accuracy                  0.2894
+2026-09-24 23:33:02,980 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.2891
+2026-09-24 23:33:02,980 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3998
+2026-09-24 23:33:02,980 simple_logger.py log_once [line:28] INFO val_loss                      2.8821
+2026-09-24 23:33:02,980 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.8778
+2026-09-24 23:33:02,980 simple_logger.py log_once [line:28] INFO std_val_loss                  1.9975
+2026-09-24 23:33:02,980 fedbase.py run [line:316] INFO Eval Time Cost:               1.4895s
+2026-09-24 23:33:02,989 asyncbase.py iterate [line:68] INFO Select clients [np.int64(15), np.int64(0)] at time 53.
+2026-09-24 23:33:03,599 asyncbase.py iterate [line:73] INFO Receive new models from clients [17, 16, 10, 3] at time 53
+2026-09-24 23:33:03,667 fedbase.py run [line:311] INFO --------------Round 51--------------
+2026-09-24 23:33:03,667 simple_logger.py log_once [line:14] INFO Current_time:53
+2026-09-24 23:33:05,148 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1293
+2026-09-24 23:33:05,148 simple_logger.py log_once [line:28] INFO test_loss                     2.3227
+2026-09-24 23:33:05,148 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1286
+2026-09-24 23:33:05,148 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1278
+2026-09-24 23:33:05,148 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2926
+2026-09-24 23:33:05,148 simple_logger.py log_once [line:28] INFO val_loss                      2.3236
+2026-09-24 23:33:05,148 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.3233
+2026-09-24 23:33:05,148 simple_logger.py log_once [line:28] INFO std_val_loss                  0.3379
+2026-09-24 23:33:05,148 fedbase.py run [line:316] INFO Eval Time Cost:               1.4813s
+2026-09-24 23:33:05,158 asyncbase.py iterate [line:68] INFO Select clients [np.int64(14), np.int64(8), np.int64(7), np.int64(10)] at time 54.
+2026-09-24 23:33:06,431 asyncbase.py iterate [line:73] INFO Receive new models from clients [14] at time 54
+2026-09-24 23:33:06,454 fedbase.py run [line:311] INFO --------------Round 52--------------
+2026-09-24 23:33:06,455 simple_logger.py log_once [line:14] INFO Current_time:54
+2026-09-24 23:33:07,952 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1262
+2026-09-24 23:33:07,952 simple_logger.py log_once [line:28] INFO test_loss                     2.4200
+2026-09-24 23:33:07,952 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1234
+2026-09-24 23:33:07,952 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1229
+2026-09-24 23:33:07,952 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2719
+2026-09-24 23:33:07,952 simple_logger.py log_once [line:28] INFO val_loss                      2.4206
+2026-09-24 23:33:07,952 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.4208
+2026-09-24 23:33:07,952 simple_logger.py log_once [line:28] INFO std_val_loss                  0.4133
+2026-09-24 23:33:07,952 fedbase.py run [line:316] INFO Eval Time Cost:               1.4977s
+2026-09-24 23:33:07,963 asyncbase.py iterate [line:68] INFO Select clients [np.int64(4)] at time 55.
+2026-09-24 23:33:08,277 asyncbase.py iterate [line:73] INFO Receive new models from clients [10, 15, 0] at time 55
+2026-09-24 23:33:08,336 fedbase.py run [line:311] INFO --------------Round 53--------------
+2026-09-24 23:33:08,336 simple_logger.py log_once [line:14] INFO Current_time:55
+2026-09-24 23:33:09,909 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1043
+2026-09-24 23:33:09,909 simple_logger.py log_once [line:28] INFO test_loss                     2.6448
+2026-09-24 23:33:09,909 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1036
+2026-09-24 23:33:09,909 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1030
+2026-09-24 23:33:09,909 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2868
+2026-09-24 23:33:09,909 simple_logger.py log_once [line:28] INFO val_loss                      2.6522
+2026-09-24 23:33:09,909 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.6533
+2026-09-24 23:33:09,909 simple_logger.py log_once [line:28] INFO std_val_loss                  0.8118
+2026-09-24 23:33:09,909 fedbase.py run [line:316] INFO Eval Time Cost:               1.5730s
+2026-09-24 23:33:09,921 asyncbase.py iterate [line:68] INFO Select clients [np.int64(18), np.int64(12)] at time 56.
+2026-09-24 23:33:10,578 asyncbase.py iterate [line:73] INFO Receive new models from clients [4, 12] at time 56
+2026-09-24 23:33:10,630 fedbase.py run [line:311] INFO --------------Round 54--------------
+2026-09-24 23:33:10,630 simple_logger.py log_once [line:14] INFO Current_time:56
+2026-09-24 23:33:12,112 simple_logger.py log_once [line:28] INFO test_accuracy                 0.0880
+2026-09-24 23:33:12,112 simple_logger.py log_once [line:28] INFO test_loss                     2.9803
+2026-09-24 23:33:12,112 simple_logger.py log_once [line:28] INFO val_accuracy                  0.0903
+2026-09-24 23:33:12,112 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.0901
+2026-09-24 23:33:12,112 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2519
+2026-09-24 23:33:12,112 simple_logger.py log_once [line:28] INFO val_loss                      2.9823
+2026-09-24 23:33:12,112 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.9808
+2026-09-24 23:33:12,112 simple_logger.py log_once [line:28] INFO std_val_loss                  1.1537
+2026-09-24 23:33:12,112 fedbase.py run [line:316] INFO Eval Time Cost:               1.4821s
+2026-09-24 23:33:12,120 asyncbase.py iterate [line:68] INFO Select clients [np.int64(19), np.int64(14)] at time 57.
+2026-09-24 23:33:12,748 asyncbase.py iterate [line:73] INFO Receive new models from clients [18, 8, 7] at time 57
+2026-09-24 23:33:12,808 fedbase.py run [line:311] INFO --------------Round 55--------------
+2026-09-24 23:33:12,808 simple_logger.py log_once [line:14] INFO Current_time:57
+2026-09-24 23:33:14,328 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1135
+2026-09-24 23:33:14,328 simple_logger.py log_once [line:28] INFO test_loss                     3.8300
+2026-09-24 23:33:14,328 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1119
+2026-09-24 23:33:14,328 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1111
+2026-09-24 23:33:14,328 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2974
+2026-09-24 23:33:14,328 simple_logger.py log_once [line:28] INFO val_loss                      3.8374
+2026-09-24 23:33:14,328 simple_logger.py log_once [line:28] INFO mean_val_loss                 3.8354
+2026-09-24 23:33:14,328 simple_logger.py log_once [line:28] INFO std_val_loss                  1.8303
+2026-09-24 23:33:14,328 fedbase.py run [line:316] INFO Eval Time Cost:               1.5203s
+2026-09-24 23:33:14,337 asyncbase.py iterate [line:68] INFO Select clients [np.int64(15), np.int64(3), np.int64(4), np.int64(9)] at time 58.
+2026-09-24 23:33:15,614 asyncbase.py iterate [line:73] INFO Receive new models from clients [14, 9, 19] at time 58
+2026-09-24 23:33:15,674 fedbase.py run [line:311] INFO --------------Round 56--------------
+2026-09-24 23:33:15,674 simple_logger.py log_once [line:14] INFO Current_time:58
+2026-09-24 23:33:17,166 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1135
+2026-09-24 23:33:17,166 simple_logger.py log_once [line:28] INFO test_loss                     31.1491
+2026-09-24 23:33:17,166 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1119
+2026-09-24 23:33:17,166 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1111
+2026-09-24 23:33:17,166 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2974
+2026-09-24 23:33:17,166 simple_logger.py log_once [line:28] INFO val_loss                      31.2455
+2026-09-24 23:33:17,166 simple_logger.py log_once [line:28] INFO mean_val_loss                 31.2227
+2026-09-24 23:33:17,166 simple_logger.py log_once [line:28] INFO std_val_loss                  17.7847
+2026-09-24 23:33:17,166 fedbase.py run [line:316] INFO Eval Time Cost:               1.4917s
+2026-09-24 23:33:17,175 asyncbase.py iterate [line:68] INFO Select clients [np.int64(5), np.int64(1), np.int64(10)] at time 59.
+2026-09-24 23:33:18,114 asyncbase.py iterate [line:73] INFO Receive new models from clients [5] at time 59
+2026-09-24 23:33:18,141 fedbase.py run [line:311] INFO --------------Round 57--------------
+2026-09-24 23:33:18,141 simple_logger.py log_once [line:14] INFO Current_time:59
+2026-09-24 23:33:19,639 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1135
+2026-09-24 23:33:19,639 simple_logger.py log_once [line:28] INFO test_loss                     165.9203
+2026-09-24 23:33:19,639 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1119
+2026-09-24 23:33:19,639 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1111
+2026-09-24 23:33:19,639 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2974
+2026-09-24 23:33:19,639 simple_logger.py log_once [line:28] INFO val_loss                      166.6506
+2026-09-24 23:33:19,639 simple_logger.py log_once [line:28] INFO mean_val_loss                 166.6760
+2026-09-24 23:33:19,639 simple_logger.py log_once [line:28] INFO std_val_loss                  61.8434
+2026-09-24 23:33:19,639 fedbase.py run [line:316] INFO Eval Time Cost:               1.4982s
+2026-09-24 23:33:19,648 asyncbase.py iterate [line:68] INFO Select clients [np.int64(18)] at time 60.
+2026-09-24 23:33:19,962 asyncbase.py iterate [line:73] INFO Receive new models from clients [4] at time 60
+2026-09-24 23:33:19,988 fedbase.py run [line:311] INFO --------------Round 58--------------
+2026-09-24 23:33:19,988 simple_logger.py log_once [line:14] INFO Current_time:60
+2026-09-24 23:33:21,482 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1135
+2026-09-24 23:33:21,482 simple_logger.py log_once [line:28] INFO test_loss                     117.1343
+2026-09-24 23:33:21,482 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1119
+2026-09-24 23:33:21,482 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1111
+2026-09-24 23:33:21,482 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2974
+2026-09-24 23:33:21,482 simple_logger.py log_once [line:28] INFO val_loss                      117.6079
+2026-09-24 23:33:21,482 simple_logger.py log_once [line:28] INFO mean_val_loss                 117.5941
+2026-09-24 23:33:21,482 simple_logger.py log_once [line:28] INFO std_val_loss                  49.2911
+2026-09-24 23:33:21,482 fedbase.py run [line:316] INFO Eval Time Cost:               1.4940s
+2026-09-24 23:33:21,491 asyncbase.py iterate [line:68] INFO Select clients [np.int64(2)] at time 61.
+2026-09-24 23:33:21,817 asyncbase.py iterate [line:73] INFO Receive new models from clients [15, 3] at time 61
+2026-09-24 23:33:21,867 fedbase.py run [line:311] INFO --------------Round 59--------------
+2026-09-24 23:33:21,867 simple_logger.py log_once [line:14] INFO Current_time:61
+2026-09-24 23:33:23,356 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1434
+2026-09-24 23:33:23,356 simple_logger.py log_once [line:28] INFO test_loss                     8.0642
+2026-09-24 23:33:23,356 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1448
+2026-09-24 23:33:23,357 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1441
+2026-09-24 23:33:23,357 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3045
+2026-09-24 23:33:23,357 simple_logger.py log_once [line:28] INFO val_loss                      8.1012
+2026-09-24 23:33:23,357 simple_logger.py log_once [line:28] INFO mean_val_loss                 8.1036
+2026-09-24 23:33:23,357 simple_logger.py log_once [line:28] INFO std_val_loss                  4.1666
+2026-09-24 23:33:23,357 fedbase.py run [line:316] INFO Eval Time Cost:               1.4897s
+2026-09-24 23:33:23,367 asyncbase.py iterate [line:68] INFO Select clients [np.int64(15), np.int64(13)] at time 62.
+2026-09-24 23:33:23,996 asyncbase.py iterate [line:73] INFO Receive new models from clients [10, 18, 15, 1] at time 62
+2026-09-24 23:33:24,065 fedbase.py run [line:311] INFO --------------Round 60--------------
+2026-09-24 23:33:24,065 simple_logger.py log_once [line:14] INFO Current_time:62
+2026-09-24 23:33:25,533 simple_logger.py log_once [line:28] INFO test_accuracy                 0.0969
+2026-09-24 23:33:25,533 simple_logger.py log_once [line:28] INFO test_loss                     2.5686
+2026-09-24 23:33:25,533 simple_logger.py log_once [line:28] INFO val_accuracy                  0.0947
+2026-09-24 23:33:25,533 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.0938
+2026-09-24 23:33:25,533 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2688
+2026-09-24 23:33:25,533 simple_logger.py log_once [line:28] INFO val_loss                      2.5704
+2026-09-24 23:33:25,533 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.5715
+2026-09-24 23:33:25,533 simple_logger.py log_once [line:28] INFO std_val_loss                  0.7100
+2026-09-24 23:33:25,533 fedbase.py run [line:316] INFO Eval Time Cost:               1.4683s
+2026-09-24 23:33:25,542 asyncbase.py iterate [line:68] INFO Select clients [np.int64(12), np.int64(9), np.int64(17), np.int64(11)] at time 63.
+2026-09-24 23:33:26,775 asyncbase.py iterate [line:73] INFO Receive new models from clients [12] at time 63
+2026-09-24 23:33:26,803 fedbase.py run [line:311] INFO --------------Round 61--------------
+2026-09-24 23:33:26,803 simple_logger.py log_once [line:14] INFO Current_time:63
+2026-09-24 23:33:28,285 simple_logger.py log_once [line:28] INFO test_accuracy                 0.0892
+2026-09-24 23:33:28,285 simple_logger.py log_once [line:28] INFO test_loss                     3.8196
+2026-09-24 23:33:28,285 simple_logger.py log_once [line:28] INFO val_accuracy                  0.0907
+2026-09-24 23:33:28,285 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.0904
+2026-09-24 23:33:28,285 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2536
+2026-09-24 23:33:28,285 simple_logger.py log_once [line:28] INFO val_loss                      3.8116
+2026-09-24 23:33:28,285 simple_logger.py log_once [line:28] INFO mean_val_loss                 3.8092
+2026-09-24 23:33:28,285 simple_logger.py log_once [line:28] INFO std_val_loss                  1.3628
+2026-09-24 23:33:28,285 fedbase.py run [line:316] INFO Eval Time Cost:               1.4825s
+2026-09-24 23:33:28,294 asyncbase.py iterate [line:68] INFO Select clients [np.int64(0)] at time 64.
+2026-09-24 23:33:28,594 asyncbase.py iterate [line:73] INFO Receive new models from clients [13, 2] at time 64
+2026-09-24 23:33:28,641 fedbase.py run [line:311] INFO --------------Round 62--------------
+2026-09-24 23:33:28,641 simple_logger.py log_once [line:14] INFO Current_time:64
+2026-09-24 23:33:30,124 simple_logger.py log_once [line:28] INFO test_accuracy                 0.0821
+2026-09-24 23:33:30,124 simple_logger.py log_once [line:28] INFO test_loss                     4.7709
+2026-09-24 23:33:30,124 simple_logger.py log_once [line:28] INFO val_accuracy                  0.0842
+2026-09-24 23:33:30,124 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.0839
+2026-09-24 23:33:30,125 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2123
+2026-09-24 23:33:30,125 simple_logger.py log_once [line:28] INFO val_loss                      4.6962
+2026-09-24 23:33:30,125 simple_logger.py log_once [line:28] INFO mean_val_loss                 4.6995
+2026-09-24 23:33:30,125 simple_logger.py log_once [line:28] INFO std_val_loss                  1.8781
+2026-09-24 23:33:30,125 fedbase.py run [line:316] INFO Eval Time Cost:               1.4839s
+2026-09-24 23:33:30,134 asyncbase.py iterate [line:68] INFO Select clients [np.int64(18), np.int64(10)] at time 65.
+2026-09-24 23:33:30,760 asyncbase.py iterate [line:73] INFO Receive new models from clients [0] at time 65
+2026-09-24 23:33:30,786 fedbase.py run [line:311] INFO --------------Round 63--------------
+2026-09-24 23:33:30,786 simple_logger.py log_once [line:14] INFO Current_time:65
+2026-09-24 23:33:32,264 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1039
+2026-09-24 23:33:32,264 simple_logger.py log_once [line:28] INFO test_loss                     4.5103
+2026-09-24 23:33:32,264 simple_logger.py log_once [line:28] INFO val_accuracy                  0.0995
+2026-09-24 23:33:32,264 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1005
+2026-09-24 23:33:32,264 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2868
+2026-09-24 23:33:32,264 simple_logger.py log_once [line:28] INFO val_loss                      4.4970
+2026-09-24 23:33:32,264 simple_logger.py log_once [line:28] INFO mean_val_loss                 4.4897
+2026-09-24 23:33:32,264 simple_logger.py log_once [line:28] INFO std_val_loss                  2.2063
+2026-09-24 23:33:32,264 fedbase.py run [line:316] INFO Eval Time Cost:               1.4786s
+2026-09-24 23:33:32,274 asyncbase.py iterate [line:68] INFO Select clients [np.int64(15)] at time 66.
+2026-09-24 23:33:32,580 asyncbase.py iterate [line:73] INFO Receive new models from clients [11, 15, 9, 18, 17] at time 66
+2026-09-24 23:33:32,660 fedbase.py run [line:311] INFO --------------Round 64--------------
+2026-09-24 23:33:32,660 simple_logger.py log_once [line:14] INFO Current_time:66
+2026-09-24 23:33:34,150 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1032
+2026-09-24 23:33:34,150 simple_logger.py log_once [line:28] INFO test_loss                     6.8940
+2026-09-24 23:33:34,150 simple_logger.py log_once [line:28] INFO val_accuracy                  0.0983
+2026-09-24 23:33:34,150 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.0993
+2026-09-24 23:33:34,150 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2871
+2026-09-24 23:33:34,150 simple_logger.py log_once [line:28] INFO val_loss                      6.8476
+2026-09-24 23:33:34,150 simple_logger.py log_once [line:28] INFO mean_val_loss                 6.8372
+2026-09-24 23:33:34,150 simple_logger.py log_once [line:28] INFO std_val_loss                  3.7098
+2026-09-24 23:33:34,150 fedbase.py run [line:316] INFO Eval Time Cost:               1.4903s
+2026-09-24 23:33:34,160 asyncbase.py iterate [line:68] INFO Select clients [np.int64(9), np.int64(13), np.int64(8), np.int64(11), np.int64(3)] at time 67.
+2026-09-24 23:33:35,692 asyncbase.py iterate [line:73] INFO Receive new models from clients [10] at time 67
+2026-09-24 23:33:35,718 fedbase.py run [line:311] INFO --------------Round 65--------------
+2026-09-24 23:33:35,719 simple_logger.py log_once [line:14] INFO Current_time:67
+2026-09-24 23:33:37,202 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1035
+2026-09-24 23:33:37,203 simple_logger.py log_once [line:28] INFO test_loss                     2.5795
+2026-09-24 23:33:37,203 simple_logger.py log_once [line:28] INFO val_accuracy                  0.0985
+2026-09-24 23:33:37,203 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.0995
+2026-09-24 23:33:37,203 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2871
+2026-09-24 23:33:37,203 simple_logger.py log_once [line:28] INFO val_loss                      2.5933
+2026-09-24 23:33:37,203 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.5897
+2026-09-24 23:33:37,203 simple_logger.py log_once [line:28] INFO std_val_loss                  0.8791
+2026-09-24 23:33:37,203 fedbase.py run [line:316] INFO Eval Time Cost:               1.4842s
+2026-09-24 23:33:37,213 asyncbase.py iterate [line:73] INFO Receive new models from clients [8, 9] at time 68
+2026-09-24 23:33:37,259 fedbase.py run [line:311] INFO --------------Round 66--------------
+2026-09-24 23:33:37,259 simple_logger.py log_once [line:14] INFO Current_time:68
+2026-09-24 23:33:38,743 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1028
+2026-09-24 23:33:38,744 simple_logger.py log_once [line:28] INFO test_loss                     1463.8904
+2026-09-24 23:33:38,744 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1043
+2026-09-24 23:33:38,744 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1043
+2026-09-24 23:33:38,744 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2848
+2026-09-24 23:33:38,744 simple_logger.py log_once [line:28] INFO val_loss                      1447.4076
+2026-09-24 23:33:38,744 simple_logger.py log_once [line:28] INFO mean_val_loss                 1445.7118
+2026-09-24 23:33:38,744 simple_logger.py log_once [line:28] INFO std_val_loss                  758.8665
+2026-09-24 23:33:38,744 fedbase.py run [line:316] INFO Eval Time Cost:               1.4850s
+2026-09-24 23:33:38,753 asyncbase.py iterate [line:68] INFO Select clients [np.int64(6), np.int64(7), np.int64(15)] at time 69.
+2026-09-24 23:33:39,679 asyncbase.py iterate [line:73] INFO Receive new models from clients [3, 15, 7] at time 69
+2026-09-24 23:33:39,735 fedbase.py run [line:311] INFO --------------Round 67--------------
+2026-09-24 23:33:39,735 simple_logger.py log_once [line:14] INFO Current_time:69
+2026-09-24 23:33:41,236 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1032
+2026-09-24 23:33:41,236 simple_logger.py log_once [line:28] INFO test_loss                     2.4041
+2026-09-24 23:33:41,236 simple_logger.py log_once [line:28] INFO val_accuracy                  0.0983
+2026-09-24 23:33:41,236 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.0993
+2026-09-24 23:33:41,236 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2871
+2026-09-24 23:33:41,236 simple_logger.py log_once [line:28] INFO val_loss                      2.4148
+2026-09-24 23:33:41,236 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.4141
+2026-09-24 23:33:41,236 simple_logger.py log_once [line:28] INFO std_val_loss                  0.5951
+2026-09-24 23:33:41,236 fedbase.py run [line:316] INFO Eval Time Cost:               1.5009s
+2026-09-24 23:33:41,245 asyncbase.py iterate [line:68] INFO Select clients [np.int64(16), np.int64(4), np.int64(3)] at time 70.
+2026-09-24 23:33:42,196 asyncbase.py iterate [line:73] INFO Receive new models from clients [13, 11] at time 70
+2026-09-24 23:33:42,243 fedbase.py run [line:311] INFO --------------Round 68--------------
+2026-09-24 23:33:42,243 simple_logger.py log_once [line:14] INFO Current_time:70
+2026-09-24 23:33:43,727 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1032
+2026-09-24 23:33:43,727 simple_logger.py log_once [line:28] INFO test_loss                     2.5005
+2026-09-24 23:33:43,727 simple_logger.py log_once [line:28] INFO val_accuracy                  0.0983
+2026-09-24 23:33:43,728 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.0993
+2026-09-24 23:33:43,728 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2871
+2026-09-24 23:33:43,728 simple_logger.py log_once [line:28] INFO val_loss                      2.5066
+2026-09-24 23:33:43,728 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.5062
+2026-09-24 23:33:43,728 simple_logger.py log_once [line:28] INFO std_val_loss                  0.7501
+2026-09-24 23:33:43,728 fedbase.py run [line:316] INFO Eval Time Cost:               1.4850s
+2026-09-24 23:33:43,738 asyncbase.py iterate [line:68] INFO Select clients [np.int64(7)] at time 71.
+2026-09-24 23:33:44,049 asyncbase.py iterate [line:73] INFO Receive new models from clients [4, 16] at time 71
+2026-09-24 23:33:44,093 fedbase.py run [line:311] INFO --------------Round 69--------------
+2026-09-24 23:33:44,094 simple_logger.py log_once [line:14] INFO Current_time:71
+2026-09-24 23:33:45,586 simple_logger.py log_once [line:28] INFO test_accuracy                 0.2972
+2026-09-24 23:33:45,586 simple_logger.py log_once [line:28] INFO test_loss                     2.6802
+2026-09-24 23:33:45,586 simple_logger.py log_once [line:28] INFO val_accuracy                  0.2968
+2026-09-24 23:33:45,586 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.2971
+2026-09-24 23:33:45,586 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3681
+2026-09-24 23:33:45,586 simple_logger.py log_once [line:28] INFO val_loss                      2.6669
+2026-09-24 23:33:45,586 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.6679
+2026-09-24 23:33:45,586 simple_logger.py log_once [line:28] INFO std_val_loss                  1.6275
+2026-09-24 23:33:45,586 fedbase.py run [line:316] INFO Eval Time Cost:               1.4925s
+2026-09-24 23:33:45,595 asyncbase.py iterate [line:68] INFO Select clients [np.int64(10), np.int64(18)] at time 72.
+2026-09-24 23:33:46,216 asyncbase.py iterate [line:73] INFO Receive new models from clients [6, 3, 18] at time 72
+2026-09-24 23:33:46,271 fedbase.py run [line:311] INFO --------------Round 70--------------
+2026-09-24 23:33:46,271 simple_logger.py log_once [line:14] INFO Current_time:72
+2026-09-24 23:33:47,782 simple_logger.py log_once [line:28] INFO test_accuracy                 0.2071
+2026-09-24 23:33:47,783 simple_logger.py log_once [line:28] INFO test_loss                     5.8700
+2026-09-24 23:33:47,783 simple_logger.py log_once [line:28] INFO val_accuracy                  0.2053
+2026-09-24 23:33:47,783 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.2040
+2026-09-24 23:33:47,783 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3739
+2026-09-24 23:33:47,783 simple_logger.py log_once [line:28] INFO val_loss                      5.8234
+2026-09-24 23:33:47,783 simple_logger.py log_once [line:28] INFO mean_val_loss                 5.8344
+2026-09-24 23:33:47,783 simple_logger.py log_once [line:28] INFO std_val_loss                  4.1616
+2026-09-24 23:33:47,783 fedbase.py run [line:316] INFO Eval Time Cost:               1.5121s
+2026-09-24 23:33:47,791 asyncbase.py iterate [line:68] INFO Select clients [np.int64(16), np.int64(8), np.int64(14)] at time 73.
+2026-09-24 23:33:48,757 asyncbase.py iterate [line:68] INFO Select clients [np.int64(11)] at time 74.
+2026-09-24 23:33:49,063 asyncbase.py iterate [line:73] INFO Receive new models from clients [16, 7] at time 74
+2026-09-24 23:33:49,107 fedbase.py run [line:311] INFO --------------Round 71--------------
+2026-09-24 23:33:49,107 simple_logger.py log_once [line:14] INFO Current_time:74
+2026-09-24 23:33:50,603 simple_logger.py log_once [line:28] INFO test_accuracy                 0.2178
+2026-09-24 23:33:50,603 simple_logger.py log_once [line:28] INFO test_loss                     5.5826
+2026-09-24 23:33:50,603 simple_logger.py log_once [line:28] INFO val_accuracy                  0.2175
+2026-09-24 23:33:50,603 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.2171
+2026-09-24 23:33:50,603 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3506
+2026-09-24 23:33:50,603 simple_logger.py log_once [line:28] INFO val_loss                      5.5715
+2026-09-24 23:33:50,603 simple_logger.py log_once [line:28] INFO mean_val_loss                 5.5816
+2026-09-24 23:33:50,603 simple_logger.py log_once [line:28] INFO std_val_loss                  4.1202
+2026-09-24 23:33:50,603 fedbase.py run [line:316] INFO Eval Time Cost:               1.4958s
+2026-09-24 23:33:50,612 asyncbase.py iterate [line:68] INFO Select clients [np.int64(1), np.int64(0)] at time 75.
+2026-09-24 23:33:51,220 asyncbase.py iterate [line:73] INFO Receive new models from clients [11, 8, 10, 14] at time 75
+2026-09-24 23:33:51,288 fedbase.py run [line:311] INFO --------------Round 72--------------
+2026-09-24 23:33:51,289 simple_logger.py log_once [line:14] INFO Current_time:75
+2026-09-24 23:33:52,776 simple_logger.py log_once [line:28] INFO test_accuracy                 0.3143
+2026-09-24 23:33:52,776 simple_logger.py log_once [line:28] INFO test_loss                     2.3041
+2026-09-24 23:33:52,776 simple_logger.py log_once [line:28] INFO val_accuracy                  0.3196
+2026-09-24 23:33:52,776 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.3206
+2026-09-24 23:33:52,776 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3787
+2026-09-24 23:33:52,776 simple_logger.py log_once [line:28] INFO val_loss                      2.2914
+2026-09-24 23:33:52,776 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.2867
+2026-09-24 23:33:52,776 simple_logger.py log_once [line:28] INFO std_val_loss                  1.2724
+2026-09-24 23:33:52,776 fedbase.py run [line:316] INFO Eval Time Cost:               1.4874s
+2026-09-24 23:33:52,786 asyncbase.py iterate [line:68] INFO Select clients [np.int64(16), np.int64(7), np.int64(9), np.int64(10)] at time 76.
+2026-09-24 23:33:54,014 asyncbase.py iterate [line:73] INFO Receive new models from clients [9] at time 76
+2026-09-24 23:33:54,041 fedbase.py run [line:311] INFO --------------Round 73--------------
+2026-09-24 23:33:54,041 simple_logger.py log_once [line:14] INFO Current_time:76
+2026-09-24 23:33:55,512 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1176
+2026-09-24 23:33:55,512 simple_logger.py log_once [line:28] INFO test_loss                     26.0177
+2026-09-24 23:33:55,512 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1206
+2026-09-24 23:33:55,512 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1203
+2026-09-24 23:33:55,512 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2551
+2026-09-24 23:33:55,512 simple_logger.py log_once [line:28] INFO val_loss                      25.5225
+2026-09-24 23:33:55,512 simple_logger.py log_once [line:28] INFO mean_val_loss                 25.4785
+2026-09-24 23:33:55,512 simple_logger.py log_once [line:28] INFO std_val_loss                  23.0180
+2026-09-24 23:33:55,512 fedbase.py run [line:316] INFO Eval Time Cost:               1.4710s
+2026-09-24 23:33:55,522 asyncbase.py iterate [line:68] INFO Select clients [np.int64(2)] at time 77.
+2026-09-24 23:33:55,833 asyncbase.py iterate [line:73] INFO Receive new models from clients [0, 1, 10] at time 77
+2026-09-24 23:33:55,891 fedbase.py run [line:311] INFO --------------Round 74--------------
+2026-09-24 23:33:55,891 simple_logger.py log_once [line:14] INFO Current_time:77
+2026-09-24 23:33:57,372 simple_logger.py log_once [line:28] INFO test_accuracy                 0.0896
+2026-09-24 23:33:57,372 simple_logger.py log_once [line:28] INFO test_loss                     24.2939
+2026-09-24 23:33:57,372 simple_logger.py log_once [line:28] INFO val_accuracy                  0.0908
+2026-09-24 23:33:57,372 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.0906
+2026-09-24 23:33:57,372 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2536
+2026-09-24 23:33:57,372 simple_logger.py log_once [line:28] INFO val_loss                      23.9981
+2026-09-24 23:33:57,372 simple_logger.py log_once [line:28] INFO mean_val_loss                 23.9441
+2026-09-24 23:33:57,372 simple_logger.py log_once [line:28] INFO std_val_loss                  19.0177
+2026-09-24 23:33:57,372 fedbase.py run [line:316] INFO Eval Time Cost:               1.4808s
+2026-09-24 23:33:57,382 asyncbase.py iterate [line:68] INFO Select clients [np.int64(14), np.int64(13)] at time 78.
+2026-09-24 23:33:58,006 asyncbase.py iterate [line:68] INFO Select clients [np.int64(9)] at time 79.
+2026-09-24 23:33:58,315 asyncbase.py iterate [line:73] INFO Receive new models from clients [16, 13, 2, 14, 7] at time 79
+2026-09-24 23:33:58,394 fedbase.py run [line:311] INFO --------------Round 75--------------
+2026-09-24 23:33:58,394 simple_logger.py log_once [line:14] INFO Current_time:79
+2026-09-24 23:33:59,877 simple_logger.py log_once [line:28] INFO test_accuracy                 0.2268
+2026-09-24 23:33:59,877 simple_logger.py log_once [line:28] INFO test_loss                     2.2276
+2026-09-24 23:33:59,877 simple_logger.py log_once [line:28] INFO val_accuracy                  0.2253
+2026-09-24 23:33:59,877 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.2255
+2026-09-24 23:33:59,877 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3322
+2026-09-24 23:33:59,877 simple_logger.py log_once [line:28] INFO val_loss                      2.2301
+2026-09-24 23:33:59,877 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.2290
+2026-09-24 23:33:59,877 simple_logger.py log_once [line:28] INFO std_val_loss                  0.4765
+2026-09-24 23:33:59,877 fedbase.py run [line:316] INFO Eval Time Cost:               1.4835s
+2026-09-24 23:33:59,886 asyncbase.py iterate [line:68] INFO Select clients [np.int64(0), np.int64(11), np.int64(14), np.int64(5), np.int64(16)] at time 80.
+2026-09-24 23:34:01,444 asyncbase.py iterate [line:73] INFO Receive new models from clients [9, 0] at time 80
+2026-09-24 23:34:01,486 fedbase.py run [line:311] INFO --------------Round 76--------------
+2026-09-24 23:34:01,487 simple_logger.py log_once [line:14] INFO Current_time:80
+2026-09-24 23:34:02,977 simple_logger.py log_once [line:28] INFO test_accuracy                 0.2187
+2026-09-24 23:34:02,978 simple_logger.py log_once [line:28] INFO test_loss                     2.1223
+2026-09-24 23:34:02,978 simple_logger.py log_once [line:28] INFO val_accuracy                  0.2210
+2026-09-24 23:34:02,978 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.2210
+2026-09-24 23:34:02,978 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3613
+2026-09-24 23:34:02,978 simple_logger.py log_once [line:28] INFO val_loss                      2.1215
+2026-09-24 23:34:02,978 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.1204
+2026-09-24 23:34:02,978 simple_logger.py log_once [line:28] INFO std_val_loss                  0.5045
+2026-09-24 23:34:02,978 fedbase.py run [line:316] INFO Eval Time Cost:               1.4912s
+2026-09-24 23:34:02,988 asyncbase.py iterate [line:68] INFO Select clients [np.int64(12)] at time 81.
+2026-09-24 23:34:03,297 asyncbase.py iterate [line:73] INFO Receive new models from clients [14, 16] at time 81
+2026-09-24 23:34:03,343 fedbase.py run [line:311] INFO --------------Round 77--------------
+2026-09-24 23:34:03,343 simple_logger.py log_once [line:14] INFO Current_time:81
+2026-09-24 23:34:04,848 simple_logger.py log_once [line:28] INFO test_accuracy                 0.2461
+2026-09-24 23:34:04,849 simple_logger.py log_once [line:28] INFO test_loss                     2.0912
+2026-09-24 23:34:04,849 simple_logger.py log_once [line:28] INFO val_accuracy                  0.2463
+2026-09-24 23:34:04,849 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.2457
+2026-09-24 23:34:04,849 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3630
+2026-09-24 23:34:04,849 simple_logger.py log_once [line:28] INFO val_loss                      2.0921
+2026-09-24 23:34:04,849 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.0908
+2026-09-24 23:34:04,849 simple_logger.py log_once [line:28] INFO std_val_loss                  0.6909
+2026-09-24 23:34:04,849 fedbase.py run [line:316] INFO Eval Time Cost:               1.5054s
+2026-09-24 23:34:04,857 asyncbase.py iterate [line:68] INFO Select clients [np.int64(4), np.int64(1), np.int64(14)] at time 82.
+2026-09-24 23:34:05,846 asyncbase.py iterate [line:73] INFO Receive new models from clients [11, 14] at time 82
+2026-09-24 23:34:05,890 fedbase.py run [line:311] INFO --------------Round 78--------------
+2026-09-24 23:34:05,890 simple_logger.py log_once [line:14] INFO Current_time:82
+2026-09-24 23:34:07,409 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1019
+2026-09-24 23:34:07,409 simple_logger.py log_once [line:28] INFO test_loss                     2.4441
+2026-09-24 23:34:07,409 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1021
+2026-09-24 23:34:07,409 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1015
+2026-09-24 23:34:07,409 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2883
+2026-09-24 23:34:07,409 simple_logger.py log_once [line:28] INFO val_loss                      2.4358
+2026-09-24 23:34:07,409 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.4363
+2026-09-24 23:34:07,409 simple_logger.py log_once [line:28] INFO std_val_loss                  0.6445
+2026-09-24 23:34:07,409 fedbase.py run [line:316] INFO Eval Time Cost:               1.5194s
+2026-09-24 23:34:07,419 asyncbase.py iterate [line:68] INFO Select clients [np.int64(0), np.int64(15)] at time 83.
+2026-09-24 23:34:08,033 asyncbase.py iterate [line:73] INFO Receive new models from clients [1, 15, 5, 12, 0] at time 83
+2026-09-24 23:34:08,117 fedbase.py run [line:311] INFO --------------Round 79--------------
+2026-09-24 23:34:08,117 simple_logger.py log_once [line:14] INFO Current_time:83
+2026-09-24 23:34:09,627 simple_logger.py log_once [line:28] INFO test_accuracy                 0.0987
+2026-09-24 23:34:09,628 simple_logger.py log_once [line:28] INFO test_loss                     2.3683
+2026-09-24 23:34:09,628 simple_logger.py log_once [line:28] INFO val_accuracy                  0.0983
+2026-09-24 23:34:09,628 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.0974
+2026-09-24 23:34:09,628 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2797
+2026-09-24 23:34:09,628 simple_logger.py log_once [line:28] INFO val_loss                      2.3722
+2026-09-24 23:34:09,628 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.3727
+2026-09-24 23:34:09,628 simple_logger.py log_once [line:28] INFO std_val_loss                  0.4632
+2026-09-24 23:34:09,628 fedbase.py run [line:316] INFO Eval Time Cost:               1.5111s
+2026-09-24 23:34:09,638 asyncbase.py iterate [line:68] INFO Select clients [np.int64(15), np.int64(13), np.int64(6), np.int64(8)] at time 84.
+2026-09-24 23:34:10,861 asyncbase.py iterate [line:73] INFO Receive new models from clients [13] at time 84
+2026-09-24 23:34:10,886 fedbase.py run [line:311] INFO --------------Round 80--------------
+2026-09-24 23:34:10,886 simple_logger.py log_once [line:14] INFO Current_time:84
+2026-09-24 23:34:12,375 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1010
+2026-09-24 23:34:12,376 simple_logger.py log_once [line:28] INFO test_loss                     11.3041
+2026-09-24 23:34:12,376 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1020
+2026-09-24 23:34:12,376 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1016
+2026-09-24 23:34:12,376 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2730
+2026-09-24 23:34:12,376 simple_logger.py log_once [line:28] INFO val_loss                      11.3219
+2026-09-24 23:34:12,376 simple_logger.py log_once [line:28] INFO mean_val_loss                 11.3211
+2026-09-24 23:34:12,376 simple_logger.py log_once [line:28] INFO std_val_loss                  4.1520
+2026-09-24 23:34:12,376 fedbase.py run [line:316] INFO Eval Time Cost:               1.4896s
+2026-09-24 23:34:12,386 asyncbase.py iterate [line:68] INFO Select clients [np.int64(16), np.int64(14)] at time 85.
+2026-09-24 23:34:13,012 asyncbase.py iterate [line:73] INFO Receive new models from clients [6, 14, 4] at time 85
+2026-09-24 23:34:13,071 fedbase.py run [line:311] INFO --------------Round 81--------------
+2026-09-24 23:34:13,071 simple_logger.py log_once [line:14] INFO Current_time:85
+2026-09-24 23:34:14,590 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1010
+2026-09-24 23:34:14,590 simple_logger.py log_once [line:28] INFO test_loss                     70.7505
+2026-09-24 23:34:14,590 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1020
+2026-09-24 23:34:14,590 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1016
+2026-09-24 23:34:14,590 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2730
+2026-09-24 23:34:14,590 simple_logger.py log_once [line:28] INFO val_loss                      70.7319
+2026-09-24 23:34:14,590 simple_logger.py log_once [line:28] INFO mean_val_loss                 70.7070
+2026-09-24 23:34:14,590 simple_logger.py log_once [line:28] INFO std_val_loss                  27.4974
+2026-09-24 23:34:14,591 fedbase.py run [line:316] INFO Eval Time Cost:               1.5197s
+2026-09-24 23:34:14,601 asyncbase.py iterate [line:68] INFO Select clients [np.int64(4), np.int64(5), np.int64(1)] at time 86.
+2026-09-24 23:34:15,531 asyncbase.py iterate [line:73] INFO Receive new models from clients [15] at time 86
+2026-09-24 23:34:15,557 fedbase.py run [line:311] INFO --------------Round 82--------------
+2026-09-24 23:34:15,557 simple_logger.py log_once [line:14] INFO Current_time:86
+2026-09-24 23:34:17,039 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1010
+2026-09-24 23:34:17,039 simple_logger.py log_once [line:28] INFO test_loss                     110.3103
+2026-09-24 23:34:17,039 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1020
+2026-09-24 23:34:17,039 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1016
+2026-09-24 23:34:17,039 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2730
+2026-09-24 23:34:17,039 simple_logger.py log_once [line:28] INFO val_loss                      110.2719
+2026-09-24 23:34:17,039 simple_logger.py log_once [line:28] INFO mean_val_loss                 110.2700
+2026-09-24 23:34:17,039 simple_logger.py log_once [line:28] INFO std_val_loss                  49.2291
+2026-09-24 23:34:17,039 fedbase.py run [line:316] INFO Eval Time Cost:               1.4817s
+2026-09-24 23:34:17,049 asyncbase.py iterate [line:68] INFO Select clients [np.int64(17)] at time 87.
+2026-09-24 23:34:17,359 asyncbase.py iterate [line:73] INFO Receive new models from clients [8, 4, 16, 5] at time 87
+2026-09-24 23:34:17,419 fedbase.py run [line:311] INFO --------------Round 83--------------
+2026-09-24 23:34:17,419 simple_logger.py log_once [line:14] INFO Current_time:87
+2026-09-24 23:34:18,901 simple_logger.py log_once [line:28] INFO test_accuracy                 0.0981
+2026-09-24 23:34:18,901 simple_logger.py log_once [line:28] INFO test_loss                     8.2787
+2026-09-24 23:34:18,902 simple_logger.py log_once [line:28] INFO val_accuracy                  0.0982
+2026-09-24 23:34:18,902 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.0972
+2026-09-24 23:34:18,902 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2798
+2026-09-24 23:34:18,902 simple_logger.py log_once [line:28] INFO val_loss                      8.2478
+2026-09-24 23:34:18,902 simple_logger.py log_once [line:28] INFO mean_val_loss                 8.2464
+2026-09-24 23:34:18,902 simple_logger.py log_once [line:28] INFO std_val_loss                  4.5209
+2026-09-24 23:34:18,902 fedbase.py run [line:316] INFO Eval Time Cost:               1.4823s
+2026-09-24 23:34:18,910 asyncbase.py iterate [line:68] INFO Select clients [np.int64(10), np.int64(13), np.int64(5), np.int64(16)] at time 88.
+2026-09-24 23:34:20,153 asyncbase.py iterate [line:73] INFO Receive new models from clients [1, 16, 17, 13] at time 88
+2026-09-24 23:34:20,218 fedbase.py run [line:311] INFO --------------Round 84--------------
+2026-09-24 23:34:20,218 simple_logger.py log_once [line:14] INFO Current_time:88
+2026-09-24 23:34:21,704 simple_logger.py log_once [line:28] INFO test_accuracy                 0.2372
+2026-09-24 23:34:21,704 simple_logger.py log_once [line:28] INFO test_loss                     3.1338
+2026-09-24 23:34:21,704 simple_logger.py log_once [line:28] INFO val_accuracy                  0.2404
+2026-09-24 23:34:21,704 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.2403
+2026-09-24 23:34:21,704 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3533
+2026-09-24 23:34:21,704 simple_logger.py log_once [line:28] INFO val_loss                      3.1087
+2026-09-24 23:34:21,704 simple_logger.py log_once [line:28] INFO mean_val_loss                 3.1048
+2026-09-24 23:34:21,704 simple_logger.py log_once [line:28] INFO std_val_loss                  2.3169
+2026-09-24 23:34:21,704 fedbase.py run [line:316] INFO Eval Time Cost:               1.4867s
+2026-09-24 23:34:21,716 asyncbase.py iterate [line:68] INFO Select clients [np.int64(8), np.int64(12), np.int64(15), np.int64(3)] at time 89.
+2026-09-24 23:34:22,982 asyncbase.py iterate [line:73] INFO Receive new models from clients [12] at time 89
+2026-09-24 23:34:23,009 fedbase.py run [line:311] INFO --------------Round 85--------------
+2026-09-24 23:34:23,009 simple_logger.py log_once [line:14] INFO Current_time:89
+2026-09-24 23:34:24,505 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1835
+2026-09-24 23:34:24,505 simple_logger.py log_once [line:28] INFO test_loss                     6.6030
+2026-09-24 23:34:24,505 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1840
+2026-09-24 23:34:24,505 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1847
+2026-09-24 23:34:24,505 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3573
+2026-09-24 23:34:24,505 simple_logger.py log_once [line:28] INFO val_loss                      6.6074
+2026-09-24 23:34:24,505 simple_logger.py log_once [line:28] INFO mean_val_loss                 6.5952
+2026-09-24 23:34:24,505 simple_logger.py log_once [line:28] INFO std_val_loss                  3.1937
+2026-09-24 23:34:24,506 fedbase.py run [line:316] INFO Eval Time Cost:               1.4968s
+2026-09-24 23:34:24,515 asyncbase.py iterate [line:68] INFO Select clients [np.int64(1)] at time 90.
+2026-09-24 23:34:24,829 asyncbase.py iterate [line:73] INFO Receive new models from clients [10, 15, 8] at time 90
+2026-09-24 23:34:24,883 fedbase.py run [line:311] INFO --------------Round 86--------------
+2026-09-24 23:34:24,883 simple_logger.py log_once [line:14] INFO Current_time:90
+2026-09-24 23:34:26,367 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1794
+2026-09-24 23:34:26,367 simple_logger.py log_once [line:28] INFO test_loss                     5.5032
+2026-09-24 23:34:26,367 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1795
+2026-09-24 23:34:26,367 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1802
+2026-09-24 23:34:26,367 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3486
+2026-09-24 23:34:26,368 simple_logger.py log_once [line:28] INFO val_loss                      5.5436
+2026-09-24 23:34:26,368 simple_logger.py log_once [line:28] INFO mean_val_loss                 5.5332
+2026-09-24 23:34:26,368 simple_logger.py log_once [line:28] INFO std_val_loss                  2.7410
+2026-09-24 23:34:26,368 fedbase.py run [line:316] INFO Eval Time Cost:               1.4842s
+2026-09-24 23:34:26,377 asyncbase.py iterate [line:68] INFO Select clients [np.int64(10), np.int64(6), np.int64(19)] at time 91.
+2026-09-24 23:34:27,312 asyncbase.py iterate [line:73] INFO Receive new models from clients [5, 3, 10] at time 91
+2026-09-24 23:34:27,365 fedbase.py run [line:311] INFO --------------Round 87--------------
+2026-09-24 23:34:27,365 simple_logger.py log_once [line:14] INFO Current_time:91
+2026-09-24 23:34:28,858 simple_logger.py log_once [line:28] INFO test_accuracy                 0.2385
+2026-09-24 23:34:28,858 simple_logger.py log_once [line:28] INFO test_loss                     4.9991
+2026-09-24 23:34:28,858 simple_logger.py log_once [line:28] INFO val_accuracy                  0.2373
+2026-09-24 23:34:28,858 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.2381
+2026-09-24 23:34:28,858 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3586
+2026-09-24 23:34:28,858 simple_logger.py log_once [line:28] INFO val_loss                      5.0079
+2026-09-24 23:34:28,858 simple_logger.py log_once [line:28] INFO mean_val_loss                 4.9981
+2026-09-24 23:34:28,858 simple_logger.py log_once [line:28] INFO std_val_loss                  3.0919
+2026-09-24 23:34:28,858 fedbase.py run [line:316] INFO Eval Time Cost:               1.4928s
+2026-09-24 23:34:28,868 asyncbase.py iterate [line:68] INFO Select clients [np.int64(10), np.int64(18), np.int64(2)] at time 92.
+2026-09-24 23:34:29,809 asyncbase.py iterate [line:73] INFO Receive new models from clients [19, 2, 1, 10] at time 93
+2026-09-24 23:34:29,877 fedbase.py run [line:311] INFO --------------Round 88--------------
+2026-09-24 23:34:29,877 simple_logger.py log_once [line:14] INFO Current_time:93
+2026-09-24 23:34:31,379 simple_logger.py log_once [line:28] INFO test_accuracy                 0.2901
+2026-09-24 23:34:31,379 simple_logger.py log_once [line:28] INFO test_loss                     2.4224
+2026-09-24 23:34:31,379 simple_logger.py log_once [line:28] INFO val_accuracy                  0.2936
+2026-09-24 23:34:31,379 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.2943
+2026-09-24 23:34:31,379 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3817
+2026-09-24 23:34:31,379 simple_logger.py log_once [line:28] INFO val_loss                      2.4081
+2026-09-24 23:34:31,379 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.4053
+2026-09-24 23:34:31,379 simple_logger.py log_once [line:28] INFO std_val_loss                  1.4018
+2026-09-24 23:34:31,379 fedbase.py run [line:316] INFO Eval Time Cost:               1.5026s
+2026-09-24 23:34:31,390 asyncbase.py iterate [line:68] INFO Select clients [np.int64(19), np.int64(3), np.int64(16), np.int64(12)] at time 94.
+2026-09-24 23:34:32,622 asyncbase.py iterate [line:73] INFO Receive new models from clients [6] at time 94
+2026-09-24 23:34:32,646 fedbase.py run [line:311] INFO --------------Round 89--------------
+2026-09-24 23:34:32,646 simple_logger.py log_once [line:14] INFO Current_time:94
+2026-09-24 23:34:34,162 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1982
+2026-09-24 23:34:34,162 simple_logger.py log_once [line:28] INFO test_loss                     15.2003
+2026-09-24 23:34:34,162 simple_logger.py log_once [line:28] INFO val_accuracy                  0.2018
+2026-09-24 23:34:34,162 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.2021
+2026-09-24 23:34:34,162 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3875
+2026-09-24 23:34:34,162 simple_logger.py log_once [line:28] INFO val_loss                      15.0400
+2026-09-24 23:34:34,162 simple_logger.py log_once [line:28] INFO mean_val_loss                 15.0451
+2026-09-24 23:34:34,163 simple_logger.py log_once [line:28] INFO std_val_loss                  7.7369
+2026-09-24 23:34:34,163 fedbase.py run [line:316] INFO Eval Time Cost:               1.5170s
+2026-09-24 23:34:34,172 asyncbase.py iterate [line:68] INFO Select clients [np.int64(15)] at time 95.
+2026-09-24 23:34:34,480 asyncbase.py iterate [line:73] INFO Receive new models from clients [18, 3, 12, 16] at time 95
+2026-09-24 23:34:34,548 fedbase.py run [line:311] INFO --------------Round 90--------------
+2026-09-24 23:34:34,548 simple_logger.py log_once [line:14] INFO Current_time:95
+2026-09-24 23:34:36,044 simple_logger.py log_once [line:28] INFO test_accuracy                 0.2961
+2026-09-24 23:34:36,044 simple_logger.py log_once [line:28] INFO test_loss                     5.1077
+2026-09-24 23:34:36,044 simple_logger.py log_once [line:28] INFO val_accuracy                  0.2970
+2026-09-24 23:34:36,044 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.2967
+2026-09-24 23:34:36,044 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.4019
+2026-09-24 23:34:36,044 simple_logger.py log_once [line:28] INFO val_loss                      5.0519
+2026-09-24 23:34:36,044 simple_logger.py log_once [line:28] INFO mean_val_loss                 5.0642
+2026-09-24 23:34:36,044 simple_logger.py log_once [line:28] INFO std_val_loss                  3.6083
+2026-09-24 23:34:36,045 fedbase.py run [line:316] INFO Eval Time Cost:               1.4961s
+2026-09-24 23:34:36,053 asyncbase.py iterate [line:68] INFO Select clients [np.int64(11), np.int64(14), np.int64(2), np.int64(4)] at time 96.
+2026-09-24 23:34:37,311 asyncbase.py iterate [line:73] INFO Receive new models from clients [14, 4] at time 96
+2026-09-24 23:34:37,356 fedbase.py run [line:311] INFO --------------Round 91--------------
+2026-09-24 23:34:37,356 simple_logger.py log_once [line:14] INFO Current_time:96
+2026-09-24 23:34:38,866 simple_logger.py log_once [line:28] INFO test_accuracy                 0.2920
+2026-09-24 23:34:38,866 simple_logger.py log_once [line:28] INFO test_loss                     2.3545
+2026-09-24 23:34:38,866 simple_logger.py log_once [line:28] INFO val_accuracy                  0.3005
+2026-09-24 23:34:38,866 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.3010
+2026-09-24 23:34:38,866 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3918
+2026-09-24 23:34:38,866 simple_logger.py log_once [line:28] INFO val_loss                      2.3247
+2026-09-24 23:34:38,866 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.3235
+2026-09-24 23:34:38,866 simple_logger.py log_once [line:28] INFO std_val_loss                  1.3572
+2026-09-24 23:34:38,866 fedbase.py run [line:316] INFO Eval Time Cost:               1.5097s
+2026-09-24 23:34:38,876 asyncbase.py iterate [line:68] INFO Select clients [np.int64(7)] at time 97.
+2026-09-24 23:34:39,186 asyncbase.py iterate [line:73] INFO Receive new models from clients [19] at time 97
+2026-09-24 23:34:39,211 fedbase.py run [line:311] INFO --------------Round 92--------------
+2026-09-24 23:34:39,211 simple_logger.py log_once [line:14] INFO Current_time:97
+2026-09-24 23:34:40,704 simple_logger.py log_once [line:28] INFO test_accuracy                 0.2897
+2026-09-24 23:34:40,705 simple_logger.py log_once [line:28] INFO test_loss                     2.9697
+2026-09-24 23:34:40,705 simple_logger.py log_once [line:28] INFO val_accuracy                  0.2923
+2026-09-24 23:34:40,705 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.2930
+2026-09-24 23:34:40,705 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.4150
+2026-09-24 23:34:40,705 simple_logger.py log_once [line:28] INFO val_loss                      2.9469
+2026-09-24 23:34:40,705 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.9466
+2026-09-24 23:34:40,705 simple_logger.py log_once [line:28] INFO std_val_loss                  2.0067
+2026-09-24 23:34:40,705 fedbase.py run [line:316] INFO Eval Time Cost:               1.4936s
+2026-09-24 23:34:40,714 asyncbase.py iterate [line:68] INFO Select clients [np.int64(3), np.int64(19)] at time 98.
+2026-09-24 23:34:41,337 asyncbase.py iterate [line:73] INFO Receive new models from clients [11, 15, 2] at time 98
+2026-09-24 23:34:41,396 fedbase.py run [line:311] INFO --------------Round 93--------------
+2026-09-24 23:34:41,396 simple_logger.py log_once [line:14] INFO Current_time:98
+2026-09-24 23:34:42,881 simple_logger.py log_once [line:28] INFO test_accuracy                 0.2131
+2026-09-24 23:34:42,881 simple_logger.py log_once [line:28] INFO test_loss                     2.4576
+2026-09-24 23:34:42,881 simple_logger.py log_once [line:28] INFO val_accuracy                  0.2102
+2026-09-24 23:34:42,881 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.2091
+2026-09-24 23:34:42,881 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2993
+2026-09-24 23:34:42,882 simple_logger.py log_once [line:28] INFO val_loss                      2.4617
+2026-09-24 23:34:42,882 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.4653
+2026-09-24 23:34:42,882 simple_logger.py log_once [line:28] INFO std_val_loss                  1.2093
+2026-09-24 23:34:42,882 fedbase.py run [line:316] INFO Eval Time Cost:               1.4858s
+2026-09-24 23:34:42,891 asyncbase.py iterate [line:68] INFO Select clients [np.int64(13), np.int64(0)] at time 99.
+2026-09-24 23:34:43,503 asyncbase.py iterate [line:73] INFO Receive new models from clients [0] at time 99
+2026-09-24 23:34:43,528 fedbase.py run [line:311] INFO --------------Round 94--------------
+2026-09-24 23:34:43,528 simple_logger.py log_once [line:14] INFO Current_time:99
+2026-09-24 23:34:45,012 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1753
+2026-09-24 23:34:45,012 simple_logger.py log_once [line:28] INFO test_loss                     6.3632
+2026-09-24 23:34:45,012 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1651
+2026-09-24 23:34:45,012 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1657
+2026-09-24 23:34:45,012 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3196
+2026-09-24 23:34:45,012 simple_logger.py log_once [line:28] INFO val_loss                      6.2931
+2026-09-24 23:34:45,012 simple_logger.py log_once [line:28] INFO mean_val_loss                 6.2889
+2026-09-24 23:34:45,012 simple_logger.py log_once [line:28] INFO std_val_loss                  3.3217
+2026-09-24 23:34:45,012 fedbase.py run [line:316] INFO Eval Time Cost:               1.4839s
+2026-09-24 23:34:45,022 asyncbase.py iterate [line:68] INFO Select clients [np.int64(5), np.int64(14)] at time 100.
+2026-09-24 23:34:45,649 asyncbase.py iterate [line:73] INFO Receive new models from clients [13, 7, 5] at time 100
+2026-09-24 23:34:45,705 fedbase.py run [line:311] INFO --------------Round 95--------------
+2026-09-24 23:34:45,705 simple_logger.py log_once [line:14] INFO Current_time:100
+2026-09-24 23:34:47,192 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1133
+2026-09-24 23:34:47,192 simple_logger.py log_once [line:28] INFO test_loss                     6.5593
+2026-09-24 23:34:47,192 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1063
+2026-09-24 23:34:47,192 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1073
+2026-09-24 23:34:47,192 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.2868
+2026-09-24 23:34:47,192 simple_logger.py log_once [line:28] INFO val_loss                      6.4899
+2026-09-24 23:34:47,193 simple_logger.py log_once [line:28] INFO mean_val_loss                 6.4875
+2026-09-24 23:34:47,193 simple_logger.py log_once [line:28] INFO std_val_loss                  3.9344
+2026-09-24 23:34:47,193 fedbase.py run [line:316] INFO Eval Time Cost:               1.4876s
+2026-09-24 23:34:47,202 asyncbase.py iterate [line:68] INFO Select clients [np.int64(10), np.int64(12)] at time 101.
+2026-09-24 23:34:47,823 asyncbase.py iterate [line:73] INFO Receive new models from clients [3, 19] at time 101
+2026-09-24 23:34:47,868 fedbase.py run [line:311] INFO --------------Round 96--------------
+2026-09-24 23:34:47,868 simple_logger.py log_once [line:14] INFO Current_time:101
+2026-09-24 23:34:49,354 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1721
+2026-09-24 23:34:49,354 simple_logger.py log_once [line:28] INFO test_loss                     2.9403
+2026-09-24 23:34:49,354 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1676
+2026-09-24 23:34:49,354 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1678
+2026-09-24 23:34:49,354 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3342
+2026-09-24 23:34:49,354 simple_logger.py log_once [line:28] INFO val_loss                      2.9105
+2026-09-24 23:34:49,354 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.9117
+2026-09-24 23:34:49,354 simple_logger.py log_once [line:28] INFO std_val_loss                  1.3611
+2026-09-24 23:34:49,354 fedbase.py run [line:316] INFO Eval Time Cost:               1.4858s
+2026-09-24 23:34:49,362 asyncbase.py iterate [line:68] INFO Select clients [np.int64(7), np.int64(6)] at time 102.
+2026-09-24 23:34:49,972 asyncbase.py iterate [line:73] INFO Receive new models from clients [14, 12, 7] at time 102
+2026-09-24 23:34:50,027 fedbase.py run [line:311] INFO --------------Round 97--------------
+2026-09-24 23:34:50,027 simple_logger.py log_once [line:14] INFO Current_time:102
+2026-09-24 23:34:51,502 simple_logger.py log_once [line:28] INFO test_accuracy                 0.2365
+2026-09-24 23:34:51,502 simple_logger.py log_once [line:28] INFO test_loss                     2.0626
+2026-09-24 23:34:51,502 simple_logger.py log_once [line:28] INFO val_accuracy                  0.2309
+2026-09-24 23:34:51,502 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.2308
+2026-09-24 23:34:51,502 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3040
+2026-09-24 23:34:51,502 simple_logger.py log_once [line:28] INFO val_loss                      2.0681
+2026-09-24 23:34:51,502 simple_logger.py log_once [line:28] INFO mean_val_loss                 2.0686
+2026-09-24 23:34:51,502 simple_logger.py log_once [line:28] INFO std_val_loss                  0.4388
+2026-09-24 23:34:51,502 fedbase.py run [line:316] INFO Eval Time Cost:               1.4755s
+2026-09-24 23:34:51,511 asyncbase.py iterate [line:68] INFO Select clients [np.int64(17), np.int64(15), np.int64(3), np.int64(12)] at time 103.
+2026-09-24 23:34:52,755 asyncbase.py iterate [line:73] INFO Receive new models from clients [10, 12] at time 103
+2026-09-24 23:34:52,799 fedbase.py run [line:311] INFO --------------Round 98--------------
+2026-09-24 23:34:52,800 simple_logger.py log_once [line:14] INFO Current_time:103
+2026-09-24 23:34:54,280 simple_logger.py log_once [line:28] INFO test_accuracy                 0.1849
+2026-09-24 23:34:54,280 simple_logger.py log_once [line:28] INFO test_loss                     3.1147
+2026-09-24 23:34:54,280 simple_logger.py log_once [line:28] INFO val_accuracy                  0.1866
+2026-09-24 23:34:54,280 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.1874
+2026-09-24 23:34:54,280 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3621
+2026-09-24 23:34:54,281 simple_logger.py log_once [line:28] INFO val_loss                      3.0656
+2026-09-24 23:34:54,281 simple_logger.py log_once [line:28] INFO mean_val_loss                 3.0631
+2026-09-24 23:34:54,281 simple_logger.py log_once [line:28] INFO std_val_loss                  1.4311
+2026-09-24 23:34:54,281 fedbase.py run [line:316] INFO Eval Time Cost:               1.4811s
+2026-09-24 23:34:54,290 asyncbase.py iterate [line:68] INFO Select clients [np.int64(1)] at time 104.
+2026-09-24 23:34:54,601 asyncbase.py iterate [line:73] INFO Receive new models from clients [17] at time 104
+2026-09-24 23:34:54,626 fedbase.py run [line:311] INFO --------------Round 99--------------
+2026-09-24 23:34:54,626 simple_logger.py log_once [line:14] INFO Current_time:104
+2026-09-24 23:34:56,112 simple_logger.py log_once [line:28] INFO test_accuracy                 0.3097
+2026-09-24 23:34:56,112 simple_logger.py log_once [line:28] INFO test_loss                     7.4141
+2026-09-24 23:34:56,113 simple_logger.py log_once [line:28] INFO val_accuracy                  0.3081
+2026-09-24 23:34:56,113 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.3084
+2026-09-24 23:34:56,113 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3913
+2026-09-24 23:34:56,113 simple_logger.py log_once [line:28] INFO val_loss                      7.2732
+2026-09-24 23:34:56,113 simple_logger.py log_once [line:28] INFO mean_val_loss                 7.2662
+2026-09-24 23:34:56,113 simple_logger.py log_once [line:28] INFO std_val_loss                  5.9114
+2026-09-24 23:34:56,113 fedbase.py run [line:316] INFO Eval Time Cost:               1.4869s
+2026-09-24 23:34:56,122 asyncbase.py iterate [line:73] INFO Receive new models from clients [6, 1, 3] at time 105
+2026-09-24 23:34:56,179 fedbase.py run [line:311] INFO --------------Round 100--------------
+2026-09-24 23:34:56,179 simple_logger.py log_once [line:14] INFO Current_time:105
+2026-09-24 23:34:57,666 simple_logger.py log_once [line:28] INFO test_accuracy                 0.2231
+2026-09-24 23:34:57,666 simple_logger.py log_once [line:28] INFO test_loss                     8.2500
+2026-09-24 23:34:57,666 simple_logger.py log_once [line:28] INFO val_accuracy                  0.2233
+2026-09-24 23:34:57,666 simple_logger.py log_once [line:28] INFO mean_val_accuracy             0.2237
+2026-09-24 23:34:57,666 simple_logger.py log_once [line:28] INFO std_val_accuracy              0.3782
+2026-09-24 23:34:57,666 simple_logger.py log_once [line:28] INFO val_loss                      8.1212
+2026-09-24 23:34:57,666 simple_logger.py log_once [line:28] INFO mean_val_loss                 8.1188
+2026-09-24 23:34:57,666 simple_logger.py log_once [line:28] INFO std_val_loss                  4.9988
+2026-09-24 23:34:57,667 fedbase.py run [line:316] INFO Eval Time Cost:               1.4878s
+2026-09-24 23:34:57,667 fedbase.py run [line:324] INFO =================End==================
+2026-09-24 23:34:57,667 fedbase.py run [line:325] INFO Total Time Cost:              232.5526s
