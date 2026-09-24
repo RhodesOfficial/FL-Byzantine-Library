@@ -3,6 +3,10 @@
 A modular Python library for **Byzantine-resilient Federated Learning** research.
 It provides a plug-and-play framework for evaluating robust aggregation rules against a wide range of Byzantine attacks under realistic federated settings.
 
+For experiments using the bundled FLGo (`easyFL/`) environment, see
+[FLGo integration](FLGO_INTEGRATION.md). The adapter connects selected
+library aggregators and attacks to FLGo tasks, simulation, and logging.
+
 ---
 
 ## Table of Contents
