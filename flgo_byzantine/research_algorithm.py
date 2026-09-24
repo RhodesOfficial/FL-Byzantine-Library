@@ -71,6 +71,11 @@ def _dataset_labels(dataset):
     return [int(dataset[index][1]) for index in range(len(dataset))]
 
 
+def _model_at_snapshot(model, snapshot, update):
+    """Encode a malicious update against the model version sent to the client."""
+    return _model_from_update(model, _parameter_vector(model) - snapshot + update)
+
+
 class Server(_asyncbase.AsyncServer):
     def initialize(self):
         self.research_mode = str(self.option.get("byz_mode", "baseline"))
@@ -193,7 +198,7 @@ class Server(_asyncbase.AsyncServer):
                 version = int(versions[index])
                 base = self.byz_snapshots[version]
                 attack = self._malicious_update(benign, base, len(ids), malicious_count)
-                response["model"][index] = _model_from_update(self.model, attack)
+                response["model"][index] = _model_at_snapshot(self.model, base, attack)
                 if self.research_attack == "joint_timing":
                     delay = self._attack_delay(attack)
                 elif self.research_attack == "joint_random":
@@ -258,6 +263,14 @@ class Server(_asyncbase.AsyncServer):
         self.model.train(was_training)
         return gradient
 
+    def iterate(self):
+        # Stop before client training on a divergent model. The suite must
+        # mark this run failed rather than count empty rounds as completed.
+        values = _parameter_vector(self.model).detach().cpu()
+        if (not bool(torch.isfinite(values).all())) or float(values.abs().max()) > 1e3:
+            raise RuntimeError("global model diverged: non-finite or weight magnitude exceeds 1000")
+        return super().iterate()
+
     def package_handler(self, packages: dict):
         ids = packages.get("__cid", [])
         if not ids:
@@ -272,8 +285,11 @@ class Server(_asyncbase.AsyncServer):
             version = int(version)
             if version not in self.byz_snapshots or self.current_round - version > max_stale:
                 continue
-            vector = self.byz_snapshots[version] - _parameter_vector(model).to(self.device)
-            if torch.isfinite(vector).all().item():
+            # Finish the update on CPU before the finite check. Calling
+            # .item() on the CUDA reduction can stall this driver after a
+            # non-finite client update.
+            vector = (self.byz_snapshots[version] - _parameter_vector(model).to(self.device)).detach()
+            if bool(torch.isfinite(vector.cpu()).all()):
                 updates.append(Update(int(cid), vector, version, now))
         if not updates:
             self.byz_last_round = {"received": len(ids), "used": 0, "stale_dropped": len(ids)}
@@ -314,6 +330,9 @@ class Server(_asyncbase.AsyncServer):
             self.byz_last_round = {"received": len(ids), "used": 0,
                                    "decisions": decisions}
             return False
+        candidate = _parameter_vector(self.model).detach().cpu() - aggregate.detach().cpu()
+        if (not bool(torch.isfinite(candidate).all())) or float(candidate.abs().max()) > 1e3:
+            raise RuntimeError("aggregate would diverge: non-finite or weight magnitude exceeds 1000")
         self.model = _model_from_update(self.model, aggregate)
         if self.device.type == "cuda":
             torch.cuda.synchronize(self.device)

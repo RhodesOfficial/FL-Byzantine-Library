@@ -131,14 +131,17 @@ def reference_fusion(root: torch.Tensor | None, history: torch.Tensor | None,
 
 def root_align(vectors: list[torch.Tensor], reference: torch.Tensor,
                correction: float = 0.5) -> torch.Tensor:
-    """Norm-bound updates and continuously align them to a reference."""
-    norm = reference.norm().clamp_min(1e-12)
+    """Align directions while keeping the step on the client-update scale."""
+    if not vectors:
+        raise ValueError("cannot align an empty update set")
+    norm = torch.stack([v.norm() for v in vectors]).median().clamp_min(1e-12)
+    direction = _unit(reference) * norm
     aligned = []
     for vector in vectors:
-        scaled = _unit(vector) * norm
+        scaled = _unit(vector) * vector.norm().clamp(max=2 * norm)
         divergence = 1.0 - cosine(vector, reference)
         weight = min(1.0, correction * divergence)
-        aligned.append((1.0 - weight) * scaled + weight * reference)
+        aligned.append((1.0 - weight) * scaled + weight * direction)
     return torch.stack(aligned).mean(dim=0)
 
 

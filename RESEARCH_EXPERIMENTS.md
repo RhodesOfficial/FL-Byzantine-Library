@@ -36,6 +36,10 @@ python run_flgo_byzantine.py --task ./mnist_dir20 --create-mnist --partition dir
 阶段 3 的**所有**条件中都从普通训练和攻击者抽样中排除；根样本只取自它们的
 本地训练集，不使用服务器测试集。阶段 3 的 `class0_only` 是根数据缺失其他
 类别的压力测试；可用 `--root-class` 更改保留类别。
+当前任务的 2、11 号客户端合计只有 0、1、2、3、6、7 类，随机抽取的 100 张
+根样本在检查中还未抽到 6 类。因此这组根客户端适合复核数值稳定性，不能作为
+“完整类别覆盖”的对照；若要检验类别缺失效应，需另设覆盖全部目标类别的
+可信根集合，并在所有相应对照中同样预留这些客户端。
 
 ## 一次运行与完整矩阵
 
@@ -48,31 +52,38 @@ python run_research.py --task ./mnist_dir20 --mode triage --attack ipm --rounds 
 生成四阶段、三个随机种子的执行计划；下列命令默认**只生成计划**：
 
 ```powershell
-python research_suite.py --task ./mnist_dir20 --root-ids 0,1 --output ./research_runs
+python research_suite.py --task ./mnist_dir20 --root-ids 2,11 --output ./research_runs_v2
 ```
 
-确认 `research_runs/manifest.json` 后执行完整矩阵。再次运行相同命令会跳过
+确认新目录的 `manifest.json` 后执行完整矩阵。再次运行相同命令会跳过
 已经完成且记录完整的条件，继续剩余条件：
 
 ```powershell
-python research_suite.py --task ./mnist_dir20 --root-ids 0,1 --output ./research_runs --run
+python research_suite.py --task ./mnist_dir20 --root-ids 2,11 --output ./research_runs_v2 --run
 ```
 
 可先缩小规模，例如 `--phases 1,2 --seeds 0 --rounds 10`。阶段 1 的后门条件
 需要图像分类任务；离线 toy 任务仅用于连接测试。运行完毕后，重新整理记录：
 
 ```powershell
-python research_suite.py --output ./research_runs --summarize
+python research_suite.py --output ./research_runs_v2 --summarize
 ```
 
-请把 `research_runs/manifest.json`、`summary.csv`、`summary.md` 和失败条件的
+请把新目录的 `manifest.json`、`summary.csv`、`summary.md` 和失败条件的
 `.log` 文件交给我；完整 FLGo JSON 记录仍在 `<task>/record/`，脚本在
 `summary.csv` 中保留每条记录的路径。
+
+新计划的运行 ID 带实现版本摘要，避免从任务目录误拾取修复前的记录。已有
+`research_runs` 仍可用 `--summarize` 复核，但不能用来续跑修复后的实现。
+汇总中的 `run_health=loss_explosion` 表示测试损失超过 1e6 或出现非有限值；
+`halted_rounds` 和 `updates_used` 有助于识别旧版保护逻辑造成的空转。
 
 ## 指标解释与实验边界
 
 - `final_accuracy`、`last_10_accuracy`、`worst_client_accuracy` 分别是最后测试
   准确率、最后十次记录的均值、最后一次客户端验证准确率的最低值。
+- `status=complete` 只表示进程和记录完成。还应检查 `run_health`、
+  `max_test_loss` 与 `halted_rounds`；数值失控的记录不能用于比较防御效果。
 - `backdoor_asr` 仅在后门条件下计算：右下角贴块后，原标签不是目标类的测试
   样本被预测为目标类的比例。IPM 与时序攻击是非定向攻击，ASR 留空。
 - `benign_false_reject_rate`、`minority_false_reject_rate` 使用模拟器已知的攻击
@@ -80,6 +91,8 @@ python research_suite.py --output ./research_runs --summarize
   实现中定义为“主导标签所在的客户端群组人数处于最低四分位”的客户端；该代理指标需
   与更细的分客户端结果一起阅读。暂缓另以 `benign_defer_rate` 和
   `minority_defer_rate` 报告，不算作误杀。
+  若所有主导标签群组人数相同，当前代理定义没有少数群体，少数群体比率留空；
+  分母仅有一两次决策时，0 也不能解释为方法已保护该群体。
 - `virtual_time` 是 FLGo 虚拟时钟时间；`server_p95_ms` 是收到更新后的服务器
   处理时间第 95 百分位，包含参考方向与聚合工作。`anytime` 的预算只约束其
   分级聚合段，而且是软上限；应同时查看 `deadline_miss_rate` 和完整进程的

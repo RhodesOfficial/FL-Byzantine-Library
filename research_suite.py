@@ -1,7 +1,7 @@
 """Plan, run, resume and summarize the four FLGo research experiments.
 
 Example:
-  python research_suite.py --task ./mnist_dir20 --root-ids 0,1 --output ./research_runs --run
+  python research_suite.py --task ./mnist_dir20 --root-ids 2,11 --output ./research_runs_v2 --run
   python research_suite.py --output ./research_runs --summarize
 """
 
@@ -9,7 +9,9 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
+import math
 import statistics
 import subprocess
 import sys
@@ -18,6 +20,15 @@ from time import perf_counter
 
 
 ROOT = Path(__file__).resolve().parent
+
+
+def _implementation_revision():
+    digest = hashlib.sha256()
+    for name in ("run_research.py", "research_suite.py",
+                 "flgo_byzantine/research_algorithm.py",
+                 "flgo_byzantine/research_methods.py"):
+        digest.update((ROOT / name).read_bytes())
+    return digest.hexdigest()[:8]
 
 
 def _ids(value):
@@ -128,6 +139,15 @@ def _summarize_case(case):
     elapsed = record.get("time", [])
     aggregation = [float(x) for x in record.get("research_server_ms", [])
                    if x is not None]
+    losses = [float(x) for x in record.get("test_loss", []) if x is not None]
+    max_loss = max(losses, default=None)
+    used = record.get("research_used", [])[1:]
+    halted_rounds = 0
+    for count in reversed(used):
+        if count != 0:
+            break
+        halted_rounds += 1
+    loss_explosion = max_loss is not None and (not math.isfinite(max_loss) or max_loss > 1e6)
     benign = sum(record.get("research_benign_decisions", []))
     minority = sum(record.get("research_minority_decisions", []))
     staleness = [x for round_values in record.get("research_staleness", [])
@@ -136,6 +156,12 @@ def _summarize_case(case):
               if isinstance(x, bool)]
     row.update({
         "final_accuracy": _last(test_acc),
+        "run_health": "loss_explosion" if loss_explosion else "ok",
+        "max_test_loss": max_loss,
+        "halted_rounds": halted_rounds,
+        "updates_used": sum(used),
+        "malicious_updates_used": sum(record.get("research_malicious", [])),
+        "minority_decisions": sum(record.get("research_minority_decisions", [])),
         "last_10_accuracy": statistics.mean(test_acc[-10:]) if test_acc else None,
         "worst_client_accuracy": min(_last(val_acc)) if val_acc and _last(val_acc) else None,
         "backdoor_asr": _last(asr),
@@ -154,6 +180,8 @@ def _summarize_case(case):
 def summarize(manifest, output):
     rows = [_summarize_case(case) for case in manifest["cases"]]
     fields = ["phase", "condition", "seed", "status", "final_accuracy",
+              "run_health", "max_test_loss", "halted_rounds", "updates_used",
+              "malicious_updates_used", "minority_decisions",
               "last_10_accuracy", "worst_client_accuracy", "backdoor_asr",
               "virtual_time", "wall_seconds", "benign_false_reject_rate",
               "benign_defer_rate", "minority_false_reject_rate",
@@ -165,7 +193,8 @@ def summarize(manifest, output):
         writer.writerows(rows)
     lines = ["# Research suite summary", "",
              f"Completed: {sum(c['status'] == 'complete' for c in manifest['cases'])}/{len(rows)}", "",
-             "All numbers are descriptive; compare matched seeds and equal threat budgets before making claims.", "",
+             "All numbers are descriptive; compare matched seeds and equal threat budgets before making claims.",
+             "Completed means the process exited and wrote a record; run_health flags loss above 1e6 or non-finite loss.", "",
              "| Phase | Condition | Runs | Mean final accuracy | Mean ASR | Mean minority false reject | Mean p95 server ms |",
              "| --- | --- | ---: | ---: | ---: | ---: | ---: |"]
     groups = {}
@@ -236,14 +265,17 @@ def main(argv=None):
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         if manifest["task"] != str(args.task.resolve()) or manifest["common"] != common:
             parser.error("existing manifest has a different task or common settings; choose a new output directory")
+        if args.run and manifest.get("implementation_revision") != _implementation_revision():
+            parser.error("implementation changed since this manifest was created; choose a new output directory")
     else:
+        revision = _implementation_revision()
         conditions = _conditions(set(args.phases), args.root_ids, args.root_class)
-        cases = [{"id": f"p{phase}_{name}_s{seed}", "phase": phase,
+        cases = [{"id": f"p{phase}_{name}_s{seed}_v{revision}", "phase": phase,
                   "condition": name, "seed": seed, "settings": settings,
                   "status": "planned", "record": None}
                  for phase, name, settings in conditions for seed in args.seeds]
         manifest = {"task": str(args.task.resolve()), "common": common,
-                    "cases": cases}
+                    "cases": cases, "implementation_revision": revision}
         manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     if args.run:
         for case in manifest["cases"]:

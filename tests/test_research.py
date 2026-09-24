@@ -16,7 +16,7 @@ try:
     import flgo_byzantine.toy_benchmark as toy
     from flgo_byzantine import research_algorithm
     from flgo_byzantine.research_methods import (
-        Triage, Update, project_conflict, reference_fusion,
+        Triage, Update, project_conflict, reference_fusion, root_align,
     )
 except ImportError as error:
     IMPORT_ERROR = error
@@ -36,6 +36,22 @@ class ResearchTests(unittest.TestCase):
         aligned = reference_fusion(root, root, root)[1]
         opposed = reference_fusion(root, -root, -root)[1]
         self.assertLess(opposed, aligned)
+
+    def test_root_gradient_magnitude_cannot_expand_client_step(self):
+        updates = [torch.tensor([0.1, 0.0]), torch.tensor([0.2, 0.0]),
+                   torch.tensor([0.15, 0.0])]
+        result = root_align(updates, torch.tensor([100000.0, 0.0]))
+        self.assertLessEqual(float(result.norm()), 0.3)
+
+    def test_attack_model_uses_sent_snapshot(self):
+        model = torch.nn.Linear(1, 1, bias=False)
+        with torch.no_grad():
+            model.weight.fill_(5.0)
+        sent_snapshot = torch.tensor([2.0])
+        result = research_algorithm._model_at_snapshot(
+            model, sent_snapshot, torch.tensor([0.5]))
+        observed = sent_snapshot - torch.nn.utils.parameters_to_vector(result.parameters())
+        self.assertTrue(torch.allclose(observed, torch.tensor([0.5])))
 
     def test_triage_preserves_supported_minority_cluster(self):
         direction = torch.tensor([1.0, 0.0])
