@@ -7,6 +7,9 @@ For experiments using the bundled FLGo (`easyFL/`) environment, see
 [FLGo integration](FLGO_INTEGRATION.md). The adapter connects selected
 library aggregators and attacks to FLGo tasks, simulation, and logging.
 
+For the asynchronous four-idea research prototype and resumable experiment
+matrix, see [Research experiments](RESEARCH_EXPERIMENTS.md).
+
 ---
 
 ## Table of Contents
