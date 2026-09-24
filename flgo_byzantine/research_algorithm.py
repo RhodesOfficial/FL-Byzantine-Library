@@ -103,6 +103,7 @@ class Server(_asyncbase.AsyncServer):
         self.byz_malicious_ids = frozenset(int(x) for x in self.research_rng.choice(
             eligible, attack_count, replace=False))
         self.byz_last_round = {}
+        self.byz_attack_without_benign = 0
         self.byz_history = None
         self.byz_previous_history = None
         self.byz_triage = Triage(max_age=int(self.option.get("byz_max_staleness", 4)))
@@ -219,8 +220,11 @@ class Server(_asyncbase.AsyncServer):
     def _malicious_update(self, benign, base, total, malicious_count):
         if self.research_attack in {"alie", "ipm", "timed_ipm"}:
             if not benign:
-                reference = self.byz_history if self.byz_history is not None else base * 0
-                return -float(self.option.get("byz_attack_scale", 1.0)) * reference
+                # IPM/ALIE are defined using co-observed benign updates. A
+                # history-reversal fallback silently creates a different,
+                # self-amplifying attack in malicious-only send batches.
+                self.byz_attack_without_benign += 1
+                return torch.zeros_like(base)
             name = "alie" if self.research_attack == "alie" else "ipm"
             if name == "alie" and len(benign) < 2:
                 return -float(self.option.get("byz_attack_scale", 1.0)) * benign[0]
@@ -330,9 +334,21 @@ class Server(_asyncbase.AsyncServer):
             self.byz_last_round = {"received": len(ids), "used": 0,
                                    "decisions": decisions}
             return False
-        candidate = _parameter_vector(self.model).detach().cpu() - aggregate.detach().cpu()
+        raw_aggregate_norm = float(aggregate.detach().norm().cpu())
+        median_update_norm = float(torch.stack([u.vector.detach().norm() for u in updates]).median().cpu())
+        aggregate = aggregate * float(self.option.get("byz_server_rate", 1.0))
+        current = _parameter_vector(self.model).detach().cpu()
+        candidate = current - aggregate.detach().cpu()
         if (not bool(torch.isfinite(candidate).all())) or float(candidate.abs().max()) > 1e3:
-            raise RuntimeError("aggregate would diverge: non-finite or weight magnitude exceeds 1000")
+            raise RuntimeError(
+                "aggregate would diverge: non-finite or weight magnitude exceeds 1000; "
+                f"round={self.current_round}, mode={self.research_mode}, "
+                f"attack={self.research_attack}, received={len(ids)}, used={len(updates)}, "
+                f"malicious={sum(u.client_id in self.byz_malicious_ids for u in updates)}, "
+                f"current_max={float(current.abs().max()):.4g}, "
+                f"candidate_max={float(candidate.abs().max()):.4g}, "
+                f"raw_step_norm={raw_aggregate_norm:.4g}, "
+                f"median_update_norm={median_update_norm:.4g}")
         self.model = _model_from_update(self.model, aggregate)
         if self.device.type == "cuda":
             torch.cuda.synchronize(self.device)
@@ -364,6 +380,9 @@ class Server(_asyncbase.AsyncServer):
             "minority_deferred": minority_deferred,
             "minority_decisions": minority_decisions,
             "root_weight": root_weight, **detail,
+            "raw_aggregate_norm": raw_aggregate_norm,
+            "median_update_norm": median_update_norm,
+            "model_max_abs": float(candidate.abs().max()),
             "server_ms": server_ms,
         }
         return True

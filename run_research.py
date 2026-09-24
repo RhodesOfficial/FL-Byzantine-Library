@@ -55,6 +55,11 @@ class ResearchLogger(SimpleLogger):
         self.output["research_server_ms"].append(event.get("server_ms"))
         self.output["research_deadline_miss"].append(event.get("deadline_miss"))
         self.output["research_stage"].append(event.get("stage"))
+        self.output["research_attack_without_benign"].append(
+            self.coordinator.byz_attack_without_benign)
+        self.output["research_raw_aggregate_norm"].append(event.get("raw_aggregate_norm"))
+        self.output["research_median_update_norm"].append(event.get("median_update_norm"))
+        self.output["research_model_max_abs"].append(event.get("model_max_abs"))
         self.output["research_backdoor_asr"].append(self.coordinator.backdoor_asr())
 
     def get_output_name(self, suffix=".json"):
@@ -80,6 +85,8 @@ def main(argv=None):
     parser.add_argument("--proportion", type=float, default=0.3)
     parser.add_argument("--epochs", type=int, default=1)
     parser.add_argument("--learning-rate", type=float, default=0.1)
+    parser.add_argument("--server-rate", type=float, default=1.0,
+                        help="Asynchronous interpolation rate applied to every aggregate")
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--gpu", type=int)
     parser.add_argument("--delay-min", type=int, default=0)
@@ -117,6 +124,8 @@ def main(argv=None):
         parser.error("invalid malicious fraction or assumed count")
     if args.attack_scale < 0:
         parser.error("attack scale must be nonnegative")
+    if not 0 < args.server_rate <= 1:
+        parser.error("server rate must be in (0, 1]")
     if args.attack == "backdoor" and args.trigger_size < 1:
         parser.error("trigger size must be positive")
     option = {
@@ -142,6 +151,7 @@ def main(argv=None):
         "byz_max_staleness": args.max_staleness,
         "byz_attack_max_delay": args.attack_max_delay,
         "byz_attack_scale": args.attack_scale,
+        "byz_server_rate": args.server_rate,
         "byz_ipm_epsilon": args.ipm_epsilon,
         "byz_alie_z": args.alie_z,
         "byz_root_ids": args.root_ids,

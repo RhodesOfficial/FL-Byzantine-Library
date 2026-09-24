@@ -12,6 +12,7 @@ import csv
 import hashlib
 import json
 import math
+import re
 import statistics
 import subprocess
 import sys
@@ -95,6 +96,7 @@ def _command(task, case, common):
                "--delay-max", str(common["delay_max"]),
                "--max-staleness", str(common["max_staleness"]),
                "--attack-max-delay", str(common["attack_max_delay"])]
+    command += ["--server-rate", str(common.get("server_rate", 1.0))]
     if common["gpu"] is not None:
         command += ["--gpu", str(common["gpu"])]
     if common["root_ids"] and case["phase"] == 3:
@@ -124,13 +126,34 @@ def _last(values):
     return values[-1] if values else None
 
 
-def _summarize_case(case):
+def _failed_log_diagnostics(path):
+    if not path.is_file():
+        return {}
+    content = path.read_text(encoding="utf-8", errors="replace")
+    rounds = re.findall(r"--------------Round (\d+)--------------", content)
+    accuracies = re.findall(r"INFO test_accuracy\s+([-+\deE.]+)", content)
+    losses = re.findall(r"INFO test_loss\s+([-+\deE.]+)", content)
+    errors = re.findall(r"^(?:RuntimeError|ValueError|AssertionError): (.+)$", content, re.MULTILINE)
+    return {
+        "last_logged_round": int(rounds[-1]) if rounds else 0,
+        "last_logged_accuracy": float(accuracies[-1]) if accuracies else None,
+        "last_logged_loss": float(losses[-1]) if losses else None,
+        "max_test_loss": max(map(float, losses)) if losses else None,
+        "failure_reason": errors[-1] if errors else "",
+    }
+
+
+def _summarize_case(case, output):
     row = {"phase": case["phase"], "condition": case["condition"],
            "seed": case["seed"], "status": case["status"],
            "wall_seconds": case.get("wall_seconds"),
            "record": case.get("record") or ""}
     path = case.get("record")
     if not path or not Path(path).is_file():
+        if case["status"] == "failed":
+            row.update(_failed_log_diagnostics(output / (case["id"] + ".log")))
+            row["run_health"] = ("stopped_divergence" if "diverge" in row.get("failure_reason", "")
+                                 else "failed")
         return row
     record = json.loads(Path(path).read_text(encoding="utf-8"))
     test_acc = record.get("test_accuracy", [])
@@ -156,7 +179,8 @@ def _summarize_case(case):
               if isinstance(x, bool)]
     row.update({
         "final_accuracy": _last(test_acc),
-        "run_health": "loss_explosion" if loss_explosion else "ok",
+        "run_health": ("loss_explosion" if loss_explosion else
+                       "high_loss" if max_loss is not None and max_loss > 100 else "ok"),
         "max_test_loss": max_loss,
         "halted_rounds": halted_rounds,
         "updates_used": sum(used),
@@ -178,7 +202,7 @@ def _summarize_case(case):
 
 
 def summarize(manifest, output):
-    rows = [_summarize_case(case) for case in manifest["cases"]]
+    rows = [_summarize_case(case, output) for case in manifest["cases"]]
     fields = ["phase", "condition", "seed", "status", "final_accuracy",
               "run_health", "max_test_loss", "halted_rounds", "updates_used",
               "malicious_updates_used", "minority_decisions",
@@ -186,7 +210,8 @@ def summarize(manifest, output):
               "virtual_time", "wall_seconds", "benign_false_reject_rate",
               "benign_defer_rate", "minority_false_reject_rate",
               "minority_defer_rate", "mean_staleness",
-              "server_p95_ms", "deadline_miss_rate", "record"]
+              "server_p95_ms", "deadline_miss_rate", "last_logged_round",
+              "last_logged_accuracy", "last_logged_loss", "failure_reason", "record"]
     with (output / "summary.csv").open("w", encoding="utf-8-sig", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=fields)
         writer.writeheader()
@@ -194,9 +219,10 @@ def summarize(manifest, output):
     lines = ["# Research suite summary", "",
              f"Completed: {sum(c['status'] == 'complete' for c in manifest['cases'])}/{len(rows)}", "",
              "All numbers are descriptive; compare matched seeds and equal threat budgets before making claims.",
-             "Completed means the process exited and wrote a record; run_health flags loss above 1e6 or non-finite loss.", "",
-             "| Phase | Condition | Runs | Mean final accuracy | Mean ASR | Mean minority false reject | Mean p95 server ms |",
-             "| --- | --- | ---: | ---: | ---: | ---: | ---: |"]
+             "Completed means the process exited and wrote a record. High loss (>100) and loss explosion (>1e6 or non-finite) are diagnostic flags.",
+             "Condition means are shown only when every planned seed completed; see CSV for individual runs and failures.", "",
+             "| Phase | Condition | Completed / planned | Failures | Mean final accuracy | Mean ASR | Mean minority false reject | Mean p95 server ms |",
+             "| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |"]
     groups = {}
     for row in rows:
         groups.setdefault((row["phase"], row["condition"]), []).append(row)
@@ -204,14 +230,18 @@ def summarize(manifest, output):
         values = [float(r[key]) for r in group if r.get(key) is not None]
         return f"{statistics.mean(values):.4f}" if values else "—"
     for (phase, condition), group in sorted(groups.items()):
-        lines.append(f"| {phase} | {condition} | {sum(r['status'] == 'complete' for r in group)} | "
-                     f"{mean(group, 'final_accuracy')} | {mean(group, 'backdoor_asr')} | "
-                     f"{mean(group, 'minority_false_reject_rate')} | "
-                     f"{mean(group, 'server_p95_ms')} |")
+        completed = sum(r['status'] == 'complete' for r in group)
+        failures = sum(r['status'] == 'failed' for r in group)
+        full = completed == len(group)
+        lines.append(f"| {phase} | {condition} | {completed}/{len(group)} | {failures} | "
+                     f"{mean(group, 'final_accuracy') if full else '—'} | "
+                     f"{mean(group, 'backdoor_asr') if full else '—'} | "
+                     f"{mean(group, 'minority_false_reject_rate') if full else '—'} | "
+                     f"{mean(group, 'server_p95_ms') if full else '—'} |")
     lines += ["", "## Interpretation notes", "",
               "- Phase 1: evaluate minority false rejection jointly with clean accuracy and attack damage.",
               "- Phase 2: joint_random and joint_timing share the same vector rule and delay bound; inspect realized staleness before attributing changes to timing choice.",
-              "- Phase 3: trusted clients are reserved from ordinary training in every phase-3 condition. Root noise and class coverage are controlled separately.",
+              "- Phase 3: trusted clients are reserved from ordinary training. With root IDs 2,11, random sampling and label noise also change observed class coverage, so noise and coverage effects are confounded.",
               "- Phase 4: the deadline is soft. Report p95 aggregation time, deadline misses and virtual training time together.",
               "- Only backdoor conditions have an ASR. IPM and timing conditions use accuracy degradation and update diagnostics.", ""]
     (output / "summary.md").write_text("\n".join(lines), encoding="utf-8")
@@ -235,6 +265,7 @@ def main(argv=None):
     parser.add_argument("--delay-max", type=int, default=3)
     parser.add_argument("--max-staleness", type=int, default=8)
     parser.add_argument("--attack-max-delay", type=int, default=6)
+    parser.add_argument("--server-rate", type=float, default=1.0)
     parser.add_argument("--gpu", type=int)
     args = parser.parse_args(argv)
     args.output.mkdir(parents=True, exist_ok=True)
@@ -252,13 +283,15 @@ def main(argv=None):
     if (args.rounds < 1 or not 0 < args.proportion <= 1 or
             not 0 <= args.malicious_fraction < 1 or
             args.delay_min < 0 or args.delay_max < args.delay_min or
-            args.max_staleness < 0 or args.attack_max_delay < 0):
+            args.max_staleness < 0 or args.attack_max_delay < 0 or
+            not 0 < args.server_rate <= 1):
         parser.error("invalid training, participation, attack or delay settings")
     common = {"rounds": args.rounds, "proportion": args.proportion,
               "malicious_fraction": args.malicious_fraction,
               "delay_min": args.delay_min, "delay_max": args.delay_max,
               "max_staleness": args.max_staleness,
               "attack_max_delay": args.attack_max_delay,
+              "server_rate": args.server_rate,
               "root_ids": args.root_ids, "root_class": args.root_class,
               "gpu": args.gpu}
     if manifest_path.exists():

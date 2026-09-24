@@ -53,6 +53,16 @@ class ResearchTests(unittest.TestCase):
         observed = sent_snapshot - torch.nn.utils.parameters_to_vector(result.parameters())
         self.assertTrue(torch.allclose(observed, torch.tensor([0.5])))
 
+    def test_ipm_without_observed_benign_update_is_null(self):
+        server = object.__new__(research_algorithm.Server)
+        server.research_attack = "ipm"
+        server.byz_history = torch.tensor([100.0])
+        server.byz_attack_without_benign = 0
+        server.option = {"byz_attack_scale": 1.0}
+        attack = server._malicious_update([], torch.tensor([1.0]), 1, 1)
+        self.assertTrue(torch.equal(attack, torch.zeros(1)))
+        self.assertEqual(server.byz_attack_without_benign, 1)
+
     def test_triage_preserves_supported_minority_cluster(self):
         direction = torch.tensor([1.0, 0.0])
         arrivals = [Update(0, direction, 1, 2),
