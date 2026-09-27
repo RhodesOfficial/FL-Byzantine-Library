@@ -17,41 +17,41 @@
 ### 聚合器扩展
 
 - **算法实现**：在 `aggregators/<组件>.py` 定义继承 `_BaseAggregator` 的类，实现 `__call__(self, inputs)`；返回一个聚合 Tensor。基类无强制构造参数，`get_attack_stats()` 默认返回 None（`aggregators/base.py`:4–20；`aggregators/fedavg.py`:4–11）。
-- **桥接注册**：在 B 导入该类，将小写名称加入 `AGGREGATORS`，并在 `_build_aggregator(name,n,f,option)` 增加构造分支和所需输入条件。现有工厂最后直接返回 RFA；只添加集合名称会落到 RFA 分支（B:19–30、52–74）。
+- **桥接注册**：在 B 导入该类，将小写名称加入 `AGGREGATORS`，并在 `_build_aggregator(name,n,f,option,context=None)` 增加构造分支和输入条件。现有工厂最后直接返回 RFA；只添加集合名称会落到 RFA 分支（B:19–34、122–153）。
 - **配置接线**：组件参数由工厂从 `option` 读取；需要命令行设置时，在 R 的 parser 和 option 字典同时增加参数。CLI choices 自动取桥接集合，无须另加名称列表（R:70–83、107–126）。
-- **注册边界**：桥接直接 import 算法类，没有另写聚合算法，也不调用 `aggregators/aggr_mapper.py`。此 FLGo 链只在桥接层注册；修改库内同一类会被桥接复用，仅改库 mapper 不会新增 FLGo 可选项（B:19–25、52–74、145；`aggregators/aggr_mapper.py`:37–62）。
-- **状态与上下文**：缓存键只对 krum 包含人数。新组件若构造时固定 n，接线还须覆盖缓存键中的 n，否则响应人数变化仍使用旧实例。额外上下文须在 B 的工厂/`aggregate()` 接线，当前没有自动注入机制（B:137–145）。
+- **注册边界**：桥接直接 import 算法类，没有另写聚合算法，也不调用 `aggregators/aggr_mapper.py`。此 FLGo 链只在桥接层注册；修改库内同一类会被桥接复用，仅改库 mapper 不会新增 FLGo 可选项（B:19–38、122–145、238；`aggregators/aggr_mapper.py`:37–62）。
+- **需求声明**：新组件可在 `AGGREGATOR_REQUIREMENTS` 登记 `AggregatorRequirements`：`root_data` 按需加载并复用任务根集；`runtime_context` 向工厂传当前上下文；`fixed_n` 将响应人数纳入缓存键；`option_keys` 将指定 option 值纳入键。声明上下文需求后，仍须由工厂分支接收 `context`；现有七项仅 krum 声明 `fixed_n`（B:40–73、213–238）。
 
 ### 攻击扩展
 
-- **算法接口**：库内全知攻击继承 `_BaseByzantine(client)`，`omniscient_callback(self,benign_gradients)` 将结果存入 `self.adv_momentum`；父客户端构造需要 `id,dataset,device,args`。但 FLGo 桥接不实例化这些攻击客户端（`attacks/base.py`:11–30；`client.py`:39–67；`attacks/alie.py`:21–35；B:26–27、159）。
-- **FLGo 可复用部分**：在 `attacks/<组件>.py` 提供造假更新函数；现有 ALIE/IPM 类与桥接共用同一函数，而非桥接独立实现。仅新增 `_BaseByzantine` 子类或修改其回调，不会自动进入 FLGo（`attacks/alie.py`:7–18、32–35；`attacks/ipm.py`:4–17；B:77–84）。
-- **桥接注册**：在 B import 造假函数、加入 `ATTACKS`、在 `_attack_update(name,benign,n,m,option)` 增加调用分支；返回单个恶意更新向量。按需在 R 接入参数。库 `attack_mapper` 不参与此链，名称无需在那里重复注册（B:26–31、77–84、132–136；R:71、107–126；`attacks/attack_mapper.py`:22–40）。
-- **攻击类型边界**：当前桥接是服务端全知更新替换；没有恶意 Client、标签投毒、本地训练替换或每个攻击者不同返回值的适配。需要这些语义时，现有单向量分发接口不能直接表达（B:128–136、159）。
+- **算法接口**：库内全知攻击继承 `_BaseByzantine(client)`，`omniscient_callback(self,benign_gradients)` 将结果存入 `self.adv_momentum`；父客户端构造需要 `id,dataset,device,args`。但 FLGo 桥接不实例化这些攻击客户端（`attacks/base.py`:11–30；`client.py`:39–67；`attacks/alie.py`:21–35；B:31–33、255）。
+- **FLGo 可复用部分**：在 `attacks/<组件>.py` 提供造假更新函数；现有 ALIE/IPM 类与桥接共用同一函数，而非桥接独立实现。仅新增 `_BaseByzantine` 子类或修改其回调，不会自动进入 FLGo（`attacks/alie.py`:7–18、32–35；`attacks/ipm.py`:4–17；B:148–155）。
+- **桥接注册**：在 B import 造假函数、加入 `ATTACKS`、在 `_attack_update(name,benign,n,m,option)` 增加调用分支；返回单个恶意更新向量。按需在 R 接入参数。库 `attack_mapper` 不参与此链，名称无需在那里重复注册（B:31–38、148–155、202–210；R:71、107–126；`attacks/attack_mapper.py`:22–40）。
+- **攻击类型边界**：当前桥接是服务端全知更新替换；没有恶意 Client、标签投毒、本地训练替换或每个攻击者不同返回值的适配。需要这些语义时，现有单向量分发接口不能直接表达（B:202–210、255）。
 
 ## 3. FLGo 桥接契约
 
 ### 对象与调度
 
-- B:`Server(BasicServer)`；`Client = BasicClient` 是别名。两个 easyFL 基类均继承 `BasicParty`；桥接覆盖 `initialize/iterate/aggregate`，训练与主循环由 easyFL 提供（B:17、87–159；S:258、293、870）。
+- B:`Server(BasicServer)`；`Client = BasicClient` 是别名。两个 easyFL 基类均继承 `BasicParty`；桥接覆盖 `initialize/iterate/aggregate`，训练与主循环由 easyFL 提供（B:158–255；S:258、293、870）。
 - **FLGo 算法接入**：`flgo_byzantine/__init__.py`:8–10 导出 Server/Client；F:`init()` 接收模块/类，P:`generate_objects()` 读取 `algorithm.Server/Client`。本链不是字符串中央注册表；F 还注入 gv/TaskCalculator 并包装模拟器行为，无须修改 easyFL（F:875–925；P:188–204）。
-- **边界签名**：`Server.iterate(self)` 无参数，有响应则令 `self.model=self.aggregate(models)` 并返回 True；无响应返回 False，runner 不推进轮次。`aggregate(self,models:list,*args,**kwargs)` 接收本轮已训练模型列表，返回完整模型对象，空列表返回当前模型（B:109–123；S:308–323）。
-- **顺序**：`models[i]` 对应 `received_clients[i]`。模拟器 `with_clock` 按有效响应重排并更新 ID 列表；桥接检查二者长度。这里是实际收到人数，不是配置的总人数或最初选中人数（`easyFL/flgo/simulator/base.py`:660–665；B:122–140）。
+- **边界签名**：`Server.iterate(self)` 无参数，有响应则令 `self.model=self.aggregate(models)` 并返回 True；无响应返回 False，runner 不推进轮次。`aggregate(self,models:list,*args,**kwargs)` 接收本轮已训练模型列表，返回完整模型对象，空列表返回当前模型（B:183–197；S:308–323）。
+- **顺序**：`models[i]` 对应 `received_clients[i]`。模拟器 `with_clock` 按有效响应重排并更新 ID 列表；桥接检查二者长度。这里是实际收到人数，不是配置的总人数或最初选中人数（`easyFL/flgo/simulator/base.py`:660–665；B:193–212）。
 
 ### Tensor 与模型
 
-- `FModule` 是 `torch.nn.Module` 子类，提供模型运算；本桥接没有调用 U 的 `_model_to_tensor/_model_from_tensor`，使用 PyTorch 参数向量工具（U:4–43、275–306；B:34–49）。
-- 设 D 为全局模型全部 `parameters()` 元素数，n 为响应数。桥接按参数迭代顺序展平并 detach，得到 `base:[D]`；每个输入为 `base-client_vector.to(base)`。聚合器收到 `List[Tensor[D]]`，不是层列表、完整模型、原始梯度或客户端对象（B:34–38、124–125）。
-- 输入包括冻结参数，不含 `buffers()`；客户端必须与服务器参数布局一致。桥接拒绝无参数模型和非有限原始更新；模型名称/各层形状没有另行核对（B:34–38、124–127）。
-- **返回合同**：`__call__` 必须返回与 `base.shape` 完全一致的有限 Tensor，不能返回模型、列表、元组或 None。设备/类型保持与输入一致，使误差计算可执行；最终写回还会 `.to(current)`。桥接不会替组件做按层拆装（B:145–156、41–49）。
-- 写回深拷贝旧全局模型，在 `no_grad` 中设置 `parameters=base-aggregate`；buffer 保留旧全局副本。普通更新不再乘学习率；仅 `sign` 乘 `byz_server_step`，缺省取 `option['learning_rate']`（B:41–49、148–156）。
-- **与基类比较**：Tensor 调用形态一致；`_BaseAggregator` 文档写“in-place”，桥接实际消费返回值，不能仅原地改 inputs。更新语义是模型差值；库客户端的 `get_grad()` 则返回动量/Adam 处理量。桥接不传样本权重、客户端 ID、层边界、根数据或模型，也不调用 `get_attack_stats()`（`aggregators/base.py`:10–20；`client.py`:159–173；B:124–156）。
+- `FModule` 是 `torch.nn.Module` 子类，提供模型运算；本桥接没有调用 U 的 `_model_to_tensor/_model_from_tensor`，使用 PyTorch 参数向量工具（U:4–43、275–306；B:104–120）。
+- 设 D 为全局模型全部 `parameters()` 元素数，n 为响应数。桥接按参数迭代顺序展平并 detach，得到 `base:[D]`；每个输入为 `base-client_vector.to(base)`。聚合器收到 `List[Tensor[D]]`，不是层列表、完整模型、原始梯度或客户端对象（B:104–108、198–199）。
+- 输入包括冻结参数，不含 `buffers()`；客户端必须与服务器参数布局一致。桥接拒绝无参数模型和非有限原始更新；模型名称/各层形状没有另行核对（B:104–108、198–201）。
+- **返回合同**：`__call__` 必须返回与 `base.shape` 完全一致的有限 Tensor，不能返回模型、列表、元组或 None。设备/类型保持与输入一致，使误差计算可执行；最终写回还会 `.to(current)`。桥接不会替组件做按层拆装（B:238–252、111–119）。
+- 写回深拷贝旧全局模型，在 `no_grad` 中设置 `parameters=base-aggregate`；buffer 保留旧全局副本。普通更新不再乘学习率；仅 `sign` 乘 `byz_server_step`，缺省取 `option['learning_rate']`（B:111–119、241–252）。
+- **与基类比较**：Tensor 调用形态一致；`_BaseAggregator` 文档写“in-place”，桥接实际消费返回值，不能仅原地改 inputs。更新语义是模型差值；库客户端的 `get_grad()` 则返回动量/Adam 处理量。`updates` 不含样本权重、客户端 ID 或层边界；声明需求的聚合器可另取上下文（`aggregators/base.py`:10–20；`client.py`:159–173；B:198–238）。
 
 ### 注册项与生命周期
 
-两个“注册表”均为 `frozenset[str]`，条目本身没有函数签名。实际接口是 `_build_aggregator(name:str,n:int,f:int,option:dict)` → 可调用实例，及 `_attack_update(name:str,benign:Sequence[Tensor],n:int,m:int,option:dict)->Tensor`（B:30–31、52、77–78）。所有聚合实例统一调用 `__call__(self,inputs)`。
+名称注册表 `AGGREGATORS`、`ATTACKS` 均为 `frozenset[str]`；另有聚合器需求映射。工厂 `_build_aggregator(name,n,f,option,context=None)` 返回可调用实例；攻击入口为 `_attack_update(name,benign,n,m,option)->Tensor`（B:37–63、122–124、148–155）。聚合实例仍统一调用 `__call__(updates)`。
 
-| 聚合名称 | 工厂调用及条件（B:55–74） |
+| 聚合名称 | 工厂调用及条件（B:126–145） |
 |---|---|
 | avg | `fedAVG()` |
 | cm | `CM()` |
@@ -61,16 +61,17 @@
 | cc | `Clipping(tau=float(option.get('byz_clip_tau',1.0)),b=f)`；n_iter默认1（`aggregators/clipping.py`:7） |
 | rfa | `RFA(T=int(option.get('byz_rfa_steps',5)),nu=float(option.get('byz_rfa_nu',1e-6)))` |
 
-- f=`byz_assumed_count`，初始化检查非负，独立于真实攻击人数。实例首次聚合才构造，按 `(名称, krum时的n否则None, f)` 缓存；键不变则保留跨轮状态。键不含 D、设备、其他参数或客户端身份；传给实例的只有 updates，成员/顺序可能跨轮变化（B:95–107、139–145；S:552–556）。
-- 输入顺序没有“恶意在末尾”保证；库中 TM/Krum/CC 的部分统计按末尾恶意计数，桥接不读取这些统计，而用真实 ID 记录本轮人数和良性均值误差（B:128–155；`aggregators/trimmed_mean.py`:24–35；`aggregators/krum.py`:112–129；`aggregators/clipping.py`:41–53）。
+- f=`byz_assumed_count`，初始化检查非负，独立于真实攻击人数。实例首次聚合才构造；缓存键含名称、f，仅声明 `fixed_n` 时含 n，另按声明加入 option 值和任务路径/根数据标识。键不含轮号、模型权重或设备；键不变则保留跨轮状态（B:66–73、170–182、226–238）。
+- 声明 `root_data` 后，桥接首次聚合时通过任务管道读取预隔离根集，校验元信息、索引及与客户端分区的关系，并复用数据集（`flgo_byzantine/root_data.py`:10–45；B:213–217）。声明 `runtime_context` 或 `root_data` 后，工厂取得 `AggregationContext(model,device,calculator,root_data)`；每轮更新其中的模型、设备和计算器引用，实例调用仍只传 `updates`（B:51–58、218–239）。
+- 输入顺序没有“恶意在末尾”保证；库中 TM/Krum/CC 的部分统计按末尾恶意计数。桥接用真实 ID 记录本轮人数和良性均值误差；若实例的 `get_attack_stats()` 返回映射，则筛选可记录值，置于 `aggregator_stats`，日志写入 `byz_aggregator_stats`（B:76–102、245–252；R:37–46）。
 
 | 攻击名称 | 实际签名/行为 |
 |---|---|
-| none | 不调用 `_attack_update`，初始化恶意人数为 0（B:102、132） |
+| none | 不调用 `_attack_update`，初始化恶意人数为 0（B:173、206–207） |
 | alie | `craft_alie_update(benign_gradients,n,m,z=None)`；返回均值−z×逐坐标标准差；至少两个良性更新且0<m<n；z 缺省由 n、m 计算并检查分位合法性（`attacks/alie.py`:7–18） |
 | ipm | `craft_ipm_update(benign_gradients,epsilon)`；返回−epsilon×良性均值；至少一个良性更新（`attacks/ipm.py`:4–8） |
 
-- B 分发器从 `byz_alie_z`/`byz_ipm_epsilon` 取参数，后者缺省 1.0。初始化按 `byz_seed` 随机固定 `floor(比例×总客户端数)` 个恶意 ID；每轮 n 是实际响应数、m 是其中恶意数、benign 长度为 n−m。只有 m>0 才造假；同一个 `[D]` 结果 clone 后替换全部恶意位置。攻击函数没有持久实例、模型、ID或数据入参；造假之后没有单独的逐输入形状/有限性检查（B:77–83、98–104、124–147）。
+- B 分发器从 `byz_alie_z`/`byz_ipm_epsilon` 取参数，后者缺省 1.0。初始化按 `byz_seed` 随机固定 `floor(比例×总客户端数)` 个恶意 ID；每轮 n 是实际响应数、m 是其中恶意数、benign 长度为 n−m。只有 m>0 才造假；同一个 `[D]` 结果 clone 后替换全部恶意位置。攻击函数没有持久实例、模型、ID或数据入参；造假之后没有单独的逐输入形状/有限性检查（B:148–155、169–175、198–210）。
 
 ## 4. 已有聚合器分类
 
@@ -114,6 +115,6 @@
 ## 7. 不确定项
 
 - 已定位全部指定职责：任务生成/初始化在F、基类/主循环在S、参数模型在U；未找到本链独立算法注册表或runner文件，职责由F与P的模块属性实例化、S.run承担（另读 `easyFL/flgo/algorithm/__init__.py`，为空）。
-- 未执行环境安装或训练，无法从源码确认当前依赖/设备下每个组件实际可运行；“已注册”仅指接线成立。已读 `tests/test_flgo_bridge.py`:51–75，现有测试覆盖avg对齐与krum+alie流程，不能据此宣称全部组合验证通过。
+- 未执行环境安装或训练，无法从源码确认当前依赖/设备下每个组件实际可运行；“已注册”仅指接线成立。`tests/test_flgo_bridge.py` 覆盖根数据、上下文/缓存键、统计日志及 krum+alie 流程，不能据此宣称全部组合验证通过。
 - `cc_threshold.py`:47调用self.tm，但该文件只定义tm_modified；`ca.py`:2使用顶层base导入。不能仅凭这些文件确认它们可独立导入/执行；分类只陈述实现操作。
 - 桥接无checkpoint状态扩展，S:804–842未保存聚合器实例；[推断] 有状态聚合器恢复后的轨迹不能仅靠全局模型checkpoint保证延续（B:106–107、139–145）。
