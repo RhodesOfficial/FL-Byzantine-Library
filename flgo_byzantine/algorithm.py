@@ -9,6 +9,12 @@ with ``byz_`` are supplied through FLGo's regular option dictionary.
 from __future__ import annotations
 
 import copy
+import json
+import math
+from collections.abc import Mapping
+from dataclasses import dataclass
+from numbers import Real
+from pathlib import Path
 from typing import Sequence
 
 import numpy as np
@@ -25,10 +31,74 @@ from aggregators.sign_sgd import SignSGD
 from aggregators.trimmed_mean import TM
 from attacks.alie import craft_alie_update
 from attacks.ipm import craft_ipm_update
+from .root_data import load_root_data
 
 
 AGGREGATORS = frozenset({"avg", "cm", "tm", "krum", "cc", "rfa", "sign"})
 ATTACKS = frozenset({"none", "alie", "ipm"})
+
+
+@dataclass(frozen=True)
+class AggregatorRequirements:
+    """Construction needs declared by a bridge adapter for an aggregator."""
+
+    root_data: bool = False
+    runtime_context: bool = False
+    fixed_n: bool = False
+    option_keys: tuple[str, ...] = ()
+
+
+@dataclass
+class AggregationContext:
+    """Current FLGo state; updates and results use ``base - client`` direction."""
+
+    model: torch.nn.Module
+    device: torch.device
+    calculator: object
+    root_data: object = None
+
+
+# New adapters can declare their requirements when registering a new name.
+# The seven existing names retain their construction and call paths.
+AGGREGATOR_REQUIREMENTS = {"krum": AggregatorRequirements(fixed_n=True)}
+
+
+def _aggregator_cache_key(name, n, f, option, requirements, root_identity, task):
+    key = (name, n if requirements.fixed_n else None, f)
+    if requirements.option_keys:
+        settings = {field: option.get(field) for field in requirements.option_keys}
+        key += (json.dumps(settings, sort_keys=True, allow_nan=False),)
+    if requirements.root_data:
+        key += ((str(Path(task).resolve()), root_identity),)
+    return key
+
+
+def _aggregator_stats(instance):
+    getter = getattr(instance, "get_attack_stats", None)
+    if not callable(getter):
+        return {}
+    try:
+        raw = getter()
+    except Exception:
+        # Observational statistics must not change the aggregation outcome.
+        return {}
+    if not isinstance(raw, Mapping):
+        return {}
+    clean = {}
+    for key, value in raw.items():
+        if not isinstance(key, str):
+            continue
+        if isinstance(value, torch.Tensor):
+            if value.numel() != 1:
+                continue
+            value = value.detach().item()
+        if isinstance(value, np.generic):
+            value = value.item()
+        if value is None or isinstance(value, (str, bool)):
+            clean[key] = value
+        elif isinstance(value, Real) and math.isfinite(value):
+            clean[key] = int(value) if isinstance(value, int) else float(value)
+    return clean
 
 
 def _parameter_vector(model: torch.nn.Module) -> torch.Tensor:
@@ -49,7 +119,8 @@ def _model_from_update(model: torch.nn.Module, update: torch.Tensor) -> torch.nn
     return result
 
 
-def _build_aggregator(name: str, n: int, f: int, option: dict):
+def _build_aggregator(name: str, n: int, f: int, option: dict,
+                      context: AggregationContext | None = None):
     if name not in AGGREGATORS:
         raise ValueError(f"unsupported byz_aggregator {name!r}; choose {sorted(AGGREGATORS)}")
     if name == "avg":
@@ -105,6 +176,9 @@ class Server(BasicServer):
         self.byz_last_round = {}
         self._byz_aggregator_instance = None
         self._byz_aggregator_shape = None
+        self._byz_root_data = None
+        self._byz_root_identity = None
+        self._byz_context = None
 
     def iterate(self):
         self.selected_clients = self.sample()
@@ -136,11 +210,30 @@ class Server(BasicServer):
                 updates[i] = crafted.clone()
         n = len(updates)
         f = self.byz_assumed_count
-        shape_key = (self.byz_aggregator,
-                     n if self.byz_aggregator == "krum" else None, f)
+        requirements = AGGREGATOR_REQUIREMENTS.get(
+            self.byz_aggregator, AggregatorRequirements())
+        if requirements.root_data and self._byz_root_data is None:
+            self._byz_root_data, self._byz_root_identity = load_root_data(
+                self.task, self.gv.TaskPipe)
+        if requirements.runtime_context or requirements.root_data:
+            if self._byz_context is None:
+                self._byz_context = AggregationContext(
+                    self.model, self.device, self.calculator, self._byz_root_data)
+            else:
+                self._byz_context.model = self.model
+                self._byz_context.device = self.device
+                self._byz_context.calculator = self.calculator
+        shape_key = _aggregator_cache_key(
+            self.byz_aggregator, n, f, self.option, requirements,
+            self._byz_root_identity, self.task)
         if self._byz_aggregator_shape != shape_key:
-            self._byz_aggregator_instance = _build_aggregator(
-                self.byz_aggregator, n, f, self.option)
+            if requirements.runtime_context or requirements.root_data:
+                self._byz_aggregator_instance = _build_aggregator(
+                    self.byz_aggregator, n, f, self.option,
+                    context=self._byz_context)
+            else:
+                self._byz_aggregator_instance = _build_aggregator(
+                    self.byz_aggregator, n, f, self.option)
             self._byz_aggregator_shape = shape_key
         aggregate = self._byz_aggregator_instance(updates)
         if aggregate.shape != base.shape or not torch.isfinite(aggregate).all().item():
@@ -153,6 +246,9 @@ class Server(BasicServer):
                                "assumed_malicious": f, "attack": self.byz_attack,
                                "aggregator": self.byz_aggregator,
                                "benign_mean_error_norm": benign_error}
+        stats = _aggregator_stats(self._byz_aggregator_instance)
+        if stats:
+            self.byz_last_round["aggregator_stats"] = stats
         return _model_from_update(self.model, aggregate)
 
 

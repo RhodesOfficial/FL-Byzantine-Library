@@ -41,6 +41,8 @@ class ByzantineLogger(SimpleLogger):
         self.output["byz_malicious"].append(summary.get("malicious", 0))
         self.output["byz_benign_mean_error_norm"].append(
             summary.get("benign_mean_error_norm"))
+        self.output["byz_aggregator_stats"].append(
+            summary.get("aggregator_stats", {}))
 
     def get_output_name(self, suffix=".json"):
         base = super().get_output_name(suffix="")
