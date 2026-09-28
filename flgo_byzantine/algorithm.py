@@ -32,11 +32,12 @@ from aggregators.sign_sgd import SignSGD
 from aggregators.trimmed_mean import TM
 from attacks.alie import craft_alie_update
 from attacks.ipm import craft_ipm_update
+from attacks.flgo_label_flip import LabelFlippedDataset
 from .root_data import load_root_data
 
 
 AGGREGATORS = frozenset({"avg", "cm", "tm", "krum", "cc", "rfa", "sign", "d1"})
-ATTACKS = frozenset({"none", "alie", "ipm"})
+ATTACKS = frozenset({"none", "alie", "ipm", "label_flip"})
 
 
 @dataclass(frozen=True)
@@ -231,7 +232,7 @@ class Server(BasicServer):
                                if cid in self.byz_malicious_ids]
         malicious_set = set(malicious_positions)
         benign = [v for i, v in enumerate(updates) if i not in malicious_set]
-        if malicious_positions and self.byz_attack != "none":
+        if malicious_positions and self.byz_attack not in {"none", "label_flip"}:
             crafted = _attack_update(self.byz_attack, benign, len(updates),
                                      len(malicious_positions), self.option)
             for i in malicious_positions:
@@ -280,4 +281,13 @@ class Server(BasicServer):
         return _model_from_update(self.model, aggregate)
 
 
-Client = BasicClient
+class Client(BasicClient):
+    """Basic FLGo client, with train-label poisoning only in label_flip mode."""
+
+    def initialize(self):
+        if self.server.byz_attack != "label_flip" or self.id not in self.server.byz_malicious_ids:
+            return
+        num_classes = self.option.get("byz_label_flip_num_classes")
+        if num_classes is None:
+            raise ValueError("label_flip requires byz_label_flip_num_classes")
+        self.set_data(LabelFlippedDataset(self.train_data, int(num_classes)), "train")

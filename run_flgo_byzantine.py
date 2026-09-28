@@ -83,6 +83,8 @@ def main(argv=None):
     parser.add_argument("--clip-tau", type=float, default=1.0)
     parser.add_argument("--ipm-epsilon", type=float, default=1.0)
     parser.add_argument("--alie-z", type=float, default=None)
+    parser.add_argument("--label-flip-num-classes", type=int, default=None,
+                        help="Label universe for cyclic label_flip attack")
     parser.add_argument("--d1-num-classes", type=int, default=None,
                         help="D1 task label-universe size; required for --aggregator d1")
     parser.add_argument("--d1-mode", choices=("majority", "conservative"),
@@ -104,6 +106,8 @@ def main(argv=None):
         parser.error("choose only one of --create-mnist and --create-toy")
     if args.aggregator == "d1" and (args.d1_num_classes is None or args.d1_num_classes < 1):
         parser.error("--aggregator d1 requires positive --d1-num-classes")
+    if args.attack == "label_flip" and (args.label_flip_num_classes is None or args.label_flip_num_classes < 2):
+        parser.error("--attack label_flip requires --label-flip-num-classes >= 2")
     if (args.create_mnist or args.create_toy) and not args.task.exists():
         import flgo.benchmark.partition as partition
         if args.create_mnist:
@@ -151,6 +155,8 @@ def main(argv=None):
             "byz_d1_reliability_floor": args.d1_reliability_floor,
             "byz_d1_batch_size": args.d1_batch_size,
         })
+    if args.attack == "label_flip":
+        option["byz_label_flip_num_classes"] = args.label_flip_num_classes
     runner = flgo.init(str(args.task), flgo_byzantine, option,
                        Logger=ByzantineLogger)
     runner.run()
