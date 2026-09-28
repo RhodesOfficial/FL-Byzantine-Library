@@ -83,6 +83,18 @@ def main(argv=None):
     parser.add_argument("--clip-tau", type=float, default=1.0)
     parser.add_argument("--ipm-epsilon", type=float, default=1.0)
     parser.add_argument("--alie-z", type=float, default=None)
+    parser.add_argument("--d1-num-classes", type=int, default=None,
+                        help="D1 task label-universe size; required for --aggregator d1")
+    parser.add_argument("--d1-mode", choices=("majority", "conservative"),
+                        default="majority")
+    parser.add_argument("--d1-clip-norm", type=float, default=1.0)
+    parser.add_argument("--d1-residual-budget-ratio", type=float, default=0.25)
+    parser.add_argument("--d1-root-step", type=float, default=0.1)
+    parser.add_argument("--d1-drag-strength", type=float, default=0.5)
+    parser.add_argument("--d1-loss-tolerance", type=float, default=0.02)
+    parser.add_argument("--d1-min-class-count", type=int, default=2)
+    parser.add_argument("--d1-reliability-floor", type=float, default=0.05)
+    parser.add_argument("--d1-batch-size", type=int, default=64)
     args = parser.parse_args(argv)
     if args.clients < 1 or args.rounds < 1 or not 0 < args.proportion <= 1:
         parser.error("clients and rounds must be positive; proportion must be in (0, 1]")
@@ -90,6 +102,8 @@ def main(argv=None):
         parser.error("alpha must be positive")
     if args.create_mnist and args.create_toy:
         parser.error("choose only one of --create-mnist and --create-toy")
+    if args.aggregator == "d1" and (args.d1_num_classes is None or args.d1_num_classes < 1):
+        parser.error("--aggregator d1 requires positive --d1-num-classes")
     if (args.create_mnist or args.create_toy) and not args.task.exists():
         import flgo.benchmark.partition as partition
         if args.create_mnist:
@@ -124,6 +138,19 @@ def main(argv=None):
         "byz_ipm_epsilon": args.ipm_epsilon,
         "byz_alie_z": args.alie_z,
     }
+    if args.aggregator == "d1":
+        option.update({
+            "byz_d1_num_classes": args.d1_num_classes,
+            "byz_d1_mode": args.d1_mode,
+            "byz_d1_clip_norm": args.d1_clip_norm,
+            "byz_d1_residual_budget_ratio": args.d1_residual_budget_ratio,
+            "byz_d1_root_step": args.d1_root_step,
+            "byz_d1_drag_strength": args.d1_drag_strength,
+            "byz_d1_loss_tolerance": args.d1_loss_tolerance,
+            "byz_d1_min_class_count": args.d1_min_class_count,
+            "byz_d1_reliability_floor": args.d1_reliability_floor,
+            "byz_d1_batch_size": args.d1_batch_size,
+        })
     runner = flgo.init(str(args.task), flgo_byzantine, option,
                        Logger=ByzantineLogger)
     runner.run()
