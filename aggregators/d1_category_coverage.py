@@ -32,13 +32,16 @@ class D1CategoryCoverage(_BaseAggregator):
                  reliability_floor: float = 0.05, batch_size: int = 64,
                  seed: int = 0, median_steps: int = 20,
                  candidate_lambdas=(0.0, 0.25, 0.5, 1.0),
-                 candidate_steps=(1.0, 0.5, 0.25, 0.125)):
+                 candidate_steps=(1.0, 0.5, 0.25, 0.125),
+                 ablation: str = "none"):
         if context is None or context.root_data is None:
             raise ValueError("D1 requires an isolated trusted root dataset and runtime context")
         if type(num_classes) is not int or num_classes < 1:
             raise ValueError("num_classes must be a positive integer")
         if mode not in {"majority", "conservative"}:
             raise ValueError("mode must be 'majority' or 'conservative'")
+        if ablation not in {"none", "single_root", "no_residual", "global_audit"}:
+            raise ValueError("unknown D1 ablation")
         for name, value in (("clip_norm", clip_norm), ("root_step", root_step),
                             ("loss_tolerance", loss_tolerance)):
             if not math.isfinite(value) or (value <= 0 if name != "loss_tolerance" else value < 0):
@@ -69,8 +72,10 @@ class D1CategoryCoverage(_BaseAggregator):
         self.median_steps = int(median_steps)
         self.candidate_lambdas = tuple(float(x) for x in candidate_lambdas)
         self.candidate_steps = tuple(float(x) for x in candidate_steps)
+        self.ablation = ablation
         self.train_indices, self.audit_indices = self._split_root(seed)
         self.last_stats = {}
+        self.last_client_weights = []
 
     def _split_root(self, seed):
         """Fixed, stratified, disjoint split; no client metadata is consumed."""
@@ -86,10 +91,16 @@ class D1CategoryCoverage(_BaseAggregator):
             by_class[label].append(index)
         generator = torch.Generator().manual_seed(int(seed))
         train, audit = {}, {}
+        target_train = (len(self.context.root_data) + 1) // 2
+        floor_train = sum(len(indices) // 2 for indices in by_class.values())
+        extra = target_train - floor_train
         for label in range(self.num_classes):
             indices = by_class[label]
             order = torch.randperm(len(indices), generator=generator).tolist()
-            cut = (len(indices) + 1) // 2
+            cut = len(indices) // 2
+            if len(indices) % 2 and extra:
+                cut += 1
+                extra -= 1
             train[label] = [indices[j] for j in order[:cut]]
             audit[label] = [indices[j] for j in order[cut:]]
         return train, audit
@@ -131,7 +142,10 @@ class D1CategoryCoverage(_BaseAggregator):
 
     def _root_evidence(self, model):
         parameters = tuple(model.parameters())
-        basis_vectors, coefficients, reliable, counts, quality = [], {}, [], {}, {}
+        dimension = sum(p.numel() for p in parameters)
+        basis_storage = parameters[0].new_empty((self.num_classes, dimension))
+        basis_count = 0
+        coefficients, reliable, counts, quality = {}, [], {}, {}
         for label in range(self.num_classes):
             indices = self.train_indices[label]
             counts[label] = len(indices)
@@ -149,21 +163,21 @@ class D1CategoryCoverage(_BaseAggregator):
             if q >= self.reliability_floor and torch.isfinite(gradient).all().item() and gradient.norm() > 0:
                 components = []
                 remainder = gradient.clone()
-                for direction in basis_vectors:
+                for direction in basis_storage[:basis_count]:
                     component = torch.dot(remainder, direction)
                     components.append(component)
                     remainder -= component * direction
                 norm = remainder.norm()
                 if norm > 1e-8 * gradient.norm():
-                    basis_vectors.append(remainder / norm)
+                    basis_storage[basis_count].copy_(remainder / norm)
+                    basis_count += 1
                     components.append(norm)
                 coefficients[label] = torch.stack(components)
                 reliable.append(label)
-        dimension = sum(p.numel() for p in parameters)
-        basis = torch.stack(basis_vectors) if basis_vectors else parameters[0].new_empty((0, dimension))
+        basis = basis_storage[:basis_count]
         padded = {}
         for label, values in coefficients.items():
-            padded[label] = torch.nn.functional.pad(values, (0, len(basis_vectors) - len(values)))
+            padded[label] = torch.nn.functional.pad(values, (0, basis_count - len(values)))
         return basis, padded, reliable, counts, quality
 
     @staticmethod
@@ -208,18 +222,26 @@ class D1CategoryCoverage(_BaseAggregator):
 
     def _feasible(self, displacement, basis, coefficients, labels, audit_model, base, baseline):
         projected = basis @ displacement
-        if any(torch.dot(coefficients[label], projected).item() > self.loss_tolerance + 1e-8
-               for label in labels):
+        increments = [torch.dot(coefficients[label], projected).item() for label in labels]
+        if self.ablation == "global_audit":
+            if sum(increments) / len(increments) > self.loss_tolerance + 1e-8:
+                return None
+        elif any(x > self.loss_tolerance + 1e-8 for x in increments):
             return None
         self._set_displacement(audit_model, base, displacement)
         losses = self._audit_losses(audit_model, labels)
-        if any(losses[label] - baseline[label] > self.loss_tolerance + 1e-8 for label in labels):
+        deltas = [losses[label] - baseline[label] for label in labels]
+        if self.ablation == "global_audit":
+            if sum(deltas) / len(deltas) > self.loss_tolerance + 1e-8:
+                return None
+        elif any(x > self.loss_tolerance + 1e-8 for x in deltas):
             return None
         return sum(losses.values()) / len(losses)
 
     def __call__(self, inputs):
         if not inputs:
             raise ValueError("D1 requires at least one client update")
+        self.last_client_weights = [0.0] * len(inputs)
         first = inputs[0]
         if first.ndim != 1 or not first.is_floating_point():
             raise ValueError("D1 requires flat floating-point vectors")
@@ -236,6 +258,15 @@ class D1CategoryCoverage(_BaseAggregator):
             basis, coefficients, reliable, counts, quality = self._root_evidence(model)
         finally:
             model.train(was_training)
+        if self.ablation == "single_root" and reliable:
+            # Keep the same class gradients and audits; only A's trusted
+            # subspace is replaced by one class-balanced root direction.
+            gradient = torch.stack([coefficients[c] for c in reliable]).mean(0) @ basis
+            direction = gradient / gradient.norm().clamp_min(1e-12)
+            projected_direction = basis @ direction
+            basis = direction[None]
+            coefficients = {c: torch.dot(coefficients[c], projected_direction)[None]
+                            for c in reliable}
         stats = {"covered_classes": len(reliable), "total_classes": self.num_classes,
                  "missing_classes": sum(counts[c] == 0 for c in counts),
                  "root_train_count": sum(len(v) for v in self.train_indices.values()),
@@ -267,11 +298,12 @@ class D1CategoryCoverage(_BaseAggregator):
         median = self._geometric_median(residuals) if self.mode == "majority" else torch.zeros_like(root)
         # Missing classes never increase this budget; the category audit below
         # protects only classes with actual independent evidence.
-        budget = self.clip_norm * self.residual_budget_ratio
+        budget = (0.0 if self.ablation == "no_residual" else
+                  self.clip_norm * self.residual_budget_ratio)
         baseline_model = copy.deepcopy(model)
         baseline = self._audit_losses(baseline_model, reliable)
         audit_model = copy.deepcopy(model)
-        best, best_loss = None, float("inf")
+        best, best_loss, best_lambda, best_step = None, float("inf"), 0.0, 0.0
         for step in self.candidate_steps:
             for lam in (self.candidate_lambdas if self.mode == "majority" else (0.0,)):
                 residual = self._cap(lam * median, budget)
@@ -279,6 +311,7 @@ class D1CategoryCoverage(_BaseAggregator):
                 score = self._feasible(candidate, basis, coefficients, reliable, audit_model, base, baseline)
                 if score is not None and score < best_loss:
                     best, best_loss = candidate, score
+                    best_lambda, best_step = lam, step
                     stats["residual_norm"] = float(self._cap(step * residual, budget).norm())
         if best is None:
             for step in self.candidate_steps:
@@ -294,6 +327,28 @@ class D1CategoryCoverage(_BaseAggregator):
         if not torch.isfinite(best).all().item():
             raise ValueError("D1 produced a non-finite displacement")
         stats["update_norm"] = float(best.norm())
+        stats["selected_lambda"] = float(best_lambda)
+        stats["selected_step"] = float(best_step)
+        # A scalar diagnostic of the explicit client coefficients. The final
+        # audit and clipping are nonlinear, so these are influence proxies.
+        parallel_weights = []
+        for vector in parallel:
+            norm = vector.norm()
+            if norm <= 1e-12:
+                parallel_weights.append(0.0)
+            else:
+                cosine = (torch.dot(vector, root) / (norm * root_norm)).clamp(-1, 1).item()
+                parallel_weights.append(max(0.0, (1 - self.drag_strength * (1 - cosine))
+                                            * root_norm.item() / norm.item()))
+        if best_lambda and budget > 0:
+            distances = torch.stack([(x - median).norm() for x in residuals]).clamp_min(1e-8)
+            residual_weights = (1 / distances) / (1 / distances).sum()
+            proxies = torch.tensor(parallel_weights, device=first.device) / len(inputs) + best_lambda * residual_weights
+        else:
+            proxies = torch.tensor(parallel_weights, device=first.device) / len(inputs)
+        self.last_client_weights = ((proxies / proxies.sum()).tolist()
+                                    if stats["fallback"] == "none" and proxies.sum() > 0
+                                    else [0.0] * len(inputs))
         self.last_stats = stats
         return -best
 

@@ -1,4 +1,4 @@
-"""D1 experiment entry point. Phase 3A currently provides only --profile smoke.
+"""D1 experiment entry point: 3A smoke and the fixed 3B full matrix.
 
 Smoke fixes the scientific conditions: MNIST, Dirichlet alpha 0.1, cyclic
 label flip at 30%, one seed, D1 versus FedAvg, and 2,000 covered root samples.
@@ -189,12 +189,56 @@ def _run_one(task, aggregator, tail_classes, gpu):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--profile", choices=("smoke",), required=True)
-    parser.add_argument("--output-dir", type=Path, default=ROOT / "outputs" / "d1_3a")
+    parser.add_argument("--profile", choices=("smoke", "full"), required=True)
+    parser.add_argument("--output-dir", type=Path, default=None)
     parser.add_argument("--gpu", type=int, default=0)
+    parser.add_argument("--list", action="store_true",
+                        help="Print the fixed 3B unit matrix without running")
+    parser.add_argument("--unit", type=int, default=None,
+                        help="Run one numbered 3B unit from --list")
+    parser.add_argument("--all", action="store_true",
+                        help="Run all 100 fixed 3B units sequentially")
+    parser.add_argument("--summarize", action="store_true",
+                        help="Summarize available 3B unit reports")
+    parser.add_argument("--rerun", action="store_true",
+                        help="Repeat units with an existing report")
     args = parser.parse_args(argv)
+    if args.profile == "full":
+        from dataclasses import asdict
+        from flgo_byzantine.d1_full_experiment import plan, run_unit, summarize
+        units = plan()
+        if args.list:
+            for index, unit in enumerate(units):
+                print(json.dumps({"index": index, **asdict(unit)}, ensure_ascii=False))
+            print(f"D1_3B_PLAN_OK units={len(units)}")
+            return
+        output_dir = args.output_dir or ROOT / "outputs" / "d1_3b"
+        if args.summarize:
+            if args.unit is not None or args.all:
+                parser.error("--summarize cannot be combined with --unit or --all")
+            path, result = summarize(output_dir)
+            print(f"D1_3B_SUMMARY_OK completed={result['completed']}/100 path={path}")
+            return
+        if (args.unit is None) == (not args.all):
+            parser.error("full profile requires exactly one of --unit or --all")
+        if args.unit is not None and not 0 <= args.unit < len(units):
+            parser.error("--unit must be an index from --list")
+        if not torch.cuda.is_available() or not 0 <= args.gpu < torch.cuda.device_count():
+            parser.error("3B full requires an available CUDA GPU index")
+        indices = range(len(units)) if args.all else (args.unit,)
+        for index in indices:
+            result = run_unit(index, units[index], output_dir, args.gpu,
+                              rerun=args.rerun)
+            print(f"D1_3B_UNIT_OK index={index} dataset={units[index].dataset} "
+                  f"method={units[index].method} overall={result['overall_accuracy']:.4f} "
+                  f"tail={result['tail_accuracy']:.4f} asr={result['backdoor_asr']:.4f}",
+                  flush=True)
+        return
+    if args.list or args.unit is not None or args.all or args.summarize or args.rerun:
+        parser.error("--list/--unit/--all/--summarize/--rerun require --profile full")
     if not torch.cuda.is_available() or args.gpu >= torch.cuda.device_count() or args.gpu < 0:
         parser.error("3A smoke requires an available CUDA GPU index")
+    args.output_dir = args.output_dir or ROOT / "outputs" / "d1_3a"
     args.output_dir.mkdir(parents=True, exist_ok=True)
     task, tail_classes, pool_counts = _make_or_validate_task(args.output_dir)
     print(f"3A task: {task}; tail classes by client-pool frequency: {tail_classes}", flush=True)

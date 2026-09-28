@@ -70,7 +70,7 @@ AGGREGATOR_REQUIREMENTS = {
                      "byz_d1_residual_budget_ratio", "byz_d1_root_step",
                      "byz_d1_drag_strength", "byz_d1_loss_tolerance",
                      "byz_d1_min_class_count", "byz_d1_reliability_floor",
-                     "byz_d1_batch_size", "byz_seed")),
+                     "byz_d1_batch_size", "byz_d1_ablation", "byz_seed")),
 }
 
 
@@ -169,7 +169,8 @@ def _build_aggregator(name: str, n: int, f: int, option: dict,
             min_class_count=int(option.get("byz_d1_min_class_count", 2)),
             reliability_floor=float(option.get("byz_d1_reliability_floor", 0.05)),
             batch_size=int(option.get("byz_d1_batch_size", 64)),
-            seed=int(option.get("byz_seed", option["seed"])))
+            seed=int(option.get("byz_seed", option["seed"])),
+            ablation=str(option.get("byz_d1_ablation", "none")))
     return RFA(T=int(option.get("byz_rfa_steps", 5)),
                nu=float(option.get("byz_rfa_nu", 1e-6)))
 
