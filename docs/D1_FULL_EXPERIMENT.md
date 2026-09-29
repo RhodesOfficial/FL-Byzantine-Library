@@ -29,21 +29,33 @@ BR-DRAG 的根参考方向、方向差异校准与范数归一来自《Xiao 等 
 
 ## 执行和恢复
 
-所有命令均使用 `E:\anaconda3\python.exe`。首次运行时，torchvision 会自动下载原始 CIFAR-10 和 CIFAR-100 到 `easyFL/flgo/benchmark/RAW_DATA/CIFAR10/`、`easyFL/flgo/benchmark/RAW_DATA/CIFAR100/`；后续运行复用本地数据。下载需要网络连接，原始数据不纳入 Git。CIFAR-LT 的长尾划分由任务生成代码完成。
+本地机器统一按 8GB CUDA 显存配置，不再区分环境 A/B；AutoDL 是可选的 24GB 云端环境。所有本地 Python 命令显式使用 `E:\anaconda3\python.exe`。FLGo 期望原始数据分别位于 `easyFL/flgo/benchmark/RAW_DATA/CIFAR10/cifar-10-batches-py/` 和 `easyFL/flgo/benchmark/RAW_DATA/CIFAR100/cifar-100-python/`。先用 `download=False` 离线校验，缺失或损坏时停止，由用户准备原始 CIFAR-10/100；不要通过改数据集或跳过单元继续。运行代码中的 `download=True` 会在文件完整时直接复用，缺失时会尝试下载且失败即报错。原始数据不纳入 Git，CIFAR-LT 长尾划分由任务生成代码完成。
 
 AutoDL 上的部署、数据校验和后台运行步骤见 [AUTODL_RUNBOOK.md](AUTODL_RUNBOOK.md)。
 
 ```powershell
+cd "E:\Federated Machine Learning\FL-Byzantine-Library-astra"
+& "E:\anaconda3\python.exe" -c "import torch; print(torch.__version__, torch.cuda.is_available(), torch.cuda.get_device_name(0))"
+& "E:\anaconda3\python.exe" -c "from pathlib import Path; from torchvision.datasets import CIFAR10,CIFAR100; r=Path('easyFL/flgo/benchmark/RAW_DATA'); print('CIFAR10_OFFLINE_READY', len(CIFAR10(root=str(r/'CIFAR10'),train=True,download=False)),len(CIFAR10(root=str(r/'CIFAR10'),train=False,download=False))); print('CIFAR100_OFFLINE_READY',len(CIFAR100(root=str(r/'CIFAR100'),train=True,download=False)),len(CIFAR100(root=str(r/'CIFAR100'),train=False,download=False)))"
 & "E:\anaconda3\python.exe" run_d1_full.py --profile full --list
-& "E:\anaconda3\python.exe" run_d1_full.py --profile full --unit 0 --gpu 0
-& "E:\anaconda3\python.exe" run_d1_full.py --profile full --all --gpu 0
+New-Item -ItemType Directory -Force outputs\d1_3b | Out-Null
+& "E:\anaconda3\python.exe" -u run_d1_full.py --profile full --unit 24 --gpu 0 2>&1 | Tee-Object -FilePath outputs\d1_3b\local_unit24.log
+if ($LASTEXITCODE -ne 0) { throw "3B CIFAR-100 unit 24 failed; inspect local_unit24.log" }
+```
+
+索引 24 是 CIFAR-100 完整根、无攻击、D1、种子 1 的**完整 200 轮单元**，用于先测本地 8GB 的最关键类别数与耗时风险，不代替 100 单元实验。该单元成功后检查报告中的显存、轮时和训练曲线，并按实际轮时估算成本；若显存不足或耗时不可接受，保留错误日志，转到 AutoDL 24GB，不缩小 batch size、客户端数、轮次或数据集。确认本地可行后再执行：
+
+```powershell
+& "E:\anaconda3\python.exe" -c "import json; d=json.load(open('outputs/d1_3b/reports/unit_024.json',encoding='utf-8')); print('seconds_per_round=',d['seconds_per_round'],'gpu_peak_reserved_gib=',d['gpu_peak_reserved_gib'])"
+& "E:\anaconda3\python.exe" -u run_d1_full.py --profile full --all --gpu 0 2>&1 | Tee-Object -FilePath outputs\d1_3b\local_full.log
+if ($LASTEXITCODE -ne 0) { throw "3B full run failed; inspect local_full.log" }
 & "E:\anaconda3\python.exe" run_d1_full.py --profile full --summarize
 ```
 
-`--all` 按固定索引顺序串行执行 100 单元；已有 `reports/unit_NNN.json` 时跳过，`--rerun` 显式重跑。每个单元先严格核对任务元数据再训练。输出位于 `outputs/d1_3b/`，不纳入 Git。
+`--all` 按固定索引顺序串行执行 100 单元；已有 `reports/unit_NNN.json` 时跳过，`--rerun` 显式重跑。每个单元先严格核对任务元数据再训练。输出位于 `outputs/d1_3b/`，不纳入 Git。每个完整单元结束才写报告，中途退出仅重跑当前单元。
 
 ## 硬件与时间
 
-本地 8GB 笔记本仅用于单轮逻辑检查。2026-09-28 的 CIFAR-100 缺类 D1 单轮检查测得根计算约 60.7 秒、PyTorch 峰值分配约 12.15 GiB；Windows 可能使用了共享显存，因此不能把它视为原生 8GB 可运行证明。CIFAR-100 完整根的类别数更多，16GB 配置仍应在正式首单元监测峰值。
+当前工作区所在机器的 GPU 实测为 RTX 4060 Laptop 8GB；其他本地 8GB 机器的速度仍需单独测量。2026-09-28 的 CIFAR-100 缺类 D1 单轮检查曾测得根计算约 60.7 秒、PyTorch 峰值分配约 12.15 GiB；Windows 可能使用共享显存，这不能证明物理 8GB 足以稳定完成 3B。应按上面的完整 CIFAR-100 单元实测，不为本地卡增加 CPU offload 或梯度检查点，也不改科学参数。
 
-按 20,000 个总轮次及单轮样本测算，4060 Ti 16GB 的总耗时粗估 **55–110 小时**，4090D 24GB 粗估 **25–60 小时**。这不是实测的两机吞吐；首个 CIFAR-100 D1 完整单元完成后，应以报告中的 `seconds_per_round` 重算剩余时间。代码的 batch size 与每轮参与数固定，不按设备暗改科学条件。
+AutoDL 4090D 上已完成的首个 CIFAR-10 D1 单元实测 `seconds_per_round=3.164`、`root_compute_seconds` 每轮均值 2.512 秒（约 79%）、PyTorch 峰值预留 0.703 GiB；同期 `nvidia-smi` 约 1.16 GiB，60 秒平均 GPU 利用率 3.4%。这只证明该单元主要受根计算路径限制，不能推出 CIFAR-100 和所有攻击/对照的显存或速度。原云端 25–60 小时估算尚未经 CIFAR-100 实测，可能超出；本地 8GB 的总耗时暂不估算。完成本地索引 24 后，用其实际报告及其他方法的首单元重新预算，不把一个 CIFAR-10 单元简单乘以 100。
