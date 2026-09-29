@@ -31,6 +31,8 @@ BR-DRAG 的根参考方向、方向差异校准与范数归一来自《Xiao 等 
 
 所有命令均使用 `E:\anaconda3\python.exe`。首次运行时，torchvision 会自动下载原始 CIFAR-10 和 CIFAR-100 到 `easyFL/flgo/benchmark/RAW_DATA/CIFAR10/`、`easyFL/flgo/benchmark/RAW_DATA/CIFAR100/`；后续运行复用本地数据。下载需要网络连接，原始数据不纳入 Git。CIFAR-LT 的长尾划分由任务生成代码完成。
 
+AutoDL 上的部署、数据校验和后台运行步骤见 [AUTODL_RUNBOOK.md](AUTODL_RUNBOOK.md)。
+
 ```powershell
 & "E:\anaconda3\python.exe" run_d1_full.py --profile full --list
 & "E:\anaconda3\python.exe" run_d1_full.py --profile full --unit 0 --gpu 0
