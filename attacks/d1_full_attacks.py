@@ -109,7 +109,7 @@ def root_constrained_update(benign, context, attacker_samples, train_indices,
 
     baseline = root_loss()
     for scale in (2.0, 1.0, 0.5, 0.25, 0.125):
-        candidate = anchor + scale * limit * harmful
+        candidate = anchor - scale * limit * harmful
         candidate = candidate * min(1.0, limit / candidate.norm().clamp_min(1e-12).item())
         with torch.no_grad():
             torch.nn.utils.vector_to_parameters(base - candidate, probe_params)
