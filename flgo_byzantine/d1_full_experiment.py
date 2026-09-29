@@ -79,6 +79,26 @@ def plan():
     return units
 
 
+def _clear_empty_task_scaffold(task):
+    """Recover a task directory abandoned before FLGo wrote its metadata."""
+    if not task.exists():
+        return
+    if (task / "info").is_file() and (task / "data.json").is_file():
+        return
+    if not task.is_dir():
+        raise RuntimeError(f"incomplete FLGo task path is not a directory: {task}")
+    children = list(task.iterdir())
+    if (all(child.name in {"log", "record"} and child.is_dir()
+            and not any(child.iterdir()) for child in children)):
+        for child in children:
+            child.rmdir()
+        task.rmdir()
+        return
+    raise RuntimeError(
+        f"incomplete FLGo task at {task}; expected info and data.json. "
+        "Existing files were preserved for inspection")
+
+
 def _task_for(unit, output_dir):
     benchmark, core = ((d1_cifar10_lt, cifar10_core) if unit.dataset == "CIFAR10"
                        else (d1_cifar100_lt, cifar100_core))
@@ -86,6 +106,7 @@ def _task_for(unit, output_dir):
     core.ROOT_SEED = unit.seed
     task = output_dir / "tasks" / unit.dataset.lower() / (
         f"s{unit.seed}_m{int(unit.missing * 100)}_a0p1_ir50_v2")
+    _clear_empty_task_scaffold(task)
     if not task.exists():
         task.parent.mkdir(parents=True, exist_ok=True)
         labels = core.TaskGenerator().train_data.targets

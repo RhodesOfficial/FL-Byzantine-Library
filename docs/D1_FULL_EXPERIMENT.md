@@ -54,6 +54,8 @@ if ($LASTEXITCODE -ne 0) { throw "3B full run failed; inspect local_full.log" }
 
 `--all` 按固定索引顺序串行执行 100 单元；已有 `reports/unit_NNN.json` 时跳过，`--rerun` 显式重跑。每个单元先严格核对任务元数据再训练。输出位于 `outputs/d1_3b/`，不纳入 Git。每个完整单元结束才写报告，中途退出仅重跑当前单元。
 
+若先前任务生成中断，只留下空的 `log/`、`record/` 目录而没有 `info`、`data.json`，下次运行会自动清理这一空壳并按原参数重建任务。若目录里还有其他文件，程序会保留现场并报错，避免覆盖已有实验资料。
+
 ## 硬件与时间
 
 当前工作区所在机器的 GPU 实测为 RTX 4060 Laptop 8GB；其他本地 8GB 机器的速度仍需单独测量。2026-09-28 的 CIFAR-100 缺类 D1 单轮检查曾测得根计算约 60.7 秒、PyTorch 峰值分配约 12.15 GiB；Windows 可能使用共享显存，这不能证明物理 8GB 足以稳定完成 3B。应按上面的完整 CIFAR-100 单元实测，不为本地卡增加 CPU offload 或梯度检查点，也不改科学参数。

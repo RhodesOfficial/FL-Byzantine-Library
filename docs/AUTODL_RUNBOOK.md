@@ -168,6 +168,7 @@ AUTODL_ENV_MODE=image bash scripts/autodl_experiment.sh summary-d1
 | `data-d1` 报 `ModuleNotFoundError: prettytable` | 镜像环境装好了，但命令漏了 `AUTODL_ENV_MODE=image`，回到未装完的默认独立环境。先运行 `AUTODL_ENV_MODE=image bash scripts/autodl_experiment.sh check`，再对 `data-d1` 或 `verify-d1-offline` 加同样前缀。 |
 | `torch.cuda.reset_peak_memory_stats` 报 `RuntimeError: Invalid device argument` | 旧版 D1 在首次 CUDA 分配前重置统计，已在提交 `1ddf2977` 修复。停机后更新到该提交或更高版本再恢复；已生成任务和完整单元报告可复用。 |
 | 任务生成后警告 `has no attribute 'visualize'` | FLGo 可视化钩子未提供；若紧接着出现 `Task ... has been successfully generated` 且轮次推进，此警告不影响训练。不要把它当作后续 Traceback 的原因。 |
+| 任务目录存在但报缺少 `info` 或 `data.json` | 中断可能只留下空的 `log/`、`record/`。新版运行器会仅对这种空壳自动重建；若目录中有其他文件，会保留并要求人工检查，避免覆盖已有结果。 |
 | `Files already downloaded and verified` 重复出现 | torchvision 完整性校验提示，不是再次下载。公开数据先用 `verify-d1-offline` 的 `download=False` 确认两套 `*_OFFLINE_READY`，再启动实验。 |
 | CIFAR 缺失、下载超时或校验失败 | 查看 `run.log`，核对 `/root/autodl-pub` 实际文件、解压顶层目录和 `RAW_DATA`；运行带模式前缀的 `verify-d1-offline`。若选择网络下载，运行带模式前缀的 `data-d1` 并在失败后修复重试；不跳过数据集。 |
 | `nvidia-smi` 显示 CUDA 13.2，但镜像 PyTorch 是 cu124 | 前者为驱动支持的 CUDA 版本，后者为 PyTorch 运行时；以 `check` 的 CUDA 可用性和运行结果判断，不要求数字完全相同。 |
