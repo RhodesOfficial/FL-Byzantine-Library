@@ -236,7 +236,9 @@ class D1CategoryCoverage(_BaseAggregator):
                 return None
         elif any(x > self.loss_tolerance + 1e-8 for x in deltas):
             return None
-        return sum(losses.values()) / len(losses)
+        score = sum(losses.values()) / len(losses)
+        baseline_macro = sum(baseline.values()) / len(baseline)
+        return score if score < baseline_macro else None
 
     def _root_fallback(self, root, basis, coefficients, labels, audit_model, base, baseline):
         """Try the declared root steps, then bounded halving before skipping."""
