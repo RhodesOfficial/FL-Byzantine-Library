@@ -263,7 +263,7 @@ def run_unit(index, unit, output_dir, gpu, *, rerun=False):
         "tail_benign_weight_loss": mean_available("tail_benign_weight_loss"),
         "weight_kind": rounds[-1]["weight_kind"],
         "tail_client_definition": runner.full_tail_client_definition,
-        "fallback_fraction": sum(r.get("aggregator_stats", {}).get("fallback", "none") != "none"
+        "fallback_fraction": sum((r.get("aggregator_stats") or {}).get("fallback", "none") != "none"
                                  for r in rounds) / 200,
         "root_compute_seconds_per_round": mean_available("root_compute_seconds"),
     }
