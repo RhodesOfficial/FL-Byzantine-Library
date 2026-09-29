@@ -1,6 +1,6 @@
 # AutoDL 运行 D1 完整实验
 
-推荐单张 RTX 4090D 24GB、至少 8 个 CPU 逻辑核心、32GB 内存和 50GB 数据盘；当前 `--all` 串行使用一张 GPU。租用时选 PyTorch 2.5.1 / Python 3.12 / CUDA 12.4 镜像。已有估算为 25–60 小时，实际以首个完整单元的 `seconds_per_round` 重估。实例报价以 AutoDL 页面为准。
+推荐单张 RTX 4090 或 4090D（均为 24GB）、至少 8 个 CPU 逻辑核心、32GB 内存和 50GB 数据盘；当前 `--all` 串行使用一张 GPU。租用时选 PyTorch 2.5.1 / Python 3.12 / CUDA 12.4 镜像。已有 4090D 估算为 25–60 小时，4090 实际耗时以首个完整单元的 `seconds_per_round` 重估。实例报价以 AutoDL 页面为准。
 
 ## 本地 Windows PowerShell
 
@@ -68,6 +68,23 @@ conda activate /root/autodl-tmp/conda/envs/flbyz312
 "$CONDA_PREFIX/bin/python" -c 'import torch; print(torch.__version__, torch.cuda.is_available())'
 bash scripts/autodl_experiment.sh check
 ```
+
+**后续新实例可复用镜像自带 PyTorch，避免重新下载约数 GB 的 PyTorch/CUDA 包。**先用下面的模式核验镜像版本；`setup` 会在数据盘创建一个继承镜像软件包的轻量 venv，只安装其余 D1 依赖。若镜像的 PyTorch、torchvision、CUDA 版本或 GPU 检查不符，该模式会立即失败，应使用上面的独立环境方式。当前已完成的独立环境不必重装。
+
+```bash
+cd /root/autodl-tmp/FL-Byzantine-Library
+AUTODL_ENV_MODE=image bash scripts/autodl_experiment.sh setup
+AUTODL_ENV_MODE=image bash scripts/autodl_experiment.sh check
+```
+
+此模式下，**每次**调用 `data-d1`、`verify-d1-offline`、`run-d1`、`summary-d1` 也都要加 `AUTODL_ENV_MODE=image`。例如在 tmux 中启动：
+
+```bash
+tmux new-session -d -s d1full \
+  'AUTODL_ENV_MODE=image bash /root/autodl-tmp/FL-Byzantine-Library/scripts/autodl_experiment.sh run-d1'
+```
+
+采用 `nohup` 时，把原命令改成 `nohup env AUTODL_ENV_MODE=image bash scripts/autodl_experiment.sh run-d1 > outputs/d1_3b/launcher.log 2>&1 < /dev/null &`。两种模式都在数据盘保存实验日志与结果。镜像模式依赖系统盘上的基础镜像；更换镜像后应重新运行 `setup` 和 `check`。
 
 FLGo 的实际数据目录由 `easyFL/flgo/benchmark/__init__.py` 中的 `data_root` 决定，默认是仓库内的 `easyFL/flgo/benchmark/RAW_DATA`。本仓库放在 `/root/autodl-tmp`，因此原始数据也在数据盘。先下载并校验 CIFAR-10、CIFAR-100；任何失败都必须修复后重试，不会跳过该数据集。
 

@@ -7,7 +7,13 @@ PROJECT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
 DATA_DISK="${DATA_DISK:-/root/autodl-tmp}"
 CONDA_ENV_NAME="${CONDA_ENV_NAME:-flbyz312}"
 ENV_DIR="$DATA_DISK/conda/envs/$CONDA_ENV_NAME"
-PYTHON_BIN="$ENV_DIR/bin/python"
+AUTODL_ENV_MODE="${AUTODL_ENV_MODE:-isolated}"
+CONDA_BASE="${CONDA_BASE:-/root/miniconda3}"
+case "$AUTODL_ENV_MODE" in
+    isolated) PYTHON_BIN="$ENV_DIR/bin/python" ;;
+    image) PYTHON_BIN="$DATA_DISK/venvs/flbyz-image/bin/python" ;;
+    *) printf 'ERROR: AUTODL_ENV_MODE must be isolated or image\n' >&2; exit 2 ;;
+esac
 GPU_INDEX="${GPU_INDEX:-0}"
 OUTPUT_DIR="${OUTPUT_DIR:-$PROJECT_DIR/outputs/d1_3b}"
 LOG_FILE="${LOG_FILE:-$OUTPUT_DIR/run.log}"
@@ -30,25 +36,47 @@ check_paths() {
 }
 
 require_python() {
-    [[ -x "$PYTHON_BIN" ]] || die "Conda environment missing: $PYTHON_BIN (run setup)"
+    [[ -x "$PYTHON_BIN" ]] || die "Python environment missing: $PYTHON_BIN (run setup with AUTODL_ENV_MODE=$AUTODL_ENV_MODE)"
 }
 
 setup_env() {
     check_paths
-    local conda_sh="${CONDA_BASE:-/root/miniconda3}/etc/profile.d/conda.sh"
+    local conda_sh="$CONDA_BASE/etc/profile.d/conda.sh"
     [[ -f "$conda_sh" ]] || die "Conda activation script missing: $conda_sh"
     # Keep package caches and the environment off the system disk.
     export CONDA_PKGS_DIRS="$DATA_DISK/conda/pkgs"
     export PIP_CACHE_DIR="$DATA_DISK/pip-cache"
     mkdir -p "$CONDA_PKGS_DIRS" "$PIP_CACHE_DIR" "$(dirname "$ENV_DIR")"
-    # shellcheck disable=SC1090
-    source "$conda_sh"
-    if [[ ! -x "$PYTHON_BIN" ]]; then
-        conda create -y -p "$ENV_DIR" python=3.12 pip
+    if [[ "$AUTODL_ENV_MODE" == image ]]; then
+        local image_python="$CONDA_BASE/bin/python"
+        [[ -x "$image_python" ]] || die "Image Python missing: $image_python"
+        # Refuse an incompatible image before creating the overlay. The venv
+        # inherits image packages, so torch/CUDA wheels are not downloaded.
+        GPU_INDEX="$GPU_INDEX" "$image_python" - <<'PY'
+import os
+import torch
+import torchvision
+
+index = int(os.environ['GPU_INDEX'])
+assert torch.__version__.split('+')[0] == '2.5.1', torch.__version__
+assert torchvision.__version__.split('+')[0] == '0.20.1', torchvision.__version__
+assert torch.version.cuda == '12.4', torch.version.cuda
+assert torch.cuda.is_available() and index < torch.cuda.device_count()
+print(f'IMAGE_TORCH_OK torch={torch.__version__} CUDA={torch.version.cuda}', flush=True)
+PY
+        if [[ ! -x "$PYTHON_BIN" ]]; then
+            "$image_python" -m venv --system-site-packages "$(dirname "$PYTHON_BIN")"
+        fi
+    else
+        # shellcheck disable=SC1090
+        source "$conda_sh"
+        if [[ ! -x "$PYTHON_BIN" ]]; then
+            conda create -y -p "$ENV_DIR" python=3.12 pip
+        fi
+        conda activate "$ENV_DIR"
+        "$PYTHON_BIN" -m pip install torch==2.5.1 torchvision==0.20.1 \
+            --index-url https://download.pytorch.org/whl/cu124
     fi
-    conda activate "$ENV_DIR"
-    "$PYTHON_BIN" -m pip install torch==2.5.1 torchvision==0.20.1 \
-        --index-url https://download.pytorch.org/whl/cu124
     # Versions mirror the locally checked D1 environment. hdbscan is not used
     # by D1; future experiments can install their own extra dependencies.
     "$PYTHON_BIN" -m pip install numpy==1.26.4 scipy==1.13.1 \
@@ -64,6 +92,7 @@ check_env() {
     require_python
     command -v nvidia-smi >/dev/null || die "nvidia-smi is unavailable"
     nvidia-smi --query-gpu=index,name,memory.total,driver_version --format=csv,noheader
+    printf 'ENV_MODE=%s PYTHON_BIN=%s\n' "$AUTODL_ENV_MODE" "$PYTHON_BIN"
     GPU_INDEX="$GPU_INDEX" "$PYTHON_BIN" -u - <<'PY'
 import os
 import torch
@@ -181,7 +210,7 @@ case "$command_name" in
     *)
         cat <<'USAGE'
 Usage: bash scripts/autodl_experiment.sh COMMAND
-  setup       Create a data-disk Conda environment and install D1 dependencies
+  setup       Install D1 dependencies in the selected data-disk environment
   check       Check paths, CUDA, dependencies and the 100-unit plan
   data-d1     Download/verify both CIFAR datasets; fail on any error
   verify-d1-offline  Verify staged CIFAR data without network access
@@ -190,7 +219,9 @@ Usage: bash scripts/autodl_experiment.sh COMMAND
   summary-d1  Summarize completed D1 reports
   status      Show process, GPU, completed reports and recent log lines
 Environment overrides: DATA_DISK, CONDA_ENV_NAME, CONDA_BASE, GPU_INDEX,
-                       OUTPUT_DIR, LOG_FILE.
+                       OUTPUT_DIR, LOG_FILE, AUTODL_ENV_MODE=isolated|image.
+  image mode reuses the image's verified torch/CUDA through a data-disk venv.
+  Pass AUTODL_ENV_MODE=image to every command when using that mode.
 USAGE
         [[ -z "$command_name" ]] || exit 2
         ;;
