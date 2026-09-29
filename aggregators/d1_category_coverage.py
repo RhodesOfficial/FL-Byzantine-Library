@@ -238,6 +238,24 @@ class D1CategoryCoverage(_BaseAggregator):
             return None
         return sum(losses.values()) / len(losses)
 
+    def _root_fallback(self, root, basis, coefficients, labels, audit_model, base, baseline):
+        """Try the declared root steps, then bounded halving before skipping."""
+        for step in self.candidate_steps:
+            candidate = self._cap(step * root, self.clip_norm)
+            if self._feasible(candidate, basis, coefficients, labels,
+                              audit_model, base, baseline) is not None:
+                return candidate, step
+        step = min(self.candidate_steps)
+        for _ in range(8):
+            step *= 0.5
+            candidate = self._cap(step * root, self.clip_norm)
+            if candidate.norm().item() < 1e-8:
+                break
+            if self._feasible(candidate, basis, coefficients, labels,
+                              audit_model, base, baseline) is not None:
+                return candidate, step
+        return None, 0.0
+
     def __call__(self, inputs):
         if not inputs:
             raise ValueError("D1 requires at least one client update")
@@ -314,13 +332,10 @@ class D1CategoryCoverage(_BaseAggregator):
                     best_lambda, best_step = lam, step
                     stats["residual_norm"] = float(self._cap(step * residual, budget).norm())
         if best is None:
-            for step in self.candidate_steps:
-                candidate = self._cap(step * root, self.clip_norm)
-                score = self._feasible(candidate, basis, coefficients, reliable, audit_model, base, baseline)
-                if score is not None:
-                    best = candidate
-                    stats["fallback"] = "root"
-                    break
+            best, best_step = self._root_fallback(
+                root, basis, coefficients, reliable, audit_model, base, baseline)
+            if best is not None:
+                stats["fallback"] = "root"
         if best is None:
             best = torch.zeros_like(first)
             stats["fallback"] = "skip_audit"

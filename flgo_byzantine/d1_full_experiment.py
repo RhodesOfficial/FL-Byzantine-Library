@@ -32,6 +32,7 @@ SCENES = (
 )
 CONTROLS = ("avg", "fltrust", "brdrag", "flest", "balanced_brdrag")
 ABLATIONS = ("single_root", "no_residual", "global_audit", "balanced_splice")
+D1_ALGORITHM_VERSION = "root-backtracking-v1"
 
 
 @dataclass(frozen=True)
@@ -187,12 +188,20 @@ def _evaluate(model, dataset, device, tail_classes, batch_size=128):
     return per_class, sum(confusion_correct) / sum(confusion_total)
 
 
+def _validate_report(report, index, unit):
+    if report.get("index") != index or report.get("unit") != asdict(unit):
+        raise ValueError(f"report {index} does not match the fixed 3B plan")
+    if (unit.method == "d1"
+            and report.get("d1_algorithm_version") != D1_ALGORITHM_VERSION):
+        raise ValueError(
+            f"report {index} uses an older D1 algorithm; rerun this unit with --rerun")
+
+
 def run_unit(index, unit, output_dir, gpu, *, rerun=False):
     report_file = output_dir / "reports" / f"unit_{index:03d}.json"
     if report_file.exists() and not rerun:
         existing = json.loads(report_file.read_text(encoding="utf-8"))
-        if existing.get("index") != index or existing.get("unit") != asdict(unit):
-            raise ValueError("existing unit report does not match the fixed 3B plan")
+        _validate_report(existing, index, unit)
         return existing
     task, core = _task_for(unit, output_dir)
     # Initialize the selected CUDA allocator before resetting its peak stats.
@@ -234,6 +243,7 @@ def run_unit(index, unit, output_dir, gpu, *, rerun=False):
 
     report = {
         "index": index, "unit": asdict(unit), "task": str(task),
+        "d1_algorithm_version": D1_ALGORITHM_VERSION if unit.method == "d1" else None,
         "overall_accuracy": overall,
         "macro_accuracy": sum(per_class) / n_classes,
         "tail_accuracy": sum(per_class[c] for c in tail) / len(tail),
@@ -270,8 +280,7 @@ def summarize(output_dir):
         path = output_dir / "reports" / f"unit_{index:03d}.json"
         if path.exists():
             row = json.loads(path.read_text(encoding="utf-8"))
-            if row.get("index") != index or row.get("unit") != asdict(unit):
-                raise ValueError(f"report {index} does not match the frozen plan")
+            _validate_report(row, index, unit)
             rows.append(row)
         else:
             missing.append(index)
