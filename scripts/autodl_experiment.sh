@@ -100,6 +100,27 @@ for name in ('CIFAR10', 'CIFAR100'):
 PY
 }
 
+verify_d1_offline() {
+    check_paths
+    require_python
+    # Check that staged public data has the exact torchvision CIFAR layout.
+    # download=False guarantees this command makes no network request.
+    PYTHONPATH="$PROJECT_DIR/easyFL:$PROJECT_DIR${PYTHONPATH:+:$PYTHONPATH}" \
+        "$PYTHON_BIN" -u - <<'PY'
+from pathlib import Path
+import flgo.benchmark
+from torchvision.datasets import CIFAR10, CIFAR100
+
+root = Path(flgo.benchmark.data_root).resolve()
+print(f'FLGO_RAW_DATA={root}', flush=True)
+for name, cls in (('CIFAR10', CIFAR10), ('CIFAR100', CIFAR100)):
+    train = cls(root=str(root / name), train=True, download=False)
+    test = cls(root=str(root / name), train=False, download=False)
+    assert len(train) == 50000 and len(test) == 10000, name
+    print(f'{name}_OFFLINE_READY train={len(train)} test={len(test)}', flush=True)
+PY
+}
+
 start_log() {
     command -v flock >/dev/null || die "flock is unavailable"
     mkdir -p "$OUTPUT_DIR" "$(dirname "$LOG_FILE")"
@@ -134,6 +155,7 @@ case "$command_name" in
     setup) setup_env ;;
     check) check_env ;;
     data-d1) prepare_d1_data ;;
+    verify-d1-offline) verify_d1_offline ;;
     run-d1)
         start_log
         check_env
@@ -162,6 +184,7 @@ Usage: bash scripts/autodl_experiment.sh COMMAND
   setup       Create a data-disk Conda environment and install D1 dependencies
   check       Check paths, CUDA, dependencies and the 100-unit plan
   data-d1     Download/verify both CIFAR datasets; fail on any error
+  verify-d1-offline  Verify staged CIFAR data without network access
   run-d1      Log, verify data, then run all 100 D1 units
   run         Log a different Python entrypoint and its arguments
   summary-d1  Summarize completed D1 reports

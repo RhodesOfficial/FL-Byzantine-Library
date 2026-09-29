@@ -79,6 +79,27 @@ bash scripts/autodl_experiment.sh data-d1
 
 预期出现 `CIFAR10_READY train=50000 test=10000` 与 `CIFAR100_READY train=50000 test=10000`。CIFAR-LT 由实验代码从原始训练集生成，无需另外下载。数据目录被 `.gitignore` 排除。
 
+### 使用 AutoDL 公开数据（若目录中确有原始 CIFAR-10/100）
+
+在 AutoDL 控制台的「公开数据」中分别搜索 CIFAR-10 和 CIFAR-100，记录各自的**实例内实际路径和文件格式**。公开数据挂载通常只读；官方建议将找到的压缩包复制或解压到 `/root/autodl-tmp`。当前目录结构满足这一要求。切勿把已经做过长尾划分、重排标签或改用图片文件夹格式的数据当作原始 CIFAR 输入。
+
+如果公开数据恰好是原版 `cifar-10-python.tar.gz` 和 `cifar-100-python.tar.gz`，先按实际路径替换两个占位符，检查压缩包内容，再分别解压。压缩包内应有 `cifar-10-batches-py/` 或 `cifar-100-python/` 顶层目录：
+
+```bash
+PUBLIC_C10_ARCHIVE='/root/autodl-pub/REPLACE/cifar-10-python.tar.gz'
+PUBLIC_C100_ARCHIVE='/root/autodl-pub/REPLACE/cifar-100-python.tar.gz'
+tar -tzf "$PUBLIC_C10_ARCHIVE" | head
+tar -tzf "$PUBLIC_C100_ARCHIVE" | head
+DATA_ROOT='/root/autodl-tmp/FL-Byzantine-Library/easyFL/flgo/benchmark/RAW_DATA'
+mkdir -p "$DATA_ROOT/CIFAR10" "$DATA_ROOT/CIFAR100"
+tar -xzf "$PUBLIC_C10_ARCHIVE" -C "$DATA_ROOT/CIFAR10"
+tar -xzf "$PUBLIC_C100_ARCHIVE" -C "$DATA_ROOT/CIFAR100"
+cd /root/autodl-tmp/FL-Byzantine-Library
+bash scripts/autodl_experiment.sh verify-d1-offline
+```
+
+若公开数据已经是上述两个解压后的目录，则将它们复制到对应的 `CIFAR10/`、`CIFAR100/` 下，再运行 `verify-d1-offline`。校验成功应输出两条 `*_OFFLINE_READY train=50000 test=10000`。该检查使用 `download=False`，缺文件或校验错误就停止，不会联网补救。校验通过后正常运行 `run-d1`；其 `download=True` 加载器会识别完整有效的本地文件并复用。若格式或校验值不匹配，先确认公开数据的具体版本和目录，不能静默替换科学设计中的原始 CIFAR。
+
 ### 推荐：tmux
 
 ```bash
