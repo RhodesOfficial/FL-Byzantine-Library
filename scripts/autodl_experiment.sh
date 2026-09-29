@@ -7,11 +7,12 @@ PROJECT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
 DATA_DISK="${DATA_DISK:-/root/autodl-tmp}"
 CONDA_ENV_NAME="${CONDA_ENV_NAME:-flbyz312}"
 ENV_DIR="$DATA_DISK/conda/envs/$CONDA_ENV_NAME"
+IMAGE_ENV_DIR="$DATA_DISK/venvs/flbyz-image"
 AUTODL_ENV_MODE="${AUTODL_ENV_MODE:-isolated}"
 CONDA_BASE="${CONDA_BASE:-/root/miniconda3}"
 case "$AUTODL_ENV_MODE" in
     isolated) PYTHON_BIN="$ENV_DIR/bin/python" ;;
-    image) PYTHON_BIN="$DATA_DISK/venvs/flbyz-image/bin/python" ;;
+    image) PYTHON_BIN="$IMAGE_ENV_DIR/bin/python" ;;
     *) printf 'ERROR: AUTODL_ENV_MODE must be isolated or image\n' >&2; exit 2 ;;
 esac
 GPU_INDEX="${GPU_INDEX:-0}"
@@ -65,7 +66,7 @@ assert torch.cuda.is_available() and index < torch.cuda.device_count()
 print(f'IMAGE_TORCH_OK torch={torch.__version__} CUDA={torch.version.cuda}', flush=True)
 PY
         if [[ ! -x "$PYTHON_BIN" ]]; then
-            "$image_python" -m venv --system-site-packages "$(dirname "$PYTHON_BIN")"
+            "$image_python" -m venv --system-site-packages "$IMAGE_ENV_DIR"
         fi
     else
         # shellcheck disable=SC1090
