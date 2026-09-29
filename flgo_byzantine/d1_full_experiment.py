@@ -174,6 +174,9 @@ def run_unit(index, unit, output_dir, gpu, *, rerun=False):
             raise ValueError("existing unit report does not match the fixed 3B plan")
         return existing
     task, core = _task_for(unit, output_dir)
+    # Initialize the selected CUDA allocator before resetting its peak stats.
+    # PyTorch 2.5.1 rejects this reset when no allocation has occurred yet.
+    torch.empty(1, device=torch.device("cuda", gpu))
     torch.cuda.reset_peak_memory_stats(gpu)
     runner = flgo.init(str(task), d1_full_algorithm, _options(unit, gpu),
                        Logger=ByzantineLogger)
