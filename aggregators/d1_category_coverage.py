@@ -9,12 +9,29 @@ from __future__ import annotations
 
 import copy
 import math
+import random
 from collections import defaultdict
+from contextlib import contextmanager
 
+import numpy as np
 import torch
 from torch.utils.data import DataLoader, Subset
 
 from .base import _BaseAggregator
+
+
+@contextmanager
+def _preserve_global_rng():
+    """Keep root data and calculator randomness local to one D1 call."""
+    numpy_state = np.random.get_state()
+    python_state = random.getstate()
+    devices = list(range(torch.cuda.device_count())) if torch.cuda.is_available() else []
+    with torch.random.fork_rng(devices=devices):
+        try:
+            yield
+        finally:
+            np.random.set_state(numpy_state)
+            random.setstate(python_state)
 
 
 class D1CategoryCoverage(_BaseAggregator):
@@ -73,7 +90,9 @@ class D1CategoryCoverage(_BaseAggregator):
         self.candidate_lambdas = tuple(float(x) for x in candidate_lambdas)
         self.candidate_steps = tuple(float(x) for x in candidate_steps)
         self.ablation = ablation
-        self.train_indices, self.audit_indices = self._split_root(seed)
+        self._loader_generator = torch.Generator().manual_seed(int(seed))
+        with _preserve_global_rng():
+            self.train_indices, self.audit_indices = self._split_root(seed)
         self.last_stats = {}
         self.last_client_weights = []
 
@@ -108,7 +127,8 @@ class D1CategoryCoverage(_BaseAggregator):
     def _batches(self, indices):
         subset = Subset(self.context.root_data, indices)
         return DataLoader(subset, batch_size=self.batch_size, shuffle=False,
-                          collate_fn=getattr(self.context.calculator, "collate_fn", None))
+                          collate_fn=getattr(self.context.calculator, "collate_fn", None),
+                          generator=self._loader_generator)
 
     def _loss(self, model, batch):
         result = self.context.calculator.compute_loss(model, batch)
@@ -259,6 +279,10 @@ class D1CategoryCoverage(_BaseAggregator):
         return None, 0.0
 
     def __call__(self, inputs):
+        with _preserve_global_rng():
+            return self._aggregate(inputs)
+
+    def _aggregate(self, inputs):
         if not inputs:
             raise ValueError("D1 requires at least one client update")
         self.last_client_weights = [0.0] * len(inputs)

@@ -1,8 +1,10 @@
 """Mock-data checks for D1's evidence, budget, fallback and sign contract."""
 
+import random
 import unittest
 from types import SimpleNamespace
 
+import numpy as np
 import torch
 
 from aggregators.d1_category_coverage import D1CategoryCoverage
@@ -16,6 +18,16 @@ class ToyCalculator:
         target = torch.ones_like(labels, dtype=features.dtype)
         prediction = model(features).squeeze(-1)
         return {"loss": ((prediction - target) ** 2).mean()}
+
+
+class RandomizedCalculator(ToyCalculator):
+    def compute_loss(self, model, batch):
+        torch.rand(())
+        np.random.rand()
+        random.random()
+        if torch.cuda.is_available():
+            torch.rand((), device="cuda")
+        return super().compute_loss(model, batch)
 
 
 def fixture(include_second=True, **kwargs):
@@ -32,6 +44,43 @@ def fixture(include_second=True, **kwargs):
 
 
 class D1CategoryCoverageTests(unittest.TestCase):
+    def test_call_preserves_global_rng_and_aggregation_output(self):
+        aggregator = fixture(candidate_steps=(1.0, 0.5, 0.25, 0.125))
+        aggregator.context.calculator = RandomizedCalculator()
+        devices = list(range(torch.cuda.device_count())) if torch.cuda.is_available() else []
+        numpy_state = np.random.get_state()
+        python_state = random.getstate()
+        try:
+            with torch.random.fork_rng(devices=devices):
+                torch.manual_seed(123)
+                np.random.seed(123)
+                random.seed(123)
+                if devices:
+                    torch.cuda.manual_seed_all(123)
+                before_torch = torch.random.get_rng_state().clone()
+                before_cuda = [state.clone() for state in torch.cuda.get_rng_state_all()] if devices else []
+                before_numpy = np.random.get_state()
+                before_python = random.getstate()
+
+                result = aggregator([torch.tensor([-0.3, -0.3])])
+
+                self.assertTrue(torch.equal(torch.random.get_rng_state(), before_torch))
+                self.assertTrue(all(torch.equal(after, before) for after, before in
+                                    zip(torch.cuda.get_rng_state_all(), before_cuda)))
+                after_numpy = np.random.get_state()
+                self.assertEqual(after_numpy[0], before_numpy[0])
+                np.testing.assert_array_equal(after_numpy[1], before_numpy[1])
+                self.assertEqual(after_numpy[2:], before_numpy[2:])
+                self.assertEqual(random.getstate(), before_python)
+                self.assertTrue(torch.allclose(
+                    result, torch.tensor([-0.10000000894069672, -0.10000000894069672]),
+                    rtol=0, atol=1e-7))
+                self.assertEqual(aggregator.last_stats["fallback"], "none")
+                self.assertEqual(aggregator.last_stats["selected_step"], 1.0)
+        finally:
+            np.random.set_state(numpy_state)
+            random.setstate(python_state)
+
     def test_category_evidence_uses_disjoint_root_sets(self):
         aggregator = fixture(include_second=False)
         train = aggregator.train_indices[0]
