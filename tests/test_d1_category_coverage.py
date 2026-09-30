@@ -44,6 +44,11 @@ def fixture(include_second=True, **kwargs):
 
 
 class D1CategoryCoverageTests(unittest.TestCase):
+    def test_default_candidate_steps_include_extended_grid(self):
+        self.assertEqual(
+            fixture().candidate_steps,
+            (1.0, 0.5, 0.25, 0.125, 0.0625, 0.03125, 0.015625))
+
     def test_call_preserves_global_rng_and_aggregation_output(self):
         aggregator = fixture(candidate_steps=(1.0, 0.5, 0.25, 0.125))
         aggregator.context.calculator = RandomizedCalculator()

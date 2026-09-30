@@ -49,7 +49,7 @@ class D1CategoryCoverage(_BaseAggregator):
                  reliability_floor: float = 0.05, batch_size: int = 64,
                  seed: int = 0, median_steps: int = 20,
                  candidate_lambdas=(0.0, 0.25, 0.5, 1.0),
-                 candidate_steps=(1.0, 0.5, 0.25, 0.125),
+                 candidate_steps=(1.0, 0.5, 0.25, 0.125, 0.0625, 0.03125, 0.015625),
                  ablation: str = "none"):
         if context is None or context.root_data is None:
             raise ValueError("D1 requires an isolated trusted root dataset and runtime context")
