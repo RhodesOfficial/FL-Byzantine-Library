@@ -8,6 +8,8 @@ The root set must have been isolated from client training by the caller.
 from __future__ import annotations
 
 import copy
+import hashlib
+import json
 import math
 import random
 from collections import defaultdict
@@ -95,6 +97,88 @@ class D1CategoryCoverage(_BaseAggregator):
             self.train_indices, self.audit_indices = self._split_root(seed)
         self.last_stats = {}
         self.last_client_weights = []
+        self._audit_scope = {
+            "sample_count": sum(map(len, self.audit_indices.values())),
+            "class_counts": {c: len(v) for c, v in self.audit_indices.items()},
+            "indices_sha256": hashlib.sha256(json.dumps(
+                self.audit_indices, sort_keys=True).encode("utf-8")).hexdigest(),
+            "fixed_across_rounds": True,
+            "model_point": "current_round_pre_aggregation_global_model",
+            "macro_definition": "unweighted_mean_over_nonempty_audit_classes",
+        }
+        self.last_diagnostics = {}
+
+    def _diagnostic_candidate(self, candidate, step, lam, residual_norm, stage):
+        diagnostic = getattr(self, "last_diagnostics", None)
+        self._active_diagnostic_candidate = None
+        if diagnostic is not None:
+            norm = candidate.norm().item()
+            entry = {"stage": stage, "step": float(step), "lambda": lam,
+                     "residual_norm": float(residual_norm), "update_norm": norm,
+                     "is_zero_update": norm <= 1e-12, "rejected_by": None,
+                     "passed_feasibility": None, "selected": False}
+            diagnostic["candidates"].append(entry)
+            self._active_diagnostic_candidate = entry
+
+    def _diagnostic_reject(self, reason):
+        entry = getattr(self, "_active_diagnostic_candidate", None)
+        if entry is not None:
+            entry["rejected_by"] = reason
+
+    def _diagnostic_score(self, score):
+        entry = getattr(self, "_active_diagnostic_candidate", None)
+        if entry is not None:
+            entry["passed_feasibility"] = score is not None
+            if score is None and entry["rejected_by"] is None:
+                entry["rejected_by"] = "other"
+
+    def _finish_diagnostics(self, result):
+        diagnostic, stats = self.last_diagnostics, self.last_stats
+        fallback = stats["fallback"]
+        diagnostic["return_path"] = {"none": "success", "root": "fallback_root",
+                                     "skip_audit": "skip_audit"}.get(fallback, "zero_update")
+        step = stats.get("selected_step", 0.0)
+        budget = (0.0 if self.ablation == "no_residual" else
+                  self.clip_norm * self.residual_budget_ratio)
+        diagnostic.update(selected_step=step, selected_lambda=stats.get("selected_lambda", 0.0),
+                          residual_norm=stats["residual_norm"], update_norm=result.norm().item(),
+                          is_zero_update=result.norm().item() <= 1e-12,
+                          residual_budget_upper_bound=step * budget,
+                          residual_budget_used_ratio=(stats["residual_norm"] / (step * budget)
+                                                      if step * budget > 0 else None))
+        baseline = self._diagnostic_audit_baseline
+        if baseline is None:
+            diagnostic["skip_reason"] = fallback
+            return
+        diagnostic["root_audit_per_class_loss"] = dict(baseline)
+        fixed_losses = dict(baseline)
+        missing = [c for c, indices in self.audit_indices.items() if indices and c not in baseline]
+        if missing:
+            # Diagnostic-only forwards on uncovered audit classes use private
+            # model/calculator/loader state and cannot affect candidate selection.
+            with _preserve_global_rng():
+                calculator = copy.deepcopy(self.context.calculator)
+                probe = copy.deepcopy(self.context.model)
+                probe.eval()
+                generator = torch.Generator()
+                generator.set_state(self._loader_generator.get_state())
+                with torch.no_grad():
+                    for label in missing:
+                        total, count = 0.0, 0
+                        loader = DataLoader(Subset(self.context.root_data, self.audit_indices[label]),
+                                            batch_size=self.batch_size, shuffle=False,
+                                            collate_fn=getattr(calculator, "collate_fn", None),
+                                            generator=generator)
+                        for batch in loader:
+                            value = calculator.compute_loss(probe, batch)
+                            loss = value["loss"] if isinstance(value, dict) else value
+                            n = len(batch[-1])
+                            total += float(loss) * n
+                            count += n
+                        fixed_losses[label] = total / count
+        diagnostic["root_audit_fixed_per_class_loss"] = fixed_losses
+        diagnostic["root_audit_macro_loss"] = sum(fixed_losses.values()) / len(fixed_losses)
+        diagnostic["skip_reason"] = None
 
     def _split_root(self, seed):
         """Fixed, stratified, disjoint split; no client metadata is consumed."""
@@ -245,42 +329,69 @@ class D1CategoryCoverage(_BaseAggregator):
         increments = [torch.dot(coefficients[label], projected).item() for label in labels]
         if self.ablation == "global_audit":
             if sum(increments) / len(increments) > self.loss_tolerance + 1e-8:
+                self._diagnostic_reject("first_order_constraint")
                 return None
         elif any(x > self.loss_tolerance + 1e-8 for x in increments):
+            self._diagnostic_reject("first_order_constraint")
             return None
         self._set_displacement(audit_model, base, displacement)
         losses = self._audit_losses(audit_model, labels)
         deltas = [losses[label] - baseline[label] for label in labels]
         if self.ablation == "global_audit":
             if sum(deltas) / len(deltas) > self.loss_tolerance + 1e-8:
+                self._diagnostic_reject("audit_loss")
                 return None
         elif any(x > self.loss_tolerance + 1e-8 for x in deltas):
+            self._diagnostic_reject("audit_loss")
             return None
         score = sum(losses.values()) / len(losses)
         baseline_macro = sum(baseline.values()) / len(baseline)
+        if not score < baseline_macro:
+            self._diagnostic_reject("macro_average_gate")
         return score if score < baseline_macro else None
 
     def _root_fallback(self, root, basis, coefficients, labels, audit_model, base, baseline):
         """Try the declared root steps, then bounded halving before skipping."""
         for step in self.candidate_steps:
             candidate = self._cap(step * root, self.clip_norm)
-            if self._feasible(candidate, basis, coefficients, labels,
-                              audit_model, base, baseline) is not None:
+            self._diagnostic_candidate(candidate, step, 0.0, 0.0, "root_fallback")
+            score = self._feasible(candidate, basis, coefficients, labels,
+                                   audit_model, base, baseline)
+            self._diagnostic_score(score)
+            if score is not None:
+                if getattr(self, "_active_diagnostic_candidate", None) is not None:
+                    self._active_diagnostic_candidate["selected"] = True
                 return candidate, step
         step = min(self.candidate_steps)
         for _ in range(8):
             step *= 0.5
             candidate = self._cap(step * root, self.clip_norm)
+            self._diagnostic_candidate(candidate, step, 0.0, 0.0, "root_backtracking")
             if candidate.norm().item() < 1e-8:
+                self._diagnostic_reject("other")
+                self._diagnostic_score(None)
                 break
-            if self._feasible(candidate, basis, coefficients, labels,
-                              audit_model, base, baseline) is not None:
+            score = self._feasible(candidate, basis, coefficients, labels,
+                                   audit_model, base, baseline)
+            self._diagnostic_score(score)
+            if score is not None:
+                if getattr(self, "_active_diagnostic_candidate", None) is not None:
+                    self._active_diagnostic_candidate["selected"] = True
                 return candidate, step
         return None, 0.0
 
     def __call__(self, inputs):
         with _preserve_global_rng():
-            return self._aggregate(inputs)
+            self.last_diagnostics = {"root_audit_scope": self._audit_scope,
+                                     "root_audit_macro_loss": None,
+                                     "root_audit_per_class_loss": None,
+                                     "root_audit_fixed_per_class_loss": None,
+                                     "skip_reason": None, "candidates": []}
+            self._diagnostic_audit_baseline = None
+            self._active_diagnostic_candidate = None
+            result = self._aggregate(inputs)
+            self._finish_diagnostics(result)
+            return result
 
     def _aggregate(self, inputs):
         if not inputs:
@@ -346,17 +457,23 @@ class D1CategoryCoverage(_BaseAggregator):
                   self.clip_norm * self.residual_budget_ratio)
         baseline_model = copy.deepcopy(model)
         baseline = self._audit_losses(baseline_model, reliable)
+        self._diagnostic_audit_baseline = baseline
         audit_model = copy.deepcopy(model)
         best, best_loss, best_lambda, best_step = None, float("inf"), 0.0, 0.0
         for step in self.candidate_steps:
             for lam in (self.candidate_lambdas if self.mode == "majority" else (0.0,)):
                 residual = self._cap(lam * median, budget)
                 candidate = self._cap(step * (trusted + residual), self.clip_norm)
+                self._diagnostic_candidate(candidate, step, float(lam),
+                                           self._cap(step * residual, budget).norm().item(), "main_grid")
                 score = self._feasible(candidate, basis, coefficients, reliable, audit_model, base, baseline)
+                self._diagnostic_score(score)
                 if score is not None and score < best_loss:
                     best, best_loss = candidate, score
                     best_lambda, best_step = lam, step
                     stats["residual_norm"] = float(self._cap(step * residual, budget).norm())
+                    for entry in self.last_diagnostics["candidates"]:
+                        entry["selected"] = entry is self._active_diagnostic_candidate
         if best is None:
             best, best_step = self._root_fallback(
                 root, basis, coefficients, reliable, audit_model, base, baseline)

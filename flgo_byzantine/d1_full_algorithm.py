@@ -6,6 +6,7 @@ import json
 import math
 import time
 from collections import defaultdict
+from pathlib import Path
 
 import numpy as np
 import torch
@@ -46,6 +47,7 @@ class Server(BridgeServer):
         self.full_round_stats = []
         self._tail_client_ids = None
         self._attacker_samples = None
+        self._attacker_samples_raw_count = None
 
     def _load_context(self):
         if self._byz_root_data is None:
@@ -99,6 +101,7 @@ class Server(BridgeServer):
                 name = info["client_names"][cid]
                 selected.extend(i for i in info[name]["data"]
                                 if int(source.targets[i]) in self.full_tail_classes)
+            self._attacker_samples_raw_count = len(selected)
             selected = selected[:64]
             self._attacker_samples = [source[i] for i in selected]
         return self._attacker_samples
@@ -118,6 +121,39 @@ class Server(BridgeServer):
                     drag_strength=float(self.option.get("byz_d1_drag_strength", 0.5)))
         return self._byz_aggregator_instance
 
+    def _write_diagnostic(self, attack, instance):
+        output_dir = self.option.get("byz_diagnostic_output_dir")
+        if output_dir is None:
+            output_dir = Path(self.gv.logger.get_output_path()).parent
+        path = Path(output_dir) / "diagnostic_log.jsonl"
+        record = {
+            "schema_version": 1, "round": len(self.full_round_stats),
+            "seed": int(self.option["byz_seed"]), "method": self.byz_aggregator,
+            "attack_name": self.byz_attack,
+            "received_client_ids": [int(cid) for cid in self.received_clients],
+            "malicious_client_ids": [int(cid) for cid in self.received_clients
+                                     if cid in self.byz_malicious_ids],
+            "attack_called": attack is not None, "attack": attack,
+            "d1": instance.last_diagnostics if self.byz_aggregator == "d1" else None,
+        }
+        nonfinite_fields = []
+
+        def finite_json(value, location):
+            if isinstance(value, float) and not math.isfinite(value):
+                nonfinite_fields.append(location)
+                return None
+            if isinstance(value, dict):
+                return {key: finite_json(item, f"{location}.{key}") for key, item in value.items()}
+            if isinstance(value, (list, tuple)):
+                return [finite_json(item, f"{location}[{index}]") for index, item in enumerate(value)]
+            return value
+
+        record = finite_json(record, "record")
+        record["nonfinite_fields"] = nonfinite_fields
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("a", encoding="utf-8") as stream:
+            stream.write(json.dumps(record, ensure_ascii=False, allow_nan=False) + "\n")
+
     def aggregate(self, models: list, *args, **kwargs):
         if len(models) != len(self.received_clients):
             raise ValueError("received client IDs and models differ")
@@ -131,11 +167,15 @@ class Server(BridgeServer):
         benign_positions = [i for i in range(len(updates)) if i not in malicious]
         benign = [updates[i] for i in benign_positions]
         adaptive_zero = False
+        attack_diagnostics = None
         if malicious and self.byz_attack == "adaptive_root":
+            attack_diagnostics = {}
             crafted = root_constrained_update(
                 benign, self._byz_context, self._owned_tail_samples(),
                 self._root_train_indices(),
-                batch_size=int(self.option.get("byz_d1_batch_size", 64)))
+                batch_size=int(self.option.get("byz_d1_batch_size", 64)),
+                diagnostics=attack_diagnostics)
+            attack_diagnostics["attacker_samples_raw_count"] = self._attacker_samples_raw_count
             adaptive_zero = crafted.norm().item() <= 1e-12
             for i in malicious:
                 updates[i] = crafted.clone()
@@ -177,6 +217,7 @@ class Server(BridgeServer):
             stats["aggregator_stats"] = instance.get_attack_stats()
         self.byz_last_round = stats
         self.full_round_stats.append(stats)
+        self._write_diagnostic(attack_diagnostics, instance)
         return _model_from_update(self.model, aggregate)
 
 
