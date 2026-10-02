@@ -188,9 +188,12 @@ def _evaluate(model, dataset, device, tail_classes, batch_size=128):
     return per_class, sum(confusion_correct) / sum(confusion_total)
 
 
-def _validate_report(report, index, unit):
+def _validate_report(report, index, unit, *, baseline_version=None, root_budget=None):
     if report.get("index") != index or report.get("unit") != asdict(unit):
         raise ValueError(f"report {index} does not match the fixed 3B plan")
+    if baseline_version is not None and (report.get("baseline_version") != baseline_version
+                                         or report.get("root_budget") != root_budget):
+        raise ValueError(f"report {index} uses a different root baseline version/budget")
     if (unit.method == "d1"
             and report.get("d1_algorithm_version") != D1_ALGORITHM_VERSION):
         raise ValueError(

@@ -9,16 +9,22 @@ from __future__ import annotations
 
 import copy
 from collections import defaultdict
+from contextlib import nullcontext
 
 import torch
 from torch.utils.data import DataLoader, Subset
 
 from .base import _BaseAggregator
+from .d1_category_coverage import _preserve_global_rng
+
+LEGACY_BASELINE_VERSION = "root1000-v1"
+B_BASELINE_VERSION = "root2000-rng-v1"
 
 
 class RootBaseline(_BaseAggregator):
     def __init__(self, context, num_classes, method, seed=0, root_step=0.1,
-                 batch_size=64, drag_strength=0.5, splice_ratio=0.25):
+                 batch_size=64, drag_strength=0.5, splice_ratio=0.25,
+                 version=LEGACY_BASELINE_VERSION, root_budget=1000):
         if method not in {"fltrust", "brdrag", "flest", "balanced_brdrag",
                           "balanced_splice"}:
             raise ValueError("unknown root baseline")
@@ -31,6 +37,23 @@ class RootBaseline(_BaseAggregator):
         self.splice_ratio = splice_ratio
         self.seed = seed
         self.round_index = 0
+        self.version, self.root_budget = version, root_budget
+        if version not in {LEGACY_BASELINE_VERSION, B_BASELINE_VERSION}:
+            raise ValueError("unknown root baseline version")
+        self.protect_rng = version == B_BASELINE_VERSION
+        if root_budget != (2000 if self.protect_rng else 1000):
+            raise ValueError("root budget differs from baseline version")
+        if self.protect_rng and (method not in {"brdrag", "balanced_brdrag"}
+                                 or len(context.root_data) != root_budget):
+            raise ValueError("B baselines require the complete 2000-example root pool")
+        self._loader_generator = (torch.Generator().manual_seed(seed)
+                                  if self.protect_rng else None)
+        with _preserve_global_rng() if self.protect_rng else nullcontext():
+            self._initialize_indices(context, num_classes, seed)
+        self.last_client_weights = []
+        self.last_stats = {}
+
+    def _initialize_indices(self, context, num_classes, seed):
         buckets = defaultdict(list)
         for index in range(len(context.root_data)):
             buckets[int(context.root_data[index][-1])].append(index)
@@ -42,18 +65,22 @@ class RootBaseline(_BaseAggregator):
             indices = buckets[label]
             order = torch.randperm(len(indices), generator=generator).tolist()
             cut = len(indices) // 2
-            if len(indices) % 2 and extra:
+            if self.protect_rng:
+                cut = len(indices)
+            if not self.protect_rng and len(indices) % 2 and extra:
                 cut += 1
                 extra -= 1
             self.train_indices[label] = [indices[i] for i in order[:cut]]
-        self.last_client_weights = []
-        self.last_stats = {}
 
     def _root(self):
+        with _preserve_global_rng() if self.protect_rng else nullcontext():
+            return self._root_unprotected()
+
+    def _root_unprotected(self):
         all_indices = [i for indices in self.train_indices.values() for i in indices]
         if self.method in {"balanced_brdrag", "balanced_splice"}:
             labels = [label for label, indices in self.train_indices.items() if indices]
-            base, remainder = divmod(1000, len(labels))
+            base, remainder = divmod(self.root_budget, len(labels))
             generator = torch.Generator().manual_seed(self.seed + self.round_index + 919)
             all_indices = []
             for offset, label in enumerate(labels):
@@ -71,7 +98,8 @@ class RootBaseline(_BaseAggregator):
         optimizer = torch.optim.SGD(model.parameters(), lr=self.root_step)
         loader = DataLoader(Subset(self.context.root_data, all_indices),
                             batch_size=self.batch_size, shuffle=False,
-                            collate_fn=getattr(self.context.calculator, "collate_fn", None))
+                            collate_fn=getattr(self.context.calculator, "collate_fn", None),
+                            generator=self._loader_generator)
         model.train()
         for batch in loader:
             optimizer.zero_grad(set_to_none=True)
@@ -130,6 +158,9 @@ class RootBaseline(_BaseAggregator):
             scores = cosines.clamp_min(0)
             transformed = unit * root_norm
         elif self.method in {"brdrag", "balanced_brdrag", "balanced_splice"}:
+            # B diagnostics can use this actual lam and clamped norms:
+            # a_i=(1-lam_i)*root_norm/(len(inputs)*norms_i), b_i=0.
+            # Both bridge vectors have opposite sign to model displacements.
             lam = (self.drag_strength * (1 - cosines)).clamp(0, 1)
             scores = torch.ones_like(cosines)
             transformed = (1 - lam[:, None]) * unit * root_norm + lam[:, None] * root

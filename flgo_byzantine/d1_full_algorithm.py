@@ -11,7 +11,7 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from aggregators.d1_reference_baselines import RootBaseline
+from aggregators.d1_reference_baselines import RootBaseline, LEGACY_BASELINE_VERSION
 from attacks.d1_full_attacks import FixedTriggerDataset, root_constrained_update
 from attacks.flgo_label_flip import LabelFlippedDataset
 from .algorithm import (AggregationContext, Client as BridgeClient,
@@ -24,6 +24,16 @@ METHODS = frozenset({"avg", "d1", "fltrust", "brdrag", "flest",
                      "balanced_brdrag", "balanced_splice"})
 ATTACKS = frozenset({"none", "label_flip", "adaptive_root", "backdoor"})
 ROOT_METHODS = METHODS - {"avg"}
+
+
+def malicious_nonzero_fraction(updates, positions):
+    """Upload activity after attack, before defense; not attack effectiveness."""
+    if any(not torch.isfinite(update).all().item() for update in updates):
+        raise ValueError("non-finite post-attack client update")
+    norms = [updates[i].double().norm().item() for i in positions]
+    if any(not math.isfinite(norm) for norm in norms):
+        raise ValueError("non-finite malicious update norm")
+    return sum(norm > 1e-12 for norm in norms) / len(norms) if norms else None
 
 
 class Server(BridgeServer):
@@ -111,14 +121,16 @@ class Server(BridgeServer):
             name = self.byz_aggregator
             if name in {"avg", "d1"}:
                 self._byz_aggregator_instance = _build_aggregator(
-                    name, 20, 0, self.option, self._byz_context)
+                    name, len(self.received_clients), 0, self.option, self._byz_context)
             else:
                 self._byz_aggregator_instance = RootBaseline(
                     self._byz_context, int(self.option["byz_d1_num_classes"]), name,
                     seed=int(self.option["byz_seed"]),
                     root_step=float(self.option.get("byz_d1_root_step", 0.1)),
                     batch_size=int(self.option.get("byz_d1_batch_size", 64)),
-                    drag_strength=float(self.option.get("byz_d1_drag_strength", 0.5)))
+                    drag_strength=float(self.option.get("byz_d1_drag_strength", 0.5)),
+                    version=self.option.get("byz_baseline_version", LEGACY_BASELINE_VERSION),
+                    root_budget=int(self.option.get("byz_root_budget", 1000)))
         return self._byz_aggregator_instance
 
     def _write_diagnostic(self, attack, instance):
@@ -136,6 +148,8 @@ class Server(BridgeServer):
             "attack_called": attack is not None, "attack": attack,
             "d1": instance.last_diagnostics if self.byz_aggregator == "d1" else None,
         }
+        if self.option.get("byz_collect_nonzero", False):
+            record["malicious_nonzero_fraction"] = self.byz_last_round["malicious_nonzero_fraction"]
         nonfinite_fields = []
 
         def finite_json(value, location):
@@ -179,6 +193,8 @@ class Server(BridgeServer):
             adaptive_zero = crafted.norm().item() <= 1e-12
             for i in malicious:
                 updates[i] = crafted.clone()
+        if self.option.get("byz_collect_nonzero", False):
+            nonzero_fraction = malicious_nonzero_fraction(updates, malicious)
         start = time.perf_counter()
         instance = self._aggregator()
         aggregate = instance(updates)
@@ -187,8 +203,8 @@ class Server(BridgeServer):
                     or instance.last_stats.get("root_audit_count") != 1000):
                 raise AssertionError("D1 root training/audit split must be 1000/1000")
         elif self.byz_aggregator in ROOT_METHODS:
-            if sum(len(v) for v in instance.train_indices.values()) != 1000:
-                raise AssertionError("root baseline must train on exactly 1000 examples")
+            if sum(len(v) for v in instance.train_indices.values()) != instance.root_budget:
+                raise AssertionError("root baseline indices differ from configured budget")
         root_seconds = time.perf_counter() - start if self.byz_aggregator != "avg" else 0.0
         if aggregate.shape != base.shape or not torch.isfinite(aggregate).all():
             raise ValueError("aggregator returned invalid update")
@@ -213,6 +229,8 @@ class Server(BridgeServer):
             "weight_kind": "coefficient_proxy" if self.byz_aggregator == "d1" else "explicit",
             "adaptive_zero_update": adaptive_zero,
         }
+        if self.option.get("byz_collect_nonzero", False):
+            stats["malicious_nonzero_fraction"] = nonzero_fraction
         if hasattr(instance, "get_attack_stats"):
             stats["aggregator_stats"] = instance.get_attack_stats()
         self.byz_last_round = stats
