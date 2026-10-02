@@ -28,6 +28,7 @@ def dataset(name: str, train: bool):
 
 
 class LTGenerator(FromDatasetGenerator):
+    imbalance_ratio = 50
     def __init__(self, benchmark: str, name: str, missing_fraction: float, seed: int):
         if missing_fraction not in (0.0, 0.2):
             raise ValueError("D1 full supports only full or 20% missing root coverage")
@@ -46,7 +47,7 @@ class LTGenerator(FromDatasetGenerator):
         covered = list(range(self.num_classes - missing))
         root, pool = [], []
         max_count = 4000 if self.num_classes == 10 else 400
-        targets = [max(1, int(round(max_count * 50 ** (-c / (self.num_classes - 1)))))
+        targets = [max(1, int(round(max_count * self.imbalance_ratio ** (-c / (self.num_classes - 1)))))
                    for c in range(self.num_classes)]
         minimum = 20 if self.num_classes == 10 else 10
         root_counts = {c: minimum for c in covered}
@@ -97,7 +98,7 @@ class LTPipe(FromDatasetPipe):
             "lt_counts": generator.lt_counts,
             "root_counts": generator.root_counts,
             "root_scheme": "lt_proportional_minimum_v2",
-            "imbalance_ratio": 50,
+            "imbalance_ratio": generator.imbalance_ratio,
             "missing_fraction": generator.missing_fraction,
         }
         path.write_text(json.dumps(info), encoding="utf-8")
