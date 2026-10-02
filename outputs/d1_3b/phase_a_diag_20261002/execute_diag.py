@@ -118,7 +118,8 @@ def make_logger(directory, baseline_record=None, collect_class_stats=True):
             curves["learning_rate_used"].append(rate)
             curves["class_correct"].append(stats["class_correct"])
             curves["class_loss_mean"].append(stats["class_loss_mean"])
-            if baseline_record is not None:
+            if baseline_record is not None and round_number <= baseline_record["time"][-1]:
+                assert round_number == baseline_record["time"][index]
                 old_accuracy = baseline_record["test_accuracy"][index]
                 old_loss = baseline_record["test_loss"][index]
                 flags, self._trajectory_exceeded = trajectory_observations(
