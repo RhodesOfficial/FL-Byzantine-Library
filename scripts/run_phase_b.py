@@ -105,7 +105,7 @@ def create_runner(manifest, seed, method, directory, verification_rounds=None):
     task = validate_task(manifest["tasks"][str(seed)])
     options = dict(manifest["options"][str(seed)][method])
     if verification_rounds is not None:
-        assert verification_rounds in (10, 20)
+        assert verification_rounds in (1, 10, 20)
         options["num_rounds"] = verification_rounds
     options["byz_diagnostic_output_dir"] = str(directory)
     directory.mkdir(parents=True, exist_ok=False)

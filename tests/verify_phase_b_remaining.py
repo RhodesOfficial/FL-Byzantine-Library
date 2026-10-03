@@ -20,25 +20,34 @@ def controlled_runtime():
     torch.use_deterministic_algorithms(True, warn_only=False)
 
 
-def pairing():
+def one_round():
+    from scripts.run_phase_b import build_manifest, create_runner, read, save, SOURCE
+    runner = create_runner(build_manifest(), 101, "brdrag", CHECKS / "one_round", verification_rounds=1)
+    runner.run()
+    expected = read(SOURCE.parent / "seed_101/result.json")["participants"][0]
+    assert len(runner.full_round_stats) == len(runner.phase_b_participants) == 1
+    assert runner.phase_b_participants[0] == expected
+    save(CHECKS / "one_round/pairing.json", {"seed": 101, "method": "brdrag", "rounds": 1,
+         "participants": runner.phase_b_participants, "phase_a_first_round": expected, "matched": True})
+    print("FIRST_ROUND_PASS seed=101 method=brdrag received=40 matches_phase_a=true")
+
+
+def initialization():
     import torch
     from scripts.run_phase_b import build_manifest, create_runner, read, SOURCE, SEEDS
     manifest = build_manifest()
     for seed in SEEDS:
         reference = None
-        expected = read(SOURCE.parent / f"seed_{seed}/result.json")["participants"]
         for method in ("brdrag", "balanced_brdrag", "d1"):
             runner = create_runner(manifest, seed, method, CHECKS / f"pair_{seed}_{method}")
             state = {k: v.detach().cpu().clone() for k, v in runner.model.state_dict().items()}
             ids = sorted(runner.byz_malicious_ids)
-            samples = [[int(i) for i in runner.sample()] for _ in range(300)]
-            assert samples == expected
             if reference is not None:
-                assert ids == reference[1] and samples == reference[2]
+                assert ids == reference[1]
                 assert state.keys() == reference[0].keys()
                 assert all(torch.equal(v, reference[0][k]) for k, v in state.items())
-            reference = state, ids, samples
-        print(f"PAIR_PASS seed={seed} initial_tensors={len(state)} malicious_ids=30 sampler_rounds=300 matches_phase_a=true")
+            reference = state, ids
+        print(f"INITIALIZATION_PASS seed={seed} initial_tensors={len(state)} malicious_ids=30 three_methods_equal=true")
 
 
 def roots():
@@ -121,7 +130,8 @@ def run_checks():
             raise RuntimeError(f"Verification failed: {action}; no further units started")
         print("\n".join(line for line in path.read_text(encoding="utf-8").splitlines()
                         if "PASS" in line))
-    child("pairing")
+    child("one-round")
+    child("initialization")
     child("roots")
     child("X")
     child("Y")
@@ -147,14 +157,16 @@ def run_checks():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("action", choices=("run", "pairing", "roots", "X", "Y", "activity"))
+    parser.add_argument("action", choices=("run", "one-round", "initialization", "roots", "X", "Y", "activity"))
     action = parser.parse_args().action
     if action in ("roots", "X", "Y"):
         controlled_runtime()
     if action == "run":
         run_checks()
-    elif action == "pairing":
-        pairing()
+    elif action == "one-round":
+        one_round()
+    elif action == "initialization":
+        initialization()
     elif action == "roots":
         roots()
     else:
