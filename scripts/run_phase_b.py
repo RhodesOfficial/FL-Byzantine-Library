@@ -96,7 +96,8 @@ def prepare():
     print("B_MANIFEST_READY tasks_generated=false root_budget=2000")
 
 
-def create_runner(manifest, seed, method, directory, verification_rounds=None):
+def create_runner(manifest, seed, method, directory, verification_rounds=None,
+                  collect_contributions=False):
     import torch
     import flgo
     from flgo_byzantine import d1_full_algorithm
@@ -104,6 +105,8 @@ def create_runner(manifest, seed, method, directory, verification_rounds=None):
     assert seed in SEEDS and method in METHODS
     task = validate_task(manifest["tasks"][str(seed)])
     options = dict(manifest["options"][str(seed)][method])
+    if collect_contributions:
+        options["byz_collect_contributions"] = True
     if verification_rounds is not None:
         assert verification_rounds in (1, 10, 20)
         options["num_rounds"] = verification_rounds

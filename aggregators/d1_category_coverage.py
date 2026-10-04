@@ -20,6 +20,7 @@ import torch
 from torch.utils.data import DataLoader, Subset
 
 from .base import _BaseAggregator
+from .contribution_diagnostics import trace, zero_trace
 
 
 @contextmanager
@@ -107,6 +108,7 @@ class D1CategoryCoverage(_BaseAggregator):
             "macro_definition": "unweighted_mean_over_nonempty_audit_classes",
         }
         self.last_diagnostics = {}
+        self.collect_contributions = False
 
     def _diagnostic_candidate(self, candidate, step, lam, residual_norm, stage):
         diagnostic = getattr(self, "last_diagnostics", None)
@@ -289,19 +291,29 @@ class D1CategoryCoverage(_BaseAggregator):
         return (vector @ basis.T) @ basis if basis.numel() else torch.zeros_like(vector)
 
     @staticmethod
-    def _cap(vector, limit):
+    def _cap(vector, limit, *, return_scale=False):
         norm = vector.norm()
-        return vector * min(1.0, limit / (norm.item() + 1e-12))
+        scale = min(1.0, limit / (norm.item() + 1e-12))
+        result = vector * scale
+        return (result, scale) if return_scale else result
 
     def _geometric_median(self, vectors):
         points = torch.stack(vectors)
         estimate = points.mean(dim=0)
+        record = getattr(self, "collect_contributions", False)
+        if record:
+            self._median_combination = points.new_full((len(vectors),), 1 / len(vectors))
         for _ in range(self.median_steps):
             distances = torch.linalg.vector_norm(points - estimate, dim=1)
             if distances.min().item() < 1e-8:
+                if record:
+                    self._median_combination = torch.zeros_like(distances)
+                    self._median_combination[distances.argmin()] = 1
                 return points[distances.argmin()].clone()
             weights = distances.clamp_min(1e-8).reciprocal()
             next_estimate = (points * weights[:, None]).sum(dim=0) / weights.sum()
+            if record:
+                self._median_combination = weights / weights.sum()
             if torch.linalg.vector_norm(next_estimate - estimate).item() < 1e-6:
                 return next_estimate
             estimate = next_estimate
@@ -397,6 +409,9 @@ class D1CategoryCoverage(_BaseAggregator):
         if not inputs:
             raise ValueError("D1 requires at least one client update")
         self.last_client_weights = [0.0] * len(inputs)
+        record = getattr(self, "collect_contributions", False)
+        if record:
+            self.last_contribution_trace = zero_trace(inputs)
         first = inputs[0]
         if first.ndim != 1 or not first.is_floating_point():
             raise ValueError("D1 requires flat floating-point vectors")
@@ -443,14 +458,23 @@ class D1CategoryCoverage(_BaseAggregator):
         residuals = [x - p for x, p in zip(displacements, parallel)]
         root_norm = root.norm()
         calibrated = []
+        if record:
+            parallel_coef, root_parts = [], []
         for vector in parallel:
             norm = vector.norm()
             cosine = (torch.dot(vector, root) / (norm * root_norm)).clamp(-1, 1).item() if norm > 0 and root_norm > 0 else 0.0
             weight = self.drag_strength * (1 - cosine)
             normalized = vector * (root_norm / norm) if norm > 0 else torch.zeros_like(root)
             calibrated.append((1 - weight) * normalized + weight * root)
+            if record:
+                parallel_coef.append(float((1 - weight) * (root_norm / norm) / len(inputs)) if norm > 0 else 0.0)
+                root_parts.append(weight * root)
         trusted = self._project(torch.stack(calibrated).mean(dim=0), basis)
         median = self._geometric_median(residuals) if self.mode == "majority" else torch.zeros_like(root)
+        if record:
+            median_coef = (self._median_combination.tolist() if self.mode == "majority"
+                           else [0.0] * len(inputs))
+            root_contribution = self._project(torch.stack(root_parts).mean(dim=0), basis)
         # Missing classes never increase this budget; the category audit below
         # protects only classes with actual independent evidence.
         budget = (0.0 if self.ablation == "no_residual" else
@@ -462,8 +486,12 @@ class D1CategoryCoverage(_BaseAggregator):
         best, best_loss, best_lambda, best_step = None, float("inf"), 0.0, 0.0
         for step in self.candidate_steps:
             for lam in (self.candidate_lambdas if self.mode == "majority" else (0.0,)):
-                residual = self._cap(lam * median, budget)
-                candidate = self._cap(step * (trusted + residual), self.clip_norm)
+                if record:
+                    residual, residual_scale = self._cap(lam * median, budget, return_scale=True)
+                    candidate, final_scale = self._cap(step * (trusted + residual), self.clip_norm, return_scale=True)
+                else:
+                    residual = self._cap(lam * median, budget)
+                    candidate = self._cap(step * (trusted + residual), self.clip_norm)
                 self._diagnostic_candidate(candidate, step, float(lam),
                                            self._cap(step * residual, budget).norm().item(), "main_grid")
                 score = self._feasible(candidate, basis, coefficients, reliable, audit_model, base, baseline)
@@ -471,6 +499,11 @@ class D1CategoryCoverage(_BaseAggregator):
                 if score is not None and score < best_loss:
                     best, best_loss = candidate, score
                     best_lambda, best_step = lam, step
+                    if record:
+                        self.last_contribution_trace = trace(
+                            parallel, residuals, [a * step * final_scale for a in parallel_coef],
+                            [w * lam * residual_scale * step * final_scale for w in median_coef],
+                            root_contribution * (step * final_scale), residual * (step * final_scale))
                     stats["residual_norm"] = float(self._cap(step * residual, budget).norm())
                     for entry in self.last_diagnostics["candidates"]:
                         entry["selected"] = entry is self._active_diagnostic_candidate
@@ -479,9 +512,17 @@ class D1CategoryCoverage(_BaseAggregator):
                 root, basis, coefficients, reliable, audit_model, base, baseline)
             if best is not None:
                 stats["fallback"] = "root"
+                if record:
+                    self.last_contribution_trace = trace(
+                        parallel, residuals, [0.0] * len(inputs), [0.0] * len(inputs),
+                        best.clone(), torch.zeros_like(best))
         if best is None:
             best = torch.zeros_like(first)
             stats["fallback"] = "skip_audit"
+            if record:
+                self.last_contribution_trace = trace(
+                    parallel, residuals, [0.0] * len(inputs), [0.0] * len(inputs),
+                    best.clone(), best.clone())
         if not torch.isfinite(best).all().item():
             raise ValueError("D1 produced a non-finite displacement")
         stats["update_norm"] = float(best.norm())

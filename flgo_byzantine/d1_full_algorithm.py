@@ -12,6 +12,8 @@ import numpy as np
 import torch
 
 from aggregators.d1_reference_baselines import RootBaseline, LEGACY_BASELINE_VERSION
+from aggregators.contribution_diagnostics import (CHANNEL_DEFINITIONS, ERROR_DEFINITIONS,
+    summarize, group_cosines, two_layer_errors, require_two_layers)
 from attacks.d1_full_attacks import FixedTriggerDataset, root_constrained_update
 from attacks.flgo_label_flip import LabelFlippedDataset
 from .algorithm import (AggregationContext, Client as BridgeClient,
@@ -197,6 +199,10 @@ class Server(BridgeServer):
             nonzero_fraction = malicious_nonzero_fraction(updates, malicious)
         start = time.perf_counter()
         instance = self._aggregator()
+        collect = bool(self.option.get("byz_collect_contributions", False))
+        if collect and self.byz_aggregator not in {"d1", "brdrag", "balanced_brdrag"}:
+            raise ValueError("contribution diagnostics require one of the three B methods")
+        instance.collect_contributions = collect
         aggregate = instance(updates)
         if self.byz_aggregator == "d1":
             if (instance.last_stats.get("root_train_count") != 1000
@@ -236,7 +242,51 @@ class Server(BridgeServer):
         self.byz_last_round = stats
         self.full_round_stats.append(stats)
         self._write_diagnostic(attack_diagnostics, instance)
-        return _model_from_update(self.model, aggregate)
+        updated_model = _model_from_update(self.model, aggregate)
+        if collect:
+            self._write_contributions(instance, base, -aggregate, _parameter_vector(updated_model).to(base))
+        return updated_model
+
+    def _write_contributions(self, instance, theta, displacement, theta_new):
+        """Identity groups are used only here, after the final update is determined."""
+        value = instance.last_contribution_trace
+        assert len(value["parallel"]) == len(self.received_clients)
+        checks = two_layer_errors(value, theta, displacement, theta_new)
+        require_two_layers(checks)
+        record = summarize(value, theta_new.double() - theta.double())
+        directory = Path(self.option.get("byz_diagnostic_output_dir") or
+                         Path(self.gv.logger.get_output_path()).parent)
+        directory.mkdir(parents=True, exist_ok=True)
+        metadata = directory / "contribution_metadata.json"
+        if not metadata.exists():
+            metadata.write_text(json.dumps({"schema_version": 1, "method": self.byz_aggregator,
+                "channel_definitions": CHANNEL_DEFINITIONS, "residual_save_interval": 20,
+                "client_fields_interval": 1, "error_definitions": ERROR_DEFINITIONS,
+                "parameter_layout": [{"name": name, "shape": list(p.shape), "numel": p.numel()}
+                                     for name, p in self.model.named_parameters()]}, indent=2,
+                allow_nan=False), encoding="utf-8")
+        round_number = len(self.full_round_stats)
+        with (directory / "contribution_checks.jsonl").open("a", encoding="utf-8") as stream:
+            stream.write(json.dumps(dict(round=round_number, **checks), allow_nan=False) + "\n")
+        record.update(round=round_number, received_client_ids=[int(i) for i in self.received_clients],
+                      residual_vector=None, residual_group_cosine=None)
+        if self.byz_aggregator == "d1" and round_number % 20 == 0:
+            assert self.full_tail_classes == [8, 9]
+            groups = {"honest_tail_enriched": [], "other_honest": [], "malicious": []}
+            for position, cid in enumerate(self.received_clients):
+                group = ("malicious" if cid in self.byz_malicious_ids else
+                         "honest_tail_enriched" if cid in self._tail_client_ids else "other_honest")
+                groups[group].append(position)
+            record["residual_group_cosine"] = group_cosines(value, groups)
+            path = directory / "residual_vectors" / f"round_{round_number:03d}.f32"
+            path.parent.mkdir(exist_ok=True)
+            vector = value["final_residual"].detach().cpu().float().numpy().astype("<f4", copy=False)
+            if not np.isfinite(vector).all():
+                raise ValueError("non-finite final residual")
+            path.write_bytes(vector.tobytes())
+            record["residual_vector"] = str(path.relative_to(directory))
+        with (directory / "contribution_log.jsonl").open("a", encoding="utf-8") as stream:
+            stream.write(json.dumps(record, allow_nan=False) + "\n")
 
 
 class Client(BridgeClient):

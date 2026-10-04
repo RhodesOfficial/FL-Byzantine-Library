@@ -16,6 +16,7 @@ from torch.utils.data import DataLoader, Subset
 
 from .base import _BaseAggregator
 from .d1_category_coverage import _preserve_global_rng
+from .contribution_diagnostics import trace, zero_trace
 
 LEGACY_BASELINE_VERSION = "root1000-v1"
 B_BASELINE_VERSION = "root2000-rng-v1"
@@ -52,6 +53,7 @@ class RootBaseline(_BaseAggregator):
             self._initialize_indices(context, num_classes, seed)
         self.last_client_weights = []
         self.last_stats = {}
+        self.collect_contributions = False
 
     def _initialize_indices(self, context, num_classes, seed):
         buckets = defaultdict(list)
@@ -146,6 +148,11 @@ class RootBaseline(_BaseAggregator):
     def __call__(self, inputs):
         if not inputs or any(x.shape != inputs[0].shape or not torch.isfinite(x).all() for x in inputs):
             raise ValueError("invalid root baseline updates")
+        record = getattr(self, "collect_contributions", False)
+        if record:
+            if self.method not in {"brdrag", "balanced_brdrag"}:
+                raise ValueError("contribution diagnostics only support the two B baselines")
+            self.last_contribution_trace = zero_trace(inputs)
         root = self._root().to(inputs[0])
         root_norm = root.norm()
         if root_norm <= 1e-12:
@@ -178,6 +185,14 @@ class RootBaseline(_BaseAggregator):
         weights = scores / scores.sum().clamp_min(1e-12)
         self.last_client_weights = weights.tolist()
         result = (weights[:, None] * transformed).sum(0)
+        if record:
+            # Use the actual lam/norms/weights computed above; root injection is separate.
+            coef = ((1 - lam) * root_norm * weights / norms).tolist()
+            coef = [a if x.norm().item() > 0 else 0.0 for a, x in zip(coef, inputs)]
+            zero = torch.zeros_like(root)
+            self.last_contribution_trace = trace(
+                [-x for x in inputs], [zero] * len(inputs), coef, [0.0] * len(inputs),
+                -(weights * lam).sum() * root, zero)
         if self.method == "balanced_splice":
             residual = torch.stack([x - torch.dot(x, root) / (root_norm ** 2) * root
                                     for x in inputs]).mean(0)
