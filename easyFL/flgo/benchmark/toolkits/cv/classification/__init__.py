@@ -318,6 +318,11 @@ class GeneralCalculator(flgo.benchmark.base.BasicTaskCalculator):
                                           pin_memory=pin_memory)
         total_loss = 0.0
         num_correct = 0
+        collect_class_stats = getattr(self, 'collect_class_stats', False)
+        if collect_class_stats:
+            class_total = torch.zeros(10, dtype=torch.long)
+            class_correct = torch.zeros(10, dtype=torch.long)
+            class_loss_sum = torch.zeros(10, dtype=torch.float64)
         for batch_id, batch_data in enumerate(data_loader):
             batch_data = self.to_device(batch_data)
             outputs = model(batch_data[0])
@@ -329,6 +334,27 @@ class GeneralCalculator(flgo.benchmark.base.BasicTaskCalculator):
             correct = y_pred.eq(batch_data[-1].data.view_as(y_pred)).long().cpu().sum()
             num_correct += correct.item()
             total_loss += batch_mean_loss * len(batch_data[-1])
+            if collect_class_stats:
+                # Reuse this batch's forward; keep the original overall loss above.
+                assert outputs.ndim == 2 and outputs.shape[1] == 10
+                assert not hasattr(model, 'compute_loss')
+                assert isinstance(self.criterion, torch.nn.CrossEntropyLoss)
+                assert self.criterion.weight is None and self.criterion.label_smoothing == 0
+                labels = batch_data[-1].detach().cpu()
+                prediction = y_pred.detach().view(-1).cpu()
+                sample_loss = torch.nn.functional.cross_entropy(
+                    outputs, batch_data[-1], reduction='none'
+                ).detach().to(device='cpu', dtype=torch.float64)
+                class_total += torch.bincount(labels, minlength=10)
+                class_correct += torch.bincount(labels[prediction == labels], minlength=10)
+                class_loss_sum.scatter_add_(0, labels, sample_loss)
+        if collect_class_stats:
+            assert torch.all(class_total > 0).item()
+            self.last_class_statistics = {
+                'class_total': class_total.tolist(),
+                'class_correct': class_correct.tolist(),
+                'class_loss_mean': (class_loss_sum / class_total).tolist(),
+            }
         return {'accuracy': 1.0 * num_correct / len(dataset), 'loss': total_loss / len(dataset)}
 
     def to_device(self, data):
