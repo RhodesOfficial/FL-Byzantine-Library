@@ -1,10 +1,11 @@
-"""Task/event backend with opt-in phase 0.3 reference preparation.
+"""Task/event backend with opt-in reference scoring and shared-budget commits.
 
-The legacy model-only seam uses external coefficients. Reference writes remain
-pure calculations until gate 0.4 supplies shared-budget and joint commit logic.
+The legacy model-only seam uses external coefficients and is disabled when a
+shared budget is configured. Single-event commits publish staged state together.
 Transport identities are trusted simulator inputs, not cryptographic identities.
 """
 from collections import deque
+import copy
 from dataclasses import asdict, dataclass, replace
 import hashlib
 import heapq
@@ -15,7 +16,8 @@ from typing import Mapping
 import torch
 
 from .reference import (FeatureMap, ReferenceCandidate, ReferenceConfig,
-                        ReferenceState, features, prepare_event)
+                        ReferenceState, features, prepare_event, write_reference)
+from .budget import Receipt, RollingBudget, audit_history
 
 
 @dataclass(frozen=True)
@@ -73,9 +75,20 @@ class Reply:
     local_model: tuple
 
 
+@dataclass(frozen=True)
+class CommitResult:
+    event: object
+    receipts: tuple
+    waiting: tuple  # (task_id, reason), with no reservation.
+    rejected: tuple
+    scales: tuple  # (task_id, remaining, lambda, a0, b0).
+    model_displacement: tuple
+    reference_displacement: tuple
+
+
 class TaskProtocol:
     def __init__(self, initial_model, config=ProtocolConfig(), reference_config=None,
-                 feature_map=None):
+                 feature_map=None, budget_config=None):
         self.config = config
         self._model = torch.as_tensor(initial_model, dtype=torch.float64, device="cpu").clone()
         if self._model.ndim != 1 or not self._model.numel() or not torch.isfinite(self._model).all():
@@ -93,6 +106,12 @@ class TaskProtocol:
         self._reference = ReferenceState.initial(reference_config or ReferenceConfig())
         contract = {"protocol": asdict(config), "reference": asdict(reference_config),
                     "feature_map": asdict(self._feature_map)} if reference_config is not None else None
+        if budget_config is not None:
+            if reference_config is None:
+                raise ValueError("shared commits require a reference configuration")
+            contract["budget"] = asdict(budget_config)
+        self._budget = RollingBudget(budget_config) if budget_config is not None else None
+        self._in_commit = False
         self._config_id = (hashlib.sha256(json.dumps(contract, sort_keys=True).encode()).hexdigest()
                            if contract is not None else config.config_id)
         self.now, self.version, self._next_task, self._sequence = 0.0, 0, 0, 0
@@ -120,6 +139,19 @@ class TaskProtocol:
     @property
     def config_id(self):
         return self._config_id
+
+    @property
+    def budget(self):
+        return self._budget  # Immutable persistent state; only commit_event replaces it.
+
+    @property
+    def at_safe_event_boundary(self):
+        return not self._in_commit
+
+    def budget_remaining(self, identity):
+        if self.budget is None:
+            raise RuntimeError("no shared budget is configured")
+        return self.budget.remaining(identity, self.now)
 
     @property
     def outstanding(self):
@@ -265,8 +297,11 @@ class TaskProtocol:
         if self.reference_config is None:
             raise RuntimeError("reference scoring must be explicitly enabled")
         self._expire_stale()
+        return self._prepare_reference_candidates(self.candidates())
+
+    def _prepare_reference_candidates(self, candidates):
         rows = []
-        for c in self.candidates():
+        for c in candidates:
             snapshot = self.snapshot(c["source_version"])
             if snapshot.config_id != self.config_id:
                 raise ValueError("source snapshot configuration mismatch")
@@ -276,8 +311,145 @@ class TaskProtocol:
         return prepare_event(rows, self.reference, self.reference_config, self.config.capacity,
                              self.config.eta_model, self.version)
 
+    def audit_budget(self):
+        """Detect missing fees/receipts, replay and every historical overspend."""
+        if self.budget is None:
+            raise RuntimeError("no shared budget is configured")
+        receipts = tuple(Receipt(**{k: row[k] for k in Receipt.__dataclass_fields__}) for row in self.ledger)
+        seen = audit_history(receipts, self.budget.config)
+        consumed = frozenset(t.task_id for t in self.tasks.values() if t.state == "consumed")
+        recorded = tuple(Receipt(**row) for batch in self.batches for row in batch["receipts"])
+        if seen != consumed or seen != self.budget.consumed or receipts != recorded:
+            raise ValueError("consumed tasks, durable receipts and batches do not reconcile")
+        active = tuple(r for r in receipts if self.budget.at-self.budget.config.window < r.at <= self.budget.at)
+        if active != self.budget.entries or self.budget.at > self.now:
+            raise ValueError("live budget entries disagree with durable history")
+        rho = self.reference_config.eta_reference / self.config.eta_model
+        for receipt in receipts:
+            task = self.tasks[receipt.task_id]
+            if (task.identity != receipt.identity or task.config_id != self.config_id
+                or receipt.at < task.issued_at or receipt.at >= task.expires_at
+                or not math.isclose(receipt.b, rho*receipt.a, rel_tol=1e-12, abs_tol=1e-15)):
+                raise ValueError("receipt identity/time/channel ratio mismatch")
+        return True
+
+    def _commit_draft(self):
+        # Structural copies only. Model/update tensors and frozen states are read
+        # without in-place mutation; all writeback tensors are new local values.
+        draft = copy.copy(self)
+        for name in ("tasks", "_live", "_sources", "_refs", "_updates"):
+            setattr(draft, name, getattr(self, name).copy())
+        for name in ("_events", "_buffer", "ledger", "batches", "trace"):
+            setattr(draft, name, list(getattr(self, name)))
+        draft._inbox = deque(self._inbox)
+        return draft
+
+    def commit_event(self):
+        """Actual §2.1.5 commit, without interleaving or mid-event save points.
+
+        All calculations/validation, including reference writing and ledger
+        append, occur on a draft. A single state publication exposes both writes,
+        receipts, task terminals and the new snapshot. This is not crash recovery.
+        """
+        if self.budget is None or self.reference_config is None:
+            raise RuntimeError("commit_event requires reference and budget configurations")
+        if self._in_commit:
+            raise RuntimeError("a commit event is already in progress")
+        self.audit_budget()
+        self._in_commit = True
+        try:
+            draft = self._commit_draft()
+            result = draft._apply_commit_event()
+            draft.audit_budget()
+            draft._in_commit = False
+            self.__dict__ = draft.__dict__  # Single publication; no callback/save between channels.
+            return result
+        finally:
+            self._in_commit = False
+
+    def _apply_commit_event(self):
+        self._budget = self.budget.prune(self.now)
+        for task_id in list(self._live.values()):
+            task = self.tasks[task_id]
+            if self.now >= task.expires_at or self.version-task.source_version > self.config.max_staleness:
+                self._finish(task_id, "expired")
+        self._fill()
+        candidates = self.candidates()
+        eligible, waiting = [], []
+        for c in candidates:
+            if self.budget_remaining(c["identity"]) > 0:
+                eligible.append(c)
+            else:
+                waiting.append((c["task_id"], "budget"))
+        event = self._prepare_reference_candidates(eligible)
+        receipts, scales, rejected, coefficients = [], [], [], {}
+        displacement = torch.zeros_like(self._model)
+        for p in event.proposals:
+            if p.g is None:
+                waiting.append((p.task_id, "cold"))
+                continue
+            if p.g == 0:
+                rejected.append(p.task_id)
+                continue
+            nominal = p.a0 + p.b0
+            if not math.isfinite(nominal):
+                raise ValueError("nonfinite nominal coefficients")
+            remaining = self.budget_remaining(p.identity)
+            lam = min(1., remaining/nominal) if nominal > 0 else 0.
+            if 0 < remaining < nominal:
+                # Algebraically lambda*a0 = L/(1+rho), lambda*b0 = rho*a.
+                # Cancel h*g/K before floating evaluation to avoid a spurious
+                # remainder (or overshoot) from divide-then-multiply rounding.
+                rho = self.reference_config.eta_reference/self.config.eta_model
+                a = remaining/(1+rho)
+                b = rho*a
+            else:
+                a, b = lam*p.a0, lam*p.b0
+            coefficients[p.task_id] = b
+            scales.append((p.task_id, remaining, lam, p.a0, p.b0))
+            if a+b == 0:
+                waiting.append((p.task_id, "zero_coefficients"))
+                continue
+            receipts.append(Receipt(p.task_id, p.identity, self.now, a, b, a+b))
+            displacement -= a*self._updates[p.task_id][1]
+        model_after = self._model + displacement
+        if not torch.isfinite(displacement).all() or not torch.isfinite(model_after).all():
+            raise ValueError("nonfinite model writeback")
+        reference_write = write_reference(event, coefficients)
+        budget_after = self.budget.record(receipts, self.now)
+        # Recheck bindings/validity at the write boundary, before staging writes.
+        for receipt in receipts:
+            task = self.tasks[receipt.task_id]
+            if (task.state != "arrived" or task.identity != receipt.identity
+                or task.config_id != self.config_id or self.now >= task.expires_at
+                or not 0 <= self.version-task.source_version <= self.config.max_staleness):
+                raise ValueError("task changed or expired before commit")
+        if receipts:
+            self.batches.append({"at": self.now, "version_before": self.version,
+                "version_after": self.version+1, "event": event,
+                "candidates": list(eligible),
+                "receipts": [asdict(r) for r in receipts], "scales": tuple(scales),
+                "model_displacement": tuple(displacement.tolist()),
+                "reference_displacement": reference_write.displacement})
+            self._model, self._reference = model_after, reference_write.after
+            self._budget = budget_after
+            for receipt in receipts:
+                self.ledger.append(dict(asdict(receipt), source_version=self.tasks[receipt.task_id].source_version))
+                self._finish(receipt.task_id, "consumed")
+        for task_id in rejected:
+            self._finish(task_id, "rejected")
+        if receipts:
+            self.version += 1
+            self._freeze()
+        self._fill()
+        self._expire_stale()
+        return CommitResult(event, tuple(receipts), tuple(sorted(waiting)), tuple(rejected),
+            tuple(scales), tuple(displacement.tolist()), reference_write.displacement)
+
     def commit_model(self, coefficients: Mapping[int, float]):
         """Model writeback seam only; NOT a D2 scoring/shared-budget commit."""
+        if self.budget is not None:
+            raise RuntimeError("budget-enabled protocols must use the joint commit_event path")
         self._expire_stale()
         candidates = self.candidates()
         if set(coefficients) != set(self._buffer):
