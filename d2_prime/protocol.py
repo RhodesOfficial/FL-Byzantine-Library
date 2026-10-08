@@ -1,6 +1,7 @@
-"""Phase 0.2 task/event backend, without scoring, reference writes or budgets.
+"""Task/event backend with opt-in phase 0.3 reference preparation.
 
-The caller supplies final model coefficients. No default detector is provided.
+The legacy model-only seam uses external coefficients. Reference writes remain
+pure calculations until gate 0.4 supplies shared-budget and joint commit logic.
 Transport identities are trusted simulator inputs, not cryptographic identities.
 """
 from collections import deque
@@ -12,6 +13,9 @@ import math
 from typing import Mapping
 
 import torch
+
+from .reference import (FeatureMap, ReferenceCandidate, ReferenceConfig,
+                        ReferenceState, features, prepare_event)
 
 
 @dataclass(frozen=True)
@@ -70,11 +74,27 @@ class Reply:
 
 
 class TaskProtocol:
-    def __init__(self, initial_model, config=ProtocolConfig()):
+    def __init__(self, initial_model, config=ProtocolConfig(), reference_config=None,
+                 feature_map=None):
         self.config = config
         self._model = torch.as_tensor(initial_model, dtype=torch.float64, device="cpu").clone()
         if self._model.ndim != 1 or not self._model.numel() or not torch.isfinite(self._model).all():
             raise ValueError("model must be a finite nonempty vector")
+        self._reference_config = reference_config
+        if reference_config is not None and reference_config.n_boot > config.capacity:
+            raise ValueError("require n_boot <= protocol capacity")
+        if reference_config is None and feature_map is not None:
+            raise ValueError("a feature map requires a reference configuration")
+        self._feature_map = (feature_map or FeatureMap.generate(self._model.numel(), reference_config)
+                             if reference_config is not None else None)
+        if self._feature_map is not None and (len(self._feature_map.buckets) != self._model.numel()
+            or self._feature_map.bucket_count != reference_config.projection_buckets):
+            raise ValueError("feature map differs from run dimensions")
+        self._reference = ReferenceState.initial(reference_config or ReferenceConfig())
+        contract = {"protocol": asdict(config), "reference": asdict(reference_config),
+                    "feature_map": asdict(self._feature_map)} if reference_config is not None else None
+        self._config_id = (hashlib.sha256(json.dumps(contract, sort_keys=True).encode()).hexdigest()
+                           if contract is not None else config.config_id)
         self.now, self.version, self._next_task, self._sequence = 0.0, 0, 0, 0
         self.tasks, self._live, self._sources, self._refs = {}, {}, {}, {}
         self._events, self._inbox, self._buffer, self._updates = [], deque(), [], {}
@@ -84,6 +104,22 @@ class TaskProtocol:
     @property
     def model(self):
         return self._model.clone()
+
+    @property
+    def reference(self):
+        return self._reference
+
+    @property
+    def reference_config(self):
+        return self._reference_config
+
+    @property
+    def feature_map(self):
+        return self._feature_map
+
+    @property
+    def config_id(self):
+        return self._config_id
 
     @property
     def outstanding(self):
@@ -97,9 +133,9 @@ class TaskProtocol:
         return self._sources[version]  # Only frozen dataclasses/tuples, no mutable tensors.
 
     def _freeze(self):
-        # Only the specified initial reference is stored in this gate. No scorer/writer.
+        # Immutable tuples capture the reference at this commit version.
         self._sources[self.version] = SourceSnapshot(self.version, tuple(self._model.tolist()),
-            (0.0,) * 33, (0.25,) * 33, 0.0, self.config.config_id)
+            self._reference.mu, self._reference.sigma, self._reference.evidence, self.config_id)
         self._refs.setdefault(self.version, 0)
         self._collect_sources()
 
@@ -123,7 +159,7 @@ class TaskProtocol:
         if not math.isfinite(self.now + self.config.lifetime):
             raise ValueError("task deadline overflow")
         task = Task(self._next_task, identity, self.version, self.now,
-                    self.now + self.config.lifetime, self.config.config_id)
+                    self.now + self.config.lifetime, self.config_id)
         self._next_task += 1
         self.tasks[task.task_id], self._live[identity] = task, task.task_id
         self._refs[task.source_version] += 1
@@ -219,6 +255,26 @@ class TaskProtocol:
             "staleness": self.version - self.tasks[i].source_version,
             "delta": tuple(self._updates[i][0].tolist()),
             "clipped_delta": tuple(self._updates[i][1].tolist())} for i in self._buffer)
+
+    def prepare_reference_event(self):
+        """Only current buffer arrivals; no model/reference/receipt writes.
+
+        Budget eligibility is not implemented in 0.3. Gate 0.4 must exclude
+        exhausted identities before building its event, not after cold statistics.
+        """
+        if self.reference_config is None:
+            raise RuntimeError("reference scoring must be explicitly enabled")
+        self._expire_stale()
+        rows = []
+        for c in self.candidates():
+            snapshot = self.snapshot(c["source_version"])
+            if snapshot.config_id != self.config_id:
+                raise ValueError("source snapshot configuration mismatch")
+            source = ReferenceState(snapshot.mu, snapshot.sigma, snapshot.evidence)
+            x = features(c["clipped_delta"], self.feature_map, self.config.clip_norm)
+            rows.append(ReferenceCandidate(c["task_id"], c["identity"], c["source_version"], source, x))
+        return prepare_event(rows, self.reference, self.reference_config, self.config.capacity,
+                             self.config.eta_model, self.version)
 
     def commit_model(self, coefficients: Mapping[int, float]):
         """Model writeback seam only; NOT a D2 scoring/shared-budget commit."""
