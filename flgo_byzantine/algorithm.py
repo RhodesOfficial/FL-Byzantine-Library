@@ -24,6 +24,7 @@ from flgo.algorithm.fedbase import BasicClient, BasicServer
 
 from aggregators.clipping import Clipping
 from aggregators.cm import CM
+from aggregators.d1_category_coverage import D1CategoryCoverage
 from aggregators.fedavg import fedAVG
 from aggregators.krum import Krum
 from aggregators.rfa import RFA
@@ -31,11 +32,12 @@ from aggregators.sign_sgd import SignSGD
 from aggregators.trimmed_mean import TM
 from attacks.alie import craft_alie_update
 from attacks.ipm import craft_ipm_update
+from attacks.flgo_label_flip import LabelFlippedDataset
 from .root_data import load_root_data
 
 
-AGGREGATORS = frozenset({"avg", "cm", "tm", "krum", "cc", "rfa", "sign"})
-ATTACKS = frozenset({"none", "alie", "ipm"})
+AGGREGATORS = frozenset({"avg", "cm", "tm", "krum", "cc", "rfa", "sign", "d1"})
+ATTACKS = frozenset({"none", "alie", "ipm", "label_flip"})
 
 
 @dataclass(frozen=True)
@@ -60,7 +62,16 @@ class AggregationContext:
 
 # New adapters can declare their requirements when registering a new name.
 # The seven existing names retain their construction and call paths.
-AGGREGATOR_REQUIREMENTS = {"krum": AggregatorRequirements(fixed_n=True)}
+AGGREGATOR_REQUIREMENTS = {
+    "krum": AggregatorRequirements(fixed_n=True),
+    "d1": AggregatorRequirements(
+        root_data=True, runtime_context=True,
+        option_keys=("byz_d1_num_classes", "byz_d1_mode", "byz_d1_clip_norm",
+                     "byz_d1_residual_budget_ratio", "byz_d1_root_step",
+                     "byz_d1_drag_strength", "byz_d1_loss_tolerance",
+                     "byz_d1_min_class_count", "byz_d1_reliability_floor",
+                     "byz_d1_batch_size", "byz_d1_ablation", "byz_seed")),
+}
 
 
 def _aggregator_cache_key(name, n, f, option, requirements, root_identity, task):
@@ -141,6 +152,25 @@ def _build_aggregator(name: str, n: int, f: int, option: dict,
         return Krum(n=n, f=f, m=n - f - 2)
     if name == "cc":
         return Clipping(tau=float(option.get("byz_clip_tau", 1.0)), b=f)
+    if name == "d1":
+        if context is None or context.root_data is None:
+            raise ValueError("D1 requires runtime context and isolated root data")
+        if option.get("byz_d1_num_classes") is None:
+            raise ValueError("D1 requires byz_d1_num_classes from the task label universe")
+        return D1CategoryCoverage(
+            context=context,
+            num_classes=int(option["byz_d1_num_classes"]),
+            mode=str(option.get("byz_d1_mode", "majority")),
+            clip_norm=float(option.get("byz_d1_clip_norm", 1.0)),
+            residual_budget_ratio=float(option.get("byz_d1_residual_budget_ratio", 0.25)),
+            root_step=float(option.get("byz_d1_root_step", 0.1)),
+            drag_strength=float(option.get("byz_d1_drag_strength", 0.5)),
+            loss_tolerance=float(option.get("byz_d1_loss_tolerance", 0.02)),
+            min_class_count=int(option.get("byz_d1_min_class_count", 2)),
+            reliability_floor=float(option.get("byz_d1_reliability_floor", 0.05)),
+            batch_size=int(option.get("byz_d1_batch_size", 64)),
+            seed=int(option.get("byz_seed", option["seed"])),
+            ablation=str(option.get("byz_d1_ablation", "none")))
     return RFA(T=int(option.get("byz_rfa_steps", 5)),
                nu=float(option.get("byz_rfa_nu", 1e-6)))
 
@@ -203,7 +233,7 @@ class Server(BasicServer):
                                if cid in self.byz_malicious_ids]
         malicious_set = set(malicious_positions)
         benign = [v for i, v in enumerate(updates) if i not in malicious_set]
-        if malicious_positions and self.byz_attack != "none":
+        if malicious_positions and self.byz_attack not in {"none", "label_flip"}:
             crafted = _attack_update(self.byz_attack, benign, len(updates),
                                      len(malicious_positions), self.option)
             for i in malicious_positions:
@@ -252,4 +282,13 @@ class Server(BasicServer):
         return _model_from_update(self.model, aggregate)
 
 
-Client = BasicClient
+class Client(BasicClient):
+    """Basic FLGo client, with train-label poisoning only in label_flip mode."""
+
+    def initialize(self):
+        if self.server.byz_attack != "label_flip" or self.id not in self.server.byz_malicious_ids:
+            return
+        num_classes = self.option.get("byz_label_flip_num_classes")
+        if num_classes is None:
+            raise ValueError("label_flip requires byz_label_flip_num_classes")
+        self.set_data(LabelFlippedDataset(self.train_data, int(num_classes)), "train")

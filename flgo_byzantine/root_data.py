@@ -21,17 +21,20 @@ def load_root_data(task_path, task_pipe_class):
     size = len(source)
     root = metadata.get("root_indices")
     pool = metadata.get("client_pool_indices")
+    discarded = metadata.get("discarded_indices", [])
     if metadata.get("source_size") != size or not isinstance(root, list) or not root:
         raise ValueError("root data metadata has an invalid source or empty root set")
-    if not isinstance(pool, list):
+    if not isinstance(pool, list) or not isinstance(discarded, list):
         raise ValueError("root data metadata has no client pool")
-    for indices in (root, pool):
+    for indices in (root, pool, discarded):
         if any(type(i) is not int or i < 0 or i >= size for i in indices):
             raise ValueError("root data contains an out-of-range index")
         if len(indices) != len(set(indices)):
             raise ValueError("root data contains duplicate indices")
-    if set(root) & set(pool) or len(root) + len(pool) != size:
-        raise ValueError("root and client training pools must partition the source")
+    if (set(root) & set(pool) or set(root) & set(discarded)
+            or set(pool) & set(discarded)
+            or len(root) + len(pool) + len(discarded) != size):
+        raise ValueError("root, client pool and discarded samples must partition the source")
     clients = pipe.feddata["client_names"]
     client_indices = [i for name in clients for i in pipe.feddata[name]["data"]]
     if set(client_indices) != set(pool) or len(client_indices) != len(pool):
