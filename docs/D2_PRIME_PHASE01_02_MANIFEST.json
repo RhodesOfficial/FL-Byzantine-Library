@@ -1,0 +1,6349 @@
+{
+  "gate_id": "0.1+0.2",
+  "source_commit": "8cb77dc4dd60e5c3b5504d2be436b60830fded20",
+  "specification_version": "D2_PRIME_DESIGN:2.1/phase0.1+0.2-v1",
+  "status": "PASS",
+  "next_gate": "0.3",
+  "input_files": [
+    "docs/D2_PRIME_CHECKPOINTS_TRIMMED.md",
+    "docs/D2_PRIME_CHECKPOINTS.md",
+    "docs/D2_PRIME_DESIGN.md",
+    "docs/D2_PRIME_DECISIONS.md",
+    "docs/RESEARCH_INNOVATIONS.md",
+    "scripts/verify_d2_prime_zero_training.py",
+    "outputs/d2_prime_zero_training_20261008/run_7069mu9d/results.json"
+  ],
+  "specification_precedence": [
+    "Trimmed checkpoint 0.1+0.2 controls delivery scope; original 0.2 invariants remain mandatory.",
+    "D section 2.1 supersedes O and E's earlier client-side delta/placeholder suggestions.",
+    "D and S agree on sliding simulated-time windows, final coefficients, shared charge and no reservations.",
+    "Source model and immutable reference snapshot are server-owned; expiry is now >= expires_at.",
+    "Commit sequence advances on positive contributions even if vectors cancel; empty/rejected events do not advance.",
+    "No unresolved D/S conflict was identified; no design files are modified."
+  ],
+  "fixed_reference_contract_for_later_gates": {
+    "feature_buckets": 32,
+    "feature_dim": 33,
+    "projection_seed": 0,
+    "sigma_min": 0.05,
+    "sigma_initial": 0.25,
+    "e_initial": 0.0,
+    "e_ready": 0.5,
+    "kappa_U": 0.1,
+    "z_cut": 3.0,
+    "B_R": 1.0,
+    "eta_R": 0.1,
+    "n_boot": 3,
+    "K": 20,
+    "eta_M": 1.0,
+    "scope": "Registered only. Phase 0.2 stores R0 metadata but does not implement feature mapping, scoring, reference writes or budget commits."
+  },
+  "protocol_conventions": {
+    "task_id": "Monotonically increasing integer within one protocol instance; never reused after failure/termination.",
+    "identity": "Trusted simulator transport identity must match issued identity and packet identity.",
+    "task_states": [
+      "issued",
+      "arrived",
+      "consumed",
+      "rejected",
+      "lost",
+      "cancelled",
+      "expired"
+    ],
+    "outstanding": "Issued plus arrived/buffer-waiting tasks; per identity at most one.",
+    "event_order": [
+      "simulated_time",
+      "expiry_before_arrival",
+      "task_id",
+      "insertion_sequence"
+    ],
+    "capacity": "Candidate buffer <= K; excess legal arrivals remain in FIFO ingress, retaining outstanding slots.",
+    "source_delta": "server_snapshot_model - returned_local_model",
+    "model_write": "current_model - sum(a_i * full_norm_clipped_source_delta_i)",
+    "coefficient": "Explicit test/caller input; 0 <= a_i <= eta_M/(1+current_version-source_version)/K. No score is inferred.",
+    "small_batch_denominator": "Configured K, never the received/retained count.",
+    "version": "Positive-coefficient commit sequence, not nonzero floating-point displacement.",
+    "ledger": "Model-channel consumption receipts only; shared a+b sliding-budget ledger is deferred to 0.4.",
+    "late_packet": "Does not terminate or consume a newly issued task of the same identity.",
+    "reference_storage": "Frozen tuple metadata initialized at R0; reference stays unchanged in this model-only gate."
+  },
+  "pending_parameters": [
+    {
+      "parameter": "formal_training_B_M",
+      "owner_gate": "1.4",
+      "current": "Synthetic tests explicitly use 1.0 or 10.0; no formal training value selected."
+    },
+    {
+      "parameter": "formal_training_H_beta",
+      "owner_gate": "2.1",
+      "current": "Not used or implemented in 0.2; no hidden budget defaults."
+    },
+    {
+      "parameter": "formal_training_delay_deadline_max_staleness",
+      "owner_gate": "2.1",
+      "current": "Synthetic lifetime 1/5 and max_staleness 0/16 are fixture values only."
+    },
+    {
+      "parameter": "strong_control_budget_adapter",
+      "owner_gate": "3.0",
+      "current": "Not implemented."
+    },
+    {
+      "parameter": "fixed_b_over_a_equivalence",
+      "owner_gate": "0.4",
+      "current": "rho=eta_R/eta_M; sum(a+b)<=beta equals sum(a)<=beta/(1+rho) with identical reference writes. No separate shared-charge performance claim."
+    },
+    {
+      "parameter": "development_evaluation_and_attack_data_partition",
+      "owner_gate": "1.1-1.4 and 3.0",
+      "current": "No real data in this gate; actual index hashes/overlap checks must be frozen before those runs."
+    },
+    {
+      "parameter": "formal_confirmation_seeds",
+      "owner_gate": "4.1",
+      "current": "Three distinct formal seeds under trimmed scheme; not selected yet. 101-103 cannot be called unseen confirmation seeds."
+    }
+  ],
+  "data_and_seed_uses": [
+    {
+      "purpose": "phase0 synthetic acceptance",
+      "data": "Explicit fixed two-coordinate vectors recorded per case",
+      "seed": null,
+      "training": false,
+      "random_sampling": false
+    },
+    {
+      "purpose": "later development",
+      "seeds": [
+        101,
+        102
+      ],
+      "data": "Previously inspected CIFAR-10 data must be disclosed as development, not relabeled untouched test data."
+    },
+    {
+      "purpose": "later attack optimization",
+      "data": "Only authorized attacker-owned training data or separately registered development data; final evaluation labels excluded."
+    },
+    {
+      "purpose": "later final evaluation",
+      "data": "Evaluation-only indices to be registered; overlaps and prior use disclosed; not used for attack search or defense tuning."
+    }
+  ],
+  "threshold_registry": {
+    "discrete_invariant_violations": 0,
+    "numeric_atol": 1e-10,
+    "numeric_rtol": 1e-08,
+    "synthetic_device_dtype": "CPU float64",
+    "formal_task_budget": 12000,
+    "formal_last_five_progress": [
+      10400,
+      10800,
+      11200,
+      11600,
+      12000
+    ],
+    "workload_alignment_difference": 0.05,
+    "attack_damage_mean_pp": 5,
+    "floor_accuracy_percent": "100/C + 5",
+    "clean_mean_tolerance_pp": 2,
+    "clean_single_seed_tolerance_pp": 3,
+    "development_gain_mean_pp": 2,
+    "development_gain_each_seed": "positive",
+    "slow_relative_retention_min": 0.8,
+    "stagnation_nominal_mass_ratio_min": 0.1,
+    "trimmed_formal_gain_mean_pp": 2,
+    "trimmed_formal_positive_seeds": "at least 2 of 3",
+    "trimmed_ablation_gain_mean_pp": 1,
+    "trimmed_source_slow_retention_gain": 0.05,
+    "scope": "Only zero-violation and numeric tolerances are exercised here; later performance thresholds are registered, not evaluated."
+  },
+  "acceptance_cases": [
+    "zero-delay synchronous equality and arrival passivity",
+    "server-owned source model and frozen snapshot metadata",
+    "40 simultaneous replies split into 20+20 with stale versions 0 then 1",
+    "same-time arrival ordering independent of enqueue order",
+    "global and per-identity outstanding limits",
+    "unknown/cross-identity/wrong-source packets have zero model/receipt effects",
+    "duplicate rejection before and after consumption",
+    "lost/cancelled/expired task slot reclamation and late-old-packet isolation",
+    "expiry boundary and buffered expiry",
+    "staleness expiry of in-flight tasks",
+    "independent 3-4-5 norm clipping oracle",
+    "zero coefficient does not advance version",
+    "positive cancelling contributions do advance version",
+    "nonfinite/vector-shape/coefficient negative cases",
+    "old snapshot retention and collection",
+    "configuration and backwards-time guards",
+    "buffer and ingress cancellation/loss reclamation",
+    "old expiry timer isolation after identity reissue"
+  ],
+  "not_covered": [
+    "0.3 actual reference/scoring",
+    "0.4 shared budget/atomic reference commit",
+    "0.5 checkpoint recovery/log neutrality",
+    "0.6 FLGo integration/fault boundary",
+    "0.7 real training smoke"
+  ],
+  "execution": {
+    "python": "E:\\anaconda3\\python.exe",
+    "torch": "2.5.1",
+    "device": "cpu",
+    "dtype": "float64",
+    "real_training_tasks": 0,
+    "tests_run": 18,
+    "failures": 0,
+    "errors": 0,
+    "status": "PASS",
+    "failed_cases": []
+  },
+  "runs": [
+    {
+      "case": "test_buffer_and_ingress_cancellation_reclaims_slots",
+      "config": {
+        "identities": 4,
+        "max_outstanding": 4,
+        "capacity": 1,
+        "lifetime": 1.0,
+        "max_staleness": 16,
+        "clip_norm": 10.0,
+        "eta_model": 1.0,
+        "specification": "D2_PRIME_DESIGN:2.1/phase0.1+0.2-v1"
+      },
+      "config_id": "57c8a4c52350b38d615255a9078f524532e4fa6e14487352395ccb5acfc7a30a",
+      "initial_model": [
+        10.0,
+        20.0
+      ],
+      "replies": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 1,
+          "identity": 1,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 2,
+          "identity": 2,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 3,
+          "identity": 3,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        }
+      ],
+      "final_model": [
+        10.0,
+        20.0
+      ],
+      "version": 0,
+      "outstanding": 0,
+      "tasks": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 1.0,
+          "config_id": "57c8a4c52350b38d615255a9078f524532e4fa6e14487352395ccb5acfc7a30a",
+          "state": "cancelled"
+        },
+        {
+          "task_id": 1,
+          "identity": 1,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 1.0,
+          "config_id": "57c8a4c52350b38d615255a9078f524532e4fa6e14487352395ccb5acfc7a30a",
+          "state": "expired"
+        },
+        {
+          "task_id": 2,
+          "identity": 2,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 1.0,
+          "config_id": "57c8a4c52350b38d615255a9078f524532e4fa6e14487352395ccb5acfc7a30a",
+          "state": "lost"
+        },
+        {
+          "task_id": 3,
+          "identity": 3,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 1.0,
+          "config_id": "57c8a4c52350b38d615255a9078f524532e4fa6e14487352395ccb5acfc7a30a",
+          "state": "expired"
+        }
+      ],
+      "trace": [
+        [
+          "issue",
+          0.0,
+          0
+        ],
+        [
+          "arrive",
+          0.0,
+          0
+        ],
+        [
+          "issue",
+          0.0,
+          1
+        ],
+        [
+          "arrive",
+          0.0,
+          1
+        ],
+        [
+          "issue",
+          0.0,
+          2
+        ],
+        [
+          "arrive",
+          0.0,
+          2
+        ],
+        [
+          "issue",
+          0.0,
+          3
+        ],
+        [
+          "arrive",
+          0.0,
+          3
+        ],
+        [
+          "cancelled",
+          0.0,
+          0
+        ],
+        [
+          "lost",
+          0.0,
+          2
+        ],
+        [
+          "expired",
+          1.0,
+          1
+        ],
+        [
+          "expired",
+          1.0,
+          3
+        ]
+      ],
+      "model_ledger": [],
+      "batches": [],
+      "fixture_sha256": "71ff3c6eb465e4338af8918da27855d00526cf1b41b9c5f6f1bce90ff0343f1e",
+      "trajectory_sha256": "8fbc4a20f241a174f79f15dd7e6f6deaa8a56cde28e8726734876aa74c97f80f"
+    },
+    {
+      "case": "test_cancelling_vectors_still_advance_version",
+      "config": {
+        "identities": 4,
+        "max_outstanding": 4,
+        "capacity": 2,
+        "lifetime": 5.0,
+        "max_staleness": 16,
+        "clip_norm": 10.0,
+        "eta_model": 1.0,
+        "specification": "D2_PRIME_DESIGN:2.1/phase0.1+0.2-v1"
+      },
+      "config_id": "647921d5800d04fac86811eef2dd60f6f42a51b37fe6e5f94b93ca26717ee2db",
+      "initial_model": [
+        10.0,
+        20.0
+      ],
+      "replies": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            20.0
+          ]
+        },
+        {
+          "task_id": 1,
+          "identity": 1,
+          "source_version": 0,
+          "local_model": [
+            9.0,
+            20.0
+          ]
+        }
+      ],
+      "final_model": [
+        10.0,
+        20.0
+      ],
+      "version": 1,
+      "outstanding": 0,
+      "tasks": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "647921d5800d04fac86811eef2dd60f6f42a51b37fe6e5f94b93ca26717ee2db",
+          "state": "consumed"
+        },
+        {
+          "task_id": 1,
+          "identity": 1,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "647921d5800d04fac86811eef2dd60f6f42a51b37fe6e5f94b93ca26717ee2db",
+          "state": "consumed"
+        }
+      ],
+      "trace": [
+        [
+          "issue",
+          0.0,
+          0
+        ],
+        [
+          "arrive",
+          0.0,
+          0
+        ],
+        [
+          "issue",
+          0.0,
+          1
+        ],
+        [
+          "arrive",
+          0.0,
+          1
+        ],
+        [
+          "consumed",
+          0.0,
+          0
+        ],
+        [
+          "consumed",
+          0.0,
+          1
+        ]
+      ],
+      "model_ledger": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "at": 0.0,
+          "source_version": 0,
+          "a": 0.5
+        },
+        {
+          "task_id": 1,
+          "identity": 1,
+          "at": 0.0,
+          "source_version": 0,
+          "a": 0.5
+        }
+      ],
+      "batches": [
+        {
+          "at": 0.0,
+          "version_before": 0,
+          "version_after": 1,
+          "candidates": [
+            {
+              "task_id": 0,
+              "identity": 0,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                0.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                0.0
+              ]
+            },
+            {
+              "task_id": 1,
+              "identity": 1,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                1.0,
+                0.0
+              ],
+              "clipped_delta": [
+                1.0,
+                0.0
+              ]
+            }
+          ],
+          "coefficients": [
+            0.5,
+            0.5
+          ]
+        }
+      ],
+      "fixture_sha256": "0363ccf5abe9fe068310a7a0d2014e9d32b17dfbf323e71059a6a57aae5c28c9",
+      "trajectory_sha256": "3d2c13c597aeb94ef8c5d0c4b76184c80d37de7a1d7f8ac19d6ca0d11435dd03"
+    },
+    {
+      "case": "test_clipping_has_independent_norm_oracle",
+      "config": {
+        "identities": 4,
+        "max_outstanding": 4,
+        "capacity": 1,
+        "lifetime": 5.0,
+        "max_staleness": 16,
+        "clip_norm": 1.0,
+        "eta_model": 1.0,
+        "specification": "D2_PRIME_DESIGN:2.1/phase0.1+0.2-v1"
+      },
+      "config_id": "ba729982137d494562ff36a8a1369dca00ab591ccfa9d430620148fcfdb566be",
+      "initial_model": [
+        10.0,
+        20.0
+      ],
+      "replies": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "local_model": [
+            13.0,
+            24.0
+          ]
+        }
+      ],
+      "final_model": [
+        10.6,
+        20.8
+      ],
+      "version": 1,
+      "outstanding": 0,
+      "tasks": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "ba729982137d494562ff36a8a1369dca00ab591ccfa9d430620148fcfdb566be",
+          "state": "consumed"
+        }
+      ],
+      "trace": [
+        [
+          "issue",
+          0.0,
+          0
+        ],
+        [
+          "arrive",
+          0.0,
+          0
+        ],
+        [
+          "consumed",
+          0.0,
+          0
+        ]
+      ],
+      "model_ledger": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "at": 0.0,
+          "source_version": 0,
+          "a": 1.0
+        }
+      ],
+      "batches": [
+        {
+          "at": 0.0,
+          "version_before": 0,
+          "version_after": 1,
+          "candidates": [
+            {
+              "task_id": 0,
+              "identity": 0,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -3.0,
+                -4.0
+              ],
+              "clipped_delta": [
+                -0.6000000000000001,
+                -0.8
+              ]
+            }
+          ],
+          "coefficients": [
+            1.0
+          ]
+        }
+      ],
+      "fixture_sha256": "85ada80923289ee9afcb8daf82d911351ae05e19c6b1ca0f701d3fb6c7264a32",
+      "trajectory_sha256": "a14c647561c46af93ca9f4e45ab4e9918498857ae2aa6977a214001716dac913"
+    },
+    {
+      "case": "test_clock_and_configuration_guards",
+      "config": {
+        "identities": 4,
+        "max_outstanding": 4,
+        "capacity": 2,
+        "lifetime": 5.0,
+        "max_staleness": 16,
+        "clip_norm": 10.0,
+        "eta_model": 1.0,
+        "specification": "D2_PRIME_DESIGN:2.1/phase0.1+0.2-v1"
+      },
+      "config_id": "647921d5800d04fac86811eef2dd60f6f42a51b37fe6e5f94b93ca26717ee2db",
+      "initial_model": [
+        10.0,
+        20.0
+      ],
+      "replies": [],
+      "final_model": [
+        10.0,
+        20.0
+      ],
+      "version": 0,
+      "outstanding": 0,
+      "tasks": [],
+      "trace": [],
+      "model_ledger": [],
+      "batches": [],
+      "fixture_sha256": "88c2720f1aa7abac0b434909f3bff15b033fb4589d4e318c9ba0b689c4f6e8a3",
+      "trajectory_sha256": "1224b03e431a08cde20b683acb526f684986e85d7ec374d3a3e1991af2fbc290"
+    },
+    {
+      "case": "test_duplicate_before_and_after_commit",
+      "config": {
+        "identities": 4,
+        "max_outstanding": 4,
+        "capacity": 1,
+        "lifetime": 5.0,
+        "max_staleness": 16,
+        "clip_norm": 10.0,
+        "eta_model": 1.0,
+        "specification": "D2_PRIME_DESIGN:2.1/phase0.1+0.2-v1"
+      },
+      "config_id": "a38a57a9edc652d33c39840e986a4159d68c8bf7958eab2729eb0ee0ba81acc1",
+      "initial_model": [
+        10.0,
+        20.0
+      ],
+      "replies": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        }
+      ],
+      "final_model": [
+        11.0,
+        18.0
+      ],
+      "version": 1,
+      "outstanding": 0,
+      "tasks": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a38a57a9edc652d33c39840e986a4159d68c8bf7958eab2729eb0ee0ba81acc1",
+          "state": "consumed"
+        }
+      ],
+      "trace": [
+        [
+          "issue",
+          0.0,
+          0
+        ],
+        [
+          "arrive",
+          0.0,
+          0
+        ],
+        [
+          "invalid:duplicate_or_terminal",
+          0.0,
+          0
+        ],
+        [
+          "consumed",
+          0.0,
+          0
+        ],
+        [
+          "invalid:duplicate_or_terminal",
+          0.0,
+          0
+        ]
+      ],
+      "model_ledger": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "at": 0.0,
+          "source_version": 0,
+          "a": 1.0
+        }
+      ],
+      "batches": [
+        {
+          "at": 0.0,
+          "version_before": 0,
+          "version_after": 1,
+          "candidates": [
+            {
+              "task_id": 0,
+              "identity": 0,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            }
+          ],
+          "coefficients": [
+            1.0
+          ]
+        }
+      ],
+      "fixture_sha256": "778e98728e28b6f8501d49c3250dbc0b4d341b6028e03601ebde4e97314079d3",
+      "trajectory_sha256": "a7a8931a08bc5d9197e6fb14bde62dcd5db7dc0fbdd9c9648c5e0916bfadd92b"
+    },
+    {
+      "case": "test_equal_time_order_independent_of_enqueue_order",
+      "config": {
+        "identities": 4,
+        "max_outstanding": 4,
+        "capacity": 4,
+        "lifetime": 5.0,
+        "max_staleness": 16,
+        "clip_norm": 10.0,
+        "eta_model": 1.0,
+        "specification": "D2_PRIME_DESIGN:2.1/phase0.1+0.2-v1"
+      },
+      "config_id": "c551fb432eed70f48d5ef392996dabb7aae2e65ed05691362aa4ba62621201a5",
+      "initial_model": [
+        10.0,
+        20.0
+      ],
+      "replies": [
+        {
+          "task_id": 2,
+          "identity": 2,
+          "source_version": 0,
+          "local_model": [
+            13.0,
+            20.0
+          ]
+        },
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            20.0
+          ]
+        },
+        {
+          "task_id": 3,
+          "identity": 3,
+          "source_version": 0,
+          "local_model": [
+            14.0,
+            20.0
+          ]
+        },
+        {
+          "task_id": 1,
+          "identity": 1,
+          "source_version": 0,
+          "local_model": [
+            12.0,
+            20.0
+          ]
+        }
+      ],
+      "final_model": [
+        12.5,
+        20.0
+      ],
+      "version": 1,
+      "outstanding": 0,
+      "tasks": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "c551fb432eed70f48d5ef392996dabb7aae2e65ed05691362aa4ba62621201a5",
+          "state": "consumed"
+        },
+        {
+          "task_id": 1,
+          "identity": 1,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "c551fb432eed70f48d5ef392996dabb7aae2e65ed05691362aa4ba62621201a5",
+          "state": "consumed"
+        },
+        {
+          "task_id": 2,
+          "identity": 2,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "c551fb432eed70f48d5ef392996dabb7aae2e65ed05691362aa4ba62621201a5",
+          "state": "consumed"
+        },
+        {
+          "task_id": 3,
+          "identity": 3,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "c551fb432eed70f48d5ef392996dabb7aae2e65ed05691362aa4ba62621201a5",
+          "state": "consumed"
+        }
+      ],
+      "trace": [
+        [
+          "issue",
+          0.0,
+          0
+        ],
+        [
+          "issue",
+          0.0,
+          1
+        ],
+        [
+          "issue",
+          0.0,
+          2
+        ],
+        [
+          "issue",
+          0.0,
+          3
+        ],
+        [
+          "arrive",
+          1.0,
+          0
+        ],
+        [
+          "arrive",
+          1.0,
+          1
+        ],
+        [
+          "arrive",
+          1.0,
+          2
+        ],
+        [
+          "arrive",
+          1.0,
+          3
+        ],
+        [
+          "consumed",
+          1.0,
+          0
+        ],
+        [
+          "consumed",
+          1.0,
+          1
+        ],
+        [
+          "consumed",
+          1.0,
+          2
+        ],
+        [
+          "consumed",
+          1.0,
+          3
+        ]
+      ],
+      "model_ledger": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.25
+        },
+        {
+          "task_id": 1,
+          "identity": 1,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.25
+        },
+        {
+          "task_id": 2,
+          "identity": 2,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.25
+        },
+        {
+          "task_id": 3,
+          "identity": 3,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.25
+        }
+      ],
+      "batches": [
+        {
+          "at": 1.0,
+          "version_before": 0,
+          "version_after": 1,
+          "candidates": [
+            {
+              "task_id": 0,
+              "identity": 0,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                0.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                0.0
+              ]
+            },
+            {
+              "task_id": 1,
+              "identity": 1,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -2.0,
+                0.0
+              ],
+              "clipped_delta": [
+                -2.0,
+                0.0
+              ]
+            },
+            {
+              "task_id": 2,
+              "identity": 2,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -3.0,
+                0.0
+              ],
+              "clipped_delta": [
+                -3.0,
+                0.0
+              ]
+            },
+            {
+              "task_id": 3,
+              "identity": 3,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -4.0,
+                0.0
+              ],
+              "clipped_delta": [
+                -4.0,
+                0.0
+              ]
+            }
+          ],
+          "coefficients": [
+            0.25,
+            0.25,
+            0.25,
+            0.25
+          ]
+        }
+      ],
+      "fixture_sha256": "c694125d6f9c70768562d1d2daf40aaa9ea8f18498b642c948b32d96a4fb4dd3",
+      "trajectory_sha256": "cc3744dfde8ed16a259513a46cc9ff9ad4dbf346df6d874f6d50ac9aeadc4342"
+    },
+    {
+      "case": "test_equal_time_order_independent_of_enqueue_order",
+      "config": {
+        "identities": 4,
+        "max_outstanding": 4,
+        "capacity": 4,
+        "lifetime": 5.0,
+        "max_staleness": 16,
+        "clip_norm": 10.0,
+        "eta_model": 1.0,
+        "specification": "D2_PRIME_DESIGN:2.1/phase0.1+0.2-v1"
+      },
+      "config_id": "c551fb432eed70f48d5ef392996dabb7aae2e65ed05691362aa4ba62621201a5",
+      "initial_model": [
+        10.0,
+        20.0
+      ],
+      "replies": [
+        {
+          "task_id": 3,
+          "identity": 3,
+          "source_version": 0,
+          "local_model": [
+            14.0,
+            20.0
+          ]
+        },
+        {
+          "task_id": 2,
+          "identity": 2,
+          "source_version": 0,
+          "local_model": [
+            13.0,
+            20.0
+          ]
+        },
+        {
+          "task_id": 1,
+          "identity": 1,
+          "source_version": 0,
+          "local_model": [
+            12.0,
+            20.0
+          ]
+        },
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            20.0
+          ]
+        }
+      ],
+      "final_model": [
+        12.5,
+        20.0
+      ],
+      "version": 1,
+      "outstanding": 0,
+      "tasks": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "c551fb432eed70f48d5ef392996dabb7aae2e65ed05691362aa4ba62621201a5",
+          "state": "consumed"
+        },
+        {
+          "task_id": 1,
+          "identity": 1,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "c551fb432eed70f48d5ef392996dabb7aae2e65ed05691362aa4ba62621201a5",
+          "state": "consumed"
+        },
+        {
+          "task_id": 2,
+          "identity": 2,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "c551fb432eed70f48d5ef392996dabb7aae2e65ed05691362aa4ba62621201a5",
+          "state": "consumed"
+        },
+        {
+          "task_id": 3,
+          "identity": 3,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "c551fb432eed70f48d5ef392996dabb7aae2e65ed05691362aa4ba62621201a5",
+          "state": "consumed"
+        }
+      ],
+      "trace": [
+        [
+          "issue",
+          0.0,
+          0
+        ],
+        [
+          "issue",
+          0.0,
+          1
+        ],
+        [
+          "issue",
+          0.0,
+          2
+        ],
+        [
+          "issue",
+          0.0,
+          3
+        ],
+        [
+          "arrive",
+          1.0,
+          0
+        ],
+        [
+          "arrive",
+          1.0,
+          1
+        ],
+        [
+          "arrive",
+          1.0,
+          2
+        ],
+        [
+          "arrive",
+          1.0,
+          3
+        ],
+        [
+          "consumed",
+          1.0,
+          0
+        ],
+        [
+          "consumed",
+          1.0,
+          1
+        ],
+        [
+          "consumed",
+          1.0,
+          2
+        ],
+        [
+          "consumed",
+          1.0,
+          3
+        ]
+      ],
+      "model_ledger": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.25
+        },
+        {
+          "task_id": 1,
+          "identity": 1,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.25
+        },
+        {
+          "task_id": 2,
+          "identity": 2,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.25
+        },
+        {
+          "task_id": 3,
+          "identity": 3,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.25
+        }
+      ],
+      "batches": [
+        {
+          "at": 1.0,
+          "version_before": 0,
+          "version_after": 1,
+          "candidates": [
+            {
+              "task_id": 0,
+              "identity": 0,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                0.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                0.0
+              ]
+            },
+            {
+              "task_id": 1,
+              "identity": 1,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -2.0,
+                0.0
+              ],
+              "clipped_delta": [
+                -2.0,
+                0.0
+              ]
+            },
+            {
+              "task_id": 2,
+              "identity": 2,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -3.0,
+                0.0
+              ],
+              "clipped_delta": [
+                -3.0,
+                0.0
+              ]
+            },
+            {
+              "task_id": 3,
+              "identity": 3,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -4.0,
+                0.0
+              ],
+              "clipped_delta": [
+                -4.0,
+                0.0
+              ]
+            }
+          ],
+          "coefficients": [
+            0.25,
+            0.25,
+            0.25,
+            0.25
+          ]
+        }
+      ],
+      "fixture_sha256": "0e43ed835c7a3e22c466034269b0a0367396f65626795e55828fdff0e6c9fe24",
+      "trajectory_sha256": "cc3744dfde8ed16a259513a46cc9ff9ad4dbf346df6d874f6d50ac9aeadc4342"
+    },
+    {
+      "case": "test_expiry_endpoint_and_buffered_expiry",
+      "config": {
+        "identities": 4,
+        "max_outstanding": 4,
+        "capacity": 2,
+        "lifetime": 1.0,
+        "max_staleness": 16,
+        "clip_norm": 10.0,
+        "eta_model": 1.0,
+        "specification": "D2_PRIME_DESIGN:2.1/phase0.1+0.2-v1"
+      },
+      "config_id": "f1b8a404532030cbf2d2b2a26446a8226164dc981bdbffdfc93b0f34bc71fcd7",
+      "initial_model": [
+        10.0,
+        20.0
+      ],
+      "replies": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        }
+      ],
+      "final_model": [
+        10.0,
+        20.0
+      ],
+      "version": 0,
+      "outstanding": 0,
+      "tasks": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 1.0,
+          "config_id": "f1b8a404532030cbf2d2b2a26446a8226164dc981bdbffdfc93b0f34bc71fcd7",
+          "state": "expired"
+        }
+      ],
+      "trace": [
+        [
+          "issue",
+          0.0,
+          0
+        ],
+        [
+          "expired",
+          1.0,
+          0
+        ],
+        [
+          "invalid:duplicate_or_terminal",
+          1.0,
+          0
+        ]
+      ],
+      "model_ledger": [],
+      "batches": [],
+      "fixture_sha256": "778e98728e28b6f8501d49c3250dbc0b4d341b6028e03601ebde4e97314079d3",
+      "trajectory_sha256": "c01b465778b6be5b6ad9348d091e122834e4f0d9920a0a6bda833faac3836c16"
+    },
+    {
+      "case": "test_expiry_endpoint_and_buffered_expiry",
+      "config": {
+        "identities": 4,
+        "max_outstanding": 4,
+        "capacity": 2,
+        "lifetime": 1.0,
+        "max_staleness": 16,
+        "clip_norm": 10.0,
+        "eta_model": 1.0,
+        "specification": "D2_PRIME_DESIGN:2.1/phase0.1+0.2-v1"
+      },
+      "config_id": "f1b8a404532030cbf2d2b2a26446a8226164dc981bdbffdfc93b0f34bc71fcd7",
+      "initial_model": [
+        10.0,
+        20.0
+      ],
+      "replies": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        }
+      ],
+      "final_model": [
+        10.0,
+        20.0
+      ],
+      "version": 0,
+      "outstanding": 0,
+      "tasks": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 1.0,
+          "config_id": "f1b8a404532030cbf2d2b2a26446a8226164dc981bdbffdfc93b0f34bc71fcd7",
+          "state": "expired"
+        }
+      ],
+      "trace": [
+        [
+          "issue",
+          0.0,
+          0
+        ],
+        [
+          "arrive",
+          0.999,
+          0
+        ],
+        [
+          "expired",
+          1.0,
+          0
+        ]
+      ],
+      "model_ledger": [],
+      "batches": [],
+      "fixture_sha256": "778e98728e28b6f8501d49c3250dbc0b4d341b6028e03601ebde4e97314079d3",
+      "trajectory_sha256": "02b4d5a097bde44d8b90e15e8d0dff326f3a38b9341a23b39e24b1b69c98de42"
+    },
+    {
+      "case": "test_forty_arrivals_two_twenty_batches",
+      "config": {
+        "identities": 40,
+        "max_outstanding": 40,
+        "capacity": 20,
+        "lifetime": 5.0,
+        "max_staleness": 16,
+        "clip_norm": 10.0,
+        "eta_model": 1.0,
+        "specification": "D2_PRIME_DESIGN:2.1/phase0.1+0.2-v1"
+      },
+      "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+      "initial_model": [
+        10.0,
+        20.0
+      ],
+      "replies": [
+        {
+          "task_id": 39,
+          "identity": 39,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 38,
+          "identity": 38,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 37,
+          "identity": 37,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 36,
+          "identity": 36,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 35,
+          "identity": 35,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 34,
+          "identity": 34,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 33,
+          "identity": 33,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 32,
+          "identity": 32,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 31,
+          "identity": 31,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 30,
+          "identity": 30,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 29,
+          "identity": 29,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 28,
+          "identity": 28,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 27,
+          "identity": 27,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 26,
+          "identity": 26,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 25,
+          "identity": 25,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 24,
+          "identity": 24,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 23,
+          "identity": 23,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 22,
+          "identity": 22,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 21,
+          "identity": 21,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 20,
+          "identity": 20,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 19,
+          "identity": 19,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 18,
+          "identity": 18,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 17,
+          "identity": 17,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 16,
+          "identity": 16,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 15,
+          "identity": 15,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 14,
+          "identity": 14,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 13,
+          "identity": 13,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 12,
+          "identity": 12,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 11,
+          "identity": 11,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 10,
+          "identity": 10,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 9,
+          "identity": 9,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 8,
+          "identity": 8,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 7,
+          "identity": 7,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 6,
+          "identity": 6,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 5,
+          "identity": 5,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 4,
+          "identity": 4,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 3,
+          "identity": 3,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 2,
+          "identity": 2,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 1,
+          "identity": 1,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        }
+      ],
+      "final_model": [
+        11.5,
+        17.0
+      ],
+      "version": 2,
+      "outstanding": 0,
+      "tasks": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 1,
+          "identity": 1,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 2,
+          "identity": 2,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 3,
+          "identity": 3,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 4,
+          "identity": 4,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 5,
+          "identity": 5,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 6,
+          "identity": 6,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 7,
+          "identity": 7,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 8,
+          "identity": 8,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 9,
+          "identity": 9,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 10,
+          "identity": 10,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 11,
+          "identity": 11,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 12,
+          "identity": 12,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 13,
+          "identity": 13,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 14,
+          "identity": 14,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 15,
+          "identity": 15,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 16,
+          "identity": 16,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 17,
+          "identity": 17,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 18,
+          "identity": 18,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 19,
+          "identity": 19,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 20,
+          "identity": 20,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 21,
+          "identity": 21,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 22,
+          "identity": 22,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 23,
+          "identity": 23,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 24,
+          "identity": 24,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 25,
+          "identity": 25,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 26,
+          "identity": 26,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 27,
+          "identity": 27,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 28,
+          "identity": 28,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 29,
+          "identity": 29,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 30,
+          "identity": 30,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 31,
+          "identity": 31,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 32,
+          "identity": 32,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 33,
+          "identity": 33,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 34,
+          "identity": 34,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 35,
+          "identity": 35,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 36,
+          "identity": 36,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 37,
+          "identity": 37,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 38,
+          "identity": 38,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        },
+        {
+          "task_id": 39,
+          "identity": 39,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a8916c4218ba09282d8c345d433980c67b891d489efdb8906bddf02fffb19078",
+          "state": "consumed"
+        }
+      ],
+      "trace": [
+        [
+          "issue",
+          0.0,
+          0
+        ],
+        [
+          "issue",
+          0.0,
+          1
+        ],
+        [
+          "issue",
+          0.0,
+          2
+        ],
+        [
+          "issue",
+          0.0,
+          3
+        ],
+        [
+          "issue",
+          0.0,
+          4
+        ],
+        [
+          "issue",
+          0.0,
+          5
+        ],
+        [
+          "issue",
+          0.0,
+          6
+        ],
+        [
+          "issue",
+          0.0,
+          7
+        ],
+        [
+          "issue",
+          0.0,
+          8
+        ],
+        [
+          "issue",
+          0.0,
+          9
+        ],
+        [
+          "issue",
+          0.0,
+          10
+        ],
+        [
+          "issue",
+          0.0,
+          11
+        ],
+        [
+          "issue",
+          0.0,
+          12
+        ],
+        [
+          "issue",
+          0.0,
+          13
+        ],
+        [
+          "issue",
+          0.0,
+          14
+        ],
+        [
+          "issue",
+          0.0,
+          15
+        ],
+        [
+          "issue",
+          0.0,
+          16
+        ],
+        [
+          "issue",
+          0.0,
+          17
+        ],
+        [
+          "issue",
+          0.0,
+          18
+        ],
+        [
+          "issue",
+          0.0,
+          19
+        ],
+        [
+          "issue",
+          0.0,
+          20
+        ],
+        [
+          "issue",
+          0.0,
+          21
+        ],
+        [
+          "issue",
+          0.0,
+          22
+        ],
+        [
+          "issue",
+          0.0,
+          23
+        ],
+        [
+          "issue",
+          0.0,
+          24
+        ],
+        [
+          "issue",
+          0.0,
+          25
+        ],
+        [
+          "issue",
+          0.0,
+          26
+        ],
+        [
+          "issue",
+          0.0,
+          27
+        ],
+        [
+          "issue",
+          0.0,
+          28
+        ],
+        [
+          "issue",
+          0.0,
+          29
+        ],
+        [
+          "issue",
+          0.0,
+          30
+        ],
+        [
+          "issue",
+          0.0,
+          31
+        ],
+        [
+          "issue",
+          0.0,
+          32
+        ],
+        [
+          "issue",
+          0.0,
+          33
+        ],
+        [
+          "issue",
+          0.0,
+          34
+        ],
+        [
+          "issue",
+          0.0,
+          35
+        ],
+        [
+          "issue",
+          0.0,
+          36
+        ],
+        [
+          "issue",
+          0.0,
+          37
+        ],
+        [
+          "issue",
+          0.0,
+          38
+        ],
+        [
+          "issue",
+          0.0,
+          39
+        ],
+        [
+          "arrive",
+          1.0,
+          0
+        ],
+        [
+          "arrive",
+          1.0,
+          1
+        ],
+        [
+          "arrive",
+          1.0,
+          2
+        ],
+        [
+          "arrive",
+          1.0,
+          3
+        ],
+        [
+          "arrive",
+          1.0,
+          4
+        ],
+        [
+          "arrive",
+          1.0,
+          5
+        ],
+        [
+          "arrive",
+          1.0,
+          6
+        ],
+        [
+          "arrive",
+          1.0,
+          7
+        ],
+        [
+          "arrive",
+          1.0,
+          8
+        ],
+        [
+          "arrive",
+          1.0,
+          9
+        ],
+        [
+          "arrive",
+          1.0,
+          10
+        ],
+        [
+          "arrive",
+          1.0,
+          11
+        ],
+        [
+          "arrive",
+          1.0,
+          12
+        ],
+        [
+          "arrive",
+          1.0,
+          13
+        ],
+        [
+          "arrive",
+          1.0,
+          14
+        ],
+        [
+          "arrive",
+          1.0,
+          15
+        ],
+        [
+          "arrive",
+          1.0,
+          16
+        ],
+        [
+          "arrive",
+          1.0,
+          17
+        ],
+        [
+          "arrive",
+          1.0,
+          18
+        ],
+        [
+          "arrive",
+          1.0,
+          19
+        ],
+        [
+          "arrive",
+          1.0,
+          20
+        ],
+        [
+          "arrive",
+          1.0,
+          21
+        ],
+        [
+          "arrive",
+          1.0,
+          22
+        ],
+        [
+          "arrive",
+          1.0,
+          23
+        ],
+        [
+          "arrive",
+          1.0,
+          24
+        ],
+        [
+          "arrive",
+          1.0,
+          25
+        ],
+        [
+          "arrive",
+          1.0,
+          26
+        ],
+        [
+          "arrive",
+          1.0,
+          27
+        ],
+        [
+          "arrive",
+          1.0,
+          28
+        ],
+        [
+          "arrive",
+          1.0,
+          29
+        ],
+        [
+          "arrive",
+          1.0,
+          30
+        ],
+        [
+          "arrive",
+          1.0,
+          31
+        ],
+        [
+          "arrive",
+          1.0,
+          32
+        ],
+        [
+          "arrive",
+          1.0,
+          33
+        ],
+        [
+          "arrive",
+          1.0,
+          34
+        ],
+        [
+          "arrive",
+          1.0,
+          35
+        ],
+        [
+          "arrive",
+          1.0,
+          36
+        ],
+        [
+          "arrive",
+          1.0,
+          37
+        ],
+        [
+          "arrive",
+          1.0,
+          38
+        ],
+        [
+          "arrive",
+          1.0,
+          39
+        ],
+        [
+          "consumed",
+          1.0,
+          0
+        ],
+        [
+          "consumed",
+          1.0,
+          1
+        ],
+        [
+          "consumed",
+          1.0,
+          2
+        ],
+        [
+          "consumed",
+          1.0,
+          3
+        ],
+        [
+          "consumed",
+          1.0,
+          4
+        ],
+        [
+          "consumed",
+          1.0,
+          5
+        ],
+        [
+          "consumed",
+          1.0,
+          6
+        ],
+        [
+          "consumed",
+          1.0,
+          7
+        ],
+        [
+          "consumed",
+          1.0,
+          8
+        ],
+        [
+          "consumed",
+          1.0,
+          9
+        ],
+        [
+          "consumed",
+          1.0,
+          10
+        ],
+        [
+          "consumed",
+          1.0,
+          11
+        ],
+        [
+          "consumed",
+          1.0,
+          12
+        ],
+        [
+          "consumed",
+          1.0,
+          13
+        ],
+        [
+          "consumed",
+          1.0,
+          14
+        ],
+        [
+          "consumed",
+          1.0,
+          15
+        ],
+        [
+          "consumed",
+          1.0,
+          16
+        ],
+        [
+          "consumed",
+          1.0,
+          17
+        ],
+        [
+          "consumed",
+          1.0,
+          18
+        ],
+        [
+          "consumed",
+          1.0,
+          19
+        ],
+        [
+          "consumed",
+          1.0,
+          20
+        ],
+        [
+          "consumed",
+          1.0,
+          21
+        ],
+        [
+          "consumed",
+          1.0,
+          22
+        ],
+        [
+          "consumed",
+          1.0,
+          23
+        ],
+        [
+          "consumed",
+          1.0,
+          24
+        ],
+        [
+          "consumed",
+          1.0,
+          25
+        ],
+        [
+          "consumed",
+          1.0,
+          26
+        ],
+        [
+          "consumed",
+          1.0,
+          27
+        ],
+        [
+          "consumed",
+          1.0,
+          28
+        ],
+        [
+          "consumed",
+          1.0,
+          29
+        ],
+        [
+          "consumed",
+          1.0,
+          30
+        ],
+        [
+          "consumed",
+          1.0,
+          31
+        ],
+        [
+          "consumed",
+          1.0,
+          32
+        ],
+        [
+          "consumed",
+          1.0,
+          33
+        ],
+        [
+          "consumed",
+          1.0,
+          34
+        ],
+        [
+          "consumed",
+          1.0,
+          35
+        ],
+        [
+          "consumed",
+          1.0,
+          36
+        ],
+        [
+          "consumed",
+          1.0,
+          37
+        ],
+        [
+          "consumed",
+          1.0,
+          38
+        ],
+        [
+          "consumed",
+          1.0,
+          39
+        ]
+      ],
+      "model_ledger": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.05
+        },
+        {
+          "task_id": 1,
+          "identity": 1,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.05
+        },
+        {
+          "task_id": 2,
+          "identity": 2,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.05
+        },
+        {
+          "task_id": 3,
+          "identity": 3,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.05
+        },
+        {
+          "task_id": 4,
+          "identity": 4,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.05
+        },
+        {
+          "task_id": 5,
+          "identity": 5,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.05
+        },
+        {
+          "task_id": 6,
+          "identity": 6,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.05
+        },
+        {
+          "task_id": 7,
+          "identity": 7,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.05
+        },
+        {
+          "task_id": 8,
+          "identity": 8,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.05
+        },
+        {
+          "task_id": 9,
+          "identity": 9,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.05
+        },
+        {
+          "task_id": 10,
+          "identity": 10,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.05
+        },
+        {
+          "task_id": 11,
+          "identity": 11,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.05
+        },
+        {
+          "task_id": 12,
+          "identity": 12,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.05
+        },
+        {
+          "task_id": 13,
+          "identity": 13,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.05
+        },
+        {
+          "task_id": 14,
+          "identity": 14,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.05
+        },
+        {
+          "task_id": 15,
+          "identity": 15,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.05
+        },
+        {
+          "task_id": 16,
+          "identity": 16,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.05
+        },
+        {
+          "task_id": 17,
+          "identity": 17,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.05
+        },
+        {
+          "task_id": 18,
+          "identity": 18,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.05
+        },
+        {
+          "task_id": 19,
+          "identity": 19,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.05
+        },
+        {
+          "task_id": 20,
+          "identity": 20,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.025
+        },
+        {
+          "task_id": 21,
+          "identity": 21,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.025
+        },
+        {
+          "task_id": 22,
+          "identity": 22,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.025
+        },
+        {
+          "task_id": 23,
+          "identity": 23,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.025
+        },
+        {
+          "task_id": 24,
+          "identity": 24,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.025
+        },
+        {
+          "task_id": 25,
+          "identity": 25,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.025
+        },
+        {
+          "task_id": 26,
+          "identity": 26,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.025
+        },
+        {
+          "task_id": 27,
+          "identity": 27,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.025
+        },
+        {
+          "task_id": 28,
+          "identity": 28,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.025
+        },
+        {
+          "task_id": 29,
+          "identity": 29,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.025
+        },
+        {
+          "task_id": 30,
+          "identity": 30,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.025
+        },
+        {
+          "task_id": 31,
+          "identity": 31,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.025
+        },
+        {
+          "task_id": 32,
+          "identity": 32,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.025
+        },
+        {
+          "task_id": 33,
+          "identity": 33,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.025
+        },
+        {
+          "task_id": 34,
+          "identity": 34,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.025
+        },
+        {
+          "task_id": 35,
+          "identity": 35,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.025
+        },
+        {
+          "task_id": 36,
+          "identity": 36,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.025
+        },
+        {
+          "task_id": 37,
+          "identity": 37,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.025
+        },
+        {
+          "task_id": 38,
+          "identity": 38,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.025
+        },
+        {
+          "task_id": 39,
+          "identity": 39,
+          "at": 1.0,
+          "source_version": 0,
+          "a": 0.025
+        }
+      ],
+      "batches": [
+        {
+          "at": 1.0,
+          "version_before": 0,
+          "version_after": 1,
+          "candidates": [
+            {
+              "task_id": 0,
+              "identity": 0,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 1,
+              "identity": 1,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 2,
+              "identity": 2,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 3,
+              "identity": 3,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 4,
+              "identity": 4,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 5,
+              "identity": 5,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 6,
+              "identity": 6,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 7,
+              "identity": 7,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 8,
+              "identity": 8,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 9,
+              "identity": 9,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 10,
+              "identity": 10,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 11,
+              "identity": 11,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 12,
+              "identity": 12,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 13,
+              "identity": 13,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 14,
+              "identity": 14,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 15,
+              "identity": 15,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 16,
+              "identity": 16,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 17,
+              "identity": 17,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 18,
+              "identity": 18,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 19,
+              "identity": 19,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            }
+          ],
+          "coefficients": [
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05
+          ]
+        },
+        {
+          "at": 1.0,
+          "version_before": 1,
+          "version_after": 2,
+          "candidates": [
+            {
+              "task_id": 20,
+              "identity": 20,
+              "source_version": 0,
+              "staleness": 1,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 21,
+              "identity": 21,
+              "source_version": 0,
+              "staleness": 1,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 22,
+              "identity": 22,
+              "source_version": 0,
+              "staleness": 1,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 23,
+              "identity": 23,
+              "source_version": 0,
+              "staleness": 1,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 24,
+              "identity": 24,
+              "source_version": 0,
+              "staleness": 1,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 25,
+              "identity": 25,
+              "source_version": 0,
+              "staleness": 1,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 26,
+              "identity": 26,
+              "source_version": 0,
+              "staleness": 1,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 27,
+              "identity": 27,
+              "source_version": 0,
+              "staleness": 1,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 28,
+              "identity": 28,
+              "source_version": 0,
+              "staleness": 1,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 29,
+              "identity": 29,
+              "source_version": 0,
+              "staleness": 1,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 30,
+              "identity": 30,
+              "source_version": 0,
+              "staleness": 1,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 31,
+              "identity": 31,
+              "source_version": 0,
+              "staleness": 1,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 32,
+              "identity": 32,
+              "source_version": 0,
+              "staleness": 1,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 33,
+              "identity": 33,
+              "source_version": 0,
+              "staleness": 1,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 34,
+              "identity": 34,
+              "source_version": 0,
+              "staleness": 1,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 35,
+              "identity": 35,
+              "source_version": 0,
+              "staleness": 1,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 36,
+              "identity": 36,
+              "source_version": 0,
+              "staleness": 1,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 37,
+              "identity": 37,
+              "source_version": 0,
+              "staleness": 1,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 38,
+              "identity": 38,
+              "source_version": 0,
+              "staleness": 1,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 39,
+              "identity": 39,
+              "source_version": 0,
+              "staleness": 1,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            }
+          ],
+          "coefficients": [
+            0.025,
+            0.025,
+            0.025,
+            0.025,
+            0.025,
+            0.025,
+            0.025,
+            0.025,
+            0.025,
+            0.025,
+            0.025,
+            0.025,
+            0.025,
+            0.025,
+            0.025,
+            0.025,
+            0.025,
+            0.025,
+            0.025,
+            0.025
+          ]
+        }
+      ],
+      "fixture_sha256": "4af8fbc5979930d68091e6c903e603d84ac7b6b40f55f1cc3a744df40ff1cee0",
+      "trajectory_sha256": "59f927ea853928da5363113fe109f6aab22ce705357f879a5257a56537b741f7"
+    },
+    {
+      "case": "test_global_and_identity_limits",
+      "config": {
+        "identities": 4,
+        "max_outstanding": 2,
+        "capacity": 2,
+        "lifetime": 5.0,
+        "max_staleness": 16,
+        "clip_norm": 10.0,
+        "eta_model": 1.0,
+        "specification": "D2_PRIME_DESIGN:2.1/phase0.1+0.2-v1"
+      },
+      "config_id": "50394db13e61f259b704128eb888aed0cd68f1ad08ae678e646a44a70f545da0",
+      "initial_model": [
+        10.0,
+        20.0
+      ],
+      "replies": [],
+      "final_model": [
+        10.0,
+        20.0
+      ],
+      "version": 0,
+      "outstanding": 2,
+      "tasks": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "50394db13e61f259b704128eb888aed0cd68f1ad08ae678e646a44a70f545da0",
+          "state": "cancelled"
+        },
+        {
+          "task_id": 1,
+          "identity": 1,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "50394db13e61f259b704128eb888aed0cd68f1ad08ae678e646a44a70f545da0",
+          "state": "issued"
+        },
+        {
+          "task_id": 2,
+          "identity": 2,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "50394db13e61f259b704128eb888aed0cd68f1ad08ae678e646a44a70f545da0",
+          "state": "issued"
+        }
+      ],
+      "trace": [
+        [
+          "issue",
+          0.0,
+          0
+        ],
+        [
+          "issue",
+          0.0,
+          1
+        ],
+        [
+          "cancelled",
+          0.0,
+          0
+        ],
+        [
+          "issue",
+          0.0,
+          2
+        ]
+      ],
+      "model_ledger": [],
+      "batches": [],
+      "fixture_sha256": "88c2720f1aa7abac0b434909f3bff15b033fb4589d4e318c9ba0b689c4f6e8a3",
+      "trajectory_sha256": "f08b475ccadf52514a1d3c320b31ea6cac7c74334644707d823e5810d30552dd"
+    },
+    {
+      "case": "test_invalid_packets_have_zero_extra_effect",
+      "config": {
+        "identities": 4,
+        "max_outstanding": 4,
+        "capacity": 2,
+        "lifetime": 5.0,
+        "max_staleness": 16,
+        "clip_norm": 10.0,
+        "eta_model": 1.0,
+        "specification": "D2_PRIME_DESIGN:2.1/phase0.1+0.2-v1"
+      },
+      "config_id": "647921d5800d04fac86811eef2dd60f6f42a51b37fe6e5f94b93ca26717ee2db",
+      "initial_model": [
+        10.0,
+        20.0
+      ],
+      "replies": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        }
+      ],
+      "final_model": [
+        10.0,
+        20.0
+      ],
+      "version": 0,
+      "outstanding": 1,
+      "tasks": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "647921d5800d04fac86811eef2dd60f6f42a51b37fe6e5f94b93ca26717ee2db",
+          "state": "issued"
+        }
+      ],
+      "trace": [
+        [
+          "issue",
+          0.0,
+          0
+        ],
+        [
+          "invalid:unknown",
+          0.0,
+          999
+        ],
+        [
+          "invalid:identity",
+          0.0,
+          0
+        ],
+        [
+          "invalid:identity",
+          0.0,
+          0
+        ],
+        [
+          "invalid:source",
+          0.0,
+          0
+        ],
+        [
+          "invalid:source",
+          0.0,
+          0
+        ]
+      ],
+      "model_ledger": [],
+      "batches": [],
+      "fixture_sha256": "778e98728e28b6f8501d49c3250dbc0b4d341b6028e03601ebde4e97314079d3",
+      "trajectory_sha256": "00464d8ad371b104f1c7aa8b8348209ad33f6364e58431c72cf0b68fe5525a22"
+    },
+    {
+      "case": "test_invalid_vector_and_coefficient_leave_writeback_unchanged",
+      "config": {
+        "identities": 4,
+        "max_outstanding": 4,
+        "capacity": 1,
+        "lifetime": 5.0,
+        "max_staleness": 16,
+        "clip_norm": 10.0,
+        "eta_model": 1.0,
+        "specification": "D2_PRIME_DESIGN:2.1/phase0.1+0.2-v1"
+      },
+      "config_id": "a38a57a9edc652d33c39840e986a4159d68c8bf7958eab2729eb0ee0ba81acc1",
+      "initial_model": [
+        10.0,
+        20.0
+      ],
+      "replies": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "local_model": [
+            1.0
+          ]
+        },
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "local_model": [
+            "nan",
+            2.0
+          ]
+        },
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "local_model": [
+            "inf",
+            2.0
+          ]
+        },
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "local_model": [
+            1e+308,
+            1e+308
+          ]
+        },
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        }
+      ],
+      "final_model": [
+        10.0,
+        20.0
+      ],
+      "version": 0,
+      "outstanding": 1,
+      "tasks": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a38a57a9edc652d33c39840e986a4159d68c8bf7958eab2729eb0ee0ba81acc1",
+          "state": "arrived"
+        }
+      ],
+      "trace": [
+        [
+          "issue",
+          0.0,
+          0
+        ],
+        [
+          "invalid:vector",
+          0.0,
+          0
+        ],
+        [
+          "invalid:vector",
+          0.0,
+          0
+        ],
+        [
+          "invalid:vector",
+          0.0,
+          0
+        ],
+        [
+          "invalid:vector_norm",
+          0.0,
+          0
+        ],
+        [
+          "arrive",
+          0.0,
+          0
+        ]
+      ],
+      "model_ledger": [],
+      "batches": [],
+      "fixture_sha256": "eb9614d63412363c752de4124bf386b2c3e2aaa3e3de18f6737f665dafae70c2",
+      "trajectory_sha256": "c3cb37f300f596bb226ee0e051d2d5be59517ab86b3be99fc811cffa6dff6dce"
+    },
+    {
+      "case": "test_loss_cancel_and_expiry_reclaim_slots",
+      "config": {
+        "identities": 4,
+        "max_outstanding": 1,
+        "capacity": 2,
+        "lifetime": 1.0,
+        "max_staleness": 16,
+        "clip_norm": 10.0,
+        "eta_model": 1.0,
+        "specification": "D2_PRIME_DESIGN:2.1/phase0.1+0.2-v1"
+      },
+      "config_id": "c422615d7a0b0ced1e61a3fd59ca7cd47831d4cac28659fcc72db92c0c102c08",
+      "initial_model": [
+        10.0,
+        20.0
+      ],
+      "replies": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        }
+      ],
+      "final_model": [
+        10.0,
+        20.0
+      ],
+      "version": 0,
+      "outstanding": 1,
+      "tasks": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 1.0,
+          "config_id": "c422615d7a0b0ced1e61a3fd59ca7cd47831d4cac28659fcc72db92c0c102c08",
+          "state": "lost"
+        },
+        {
+          "task_id": 1,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 1.0,
+          "config_id": "c422615d7a0b0ced1e61a3fd59ca7cd47831d4cac28659fcc72db92c0c102c08",
+          "state": "issued"
+        }
+      ],
+      "trace": [
+        [
+          "issue",
+          0.0,
+          0
+        ],
+        [
+          "lost",
+          0.0,
+          0
+        ],
+        [
+          "issue",
+          0.0,
+          1
+        ],
+        [
+          "invalid:duplicate_or_terminal",
+          0.0,
+          0
+        ]
+      ],
+      "model_ledger": [],
+      "batches": [],
+      "fixture_sha256": "778e98728e28b6f8501d49c3250dbc0b4d341b6028e03601ebde4e97314079d3",
+      "trajectory_sha256": "5caeccb88968cc112d8c21655efe49fe71f9e3eb9613a06b9c5419b02d1d895b"
+    },
+    {
+      "case": "test_loss_cancel_and_expiry_reclaim_slots",
+      "config": {
+        "identities": 4,
+        "max_outstanding": 1,
+        "capacity": 2,
+        "lifetime": 1.0,
+        "max_staleness": 16,
+        "clip_norm": 10.0,
+        "eta_model": 1.0,
+        "specification": "D2_PRIME_DESIGN:2.1/phase0.1+0.2-v1"
+      },
+      "config_id": "c422615d7a0b0ced1e61a3fd59ca7cd47831d4cac28659fcc72db92c0c102c08",
+      "initial_model": [
+        10.0,
+        20.0
+      ],
+      "replies": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        }
+      ],
+      "final_model": [
+        10.0,
+        20.0
+      ],
+      "version": 0,
+      "outstanding": 1,
+      "tasks": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 1.0,
+          "config_id": "c422615d7a0b0ced1e61a3fd59ca7cd47831d4cac28659fcc72db92c0c102c08",
+          "state": "cancelled"
+        },
+        {
+          "task_id": 1,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 1.0,
+          "config_id": "c422615d7a0b0ced1e61a3fd59ca7cd47831d4cac28659fcc72db92c0c102c08",
+          "state": "issued"
+        }
+      ],
+      "trace": [
+        [
+          "issue",
+          0.0,
+          0
+        ],
+        [
+          "cancelled",
+          0.0,
+          0
+        ],
+        [
+          "issue",
+          0.0,
+          1
+        ],
+        [
+          "invalid:duplicate_or_terminal",
+          0.0,
+          0
+        ]
+      ],
+      "model_ledger": [],
+      "batches": [],
+      "fixture_sha256": "778e98728e28b6f8501d49c3250dbc0b4d341b6028e03601ebde4e97314079d3",
+      "trajectory_sha256": "535bb052a758b5551e08d8c86cd034377aef47d6c27228247cc660571fafdb71"
+    },
+    {
+      "case": "test_loss_cancel_and_expiry_reclaim_slots",
+      "config": {
+        "identities": 4,
+        "max_outstanding": 1,
+        "capacity": 2,
+        "lifetime": 1.0,
+        "max_staleness": 16,
+        "clip_norm": 10.0,
+        "eta_model": 1.0,
+        "specification": "D2_PRIME_DESIGN:2.1/phase0.1+0.2-v1"
+      },
+      "config_id": "c422615d7a0b0ced1e61a3fd59ca7cd47831d4cac28659fcc72db92c0c102c08",
+      "initial_model": [
+        10.0,
+        20.0
+      ],
+      "replies": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        }
+      ],
+      "final_model": [
+        10.0,
+        20.0
+      ],
+      "version": 0,
+      "outstanding": 1,
+      "tasks": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 1.0,
+          "config_id": "c422615d7a0b0ced1e61a3fd59ca7cd47831d4cac28659fcc72db92c0c102c08",
+          "state": "expired"
+        },
+        {
+          "task_id": 1,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 1.0,
+          "expires_at": 2.0,
+          "config_id": "c422615d7a0b0ced1e61a3fd59ca7cd47831d4cac28659fcc72db92c0c102c08",
+          "state": "issued"
+        }
+      ],
+      "trace": [
+        [
+          "issue",
+          0.0,
+          0
+        ],
+        [
+          "expired",
+          1.0,
+          0
+        ],
+        [
+          "issue",
+          1.0,
+          1
+        ],
+        [
+          "invalid:duplicate_or_terminal",
+          1.0,
+          0
+        ]
+      ],
+      "model_ledger": [],
+      "batches": [],
+      "fixture_sha256": "778e98728e28b6f8501d49c3250dbc0b4d341b6028e03601ebde4e97314079d3",
+      "trajectory_sha256": "25b399cdbf942ed0f0b337b0e4468de86b32b703967fbda5cea4857fd80371bd"
+    },
+    {
+      "case": "test_old_expiry_event_cannot_cancel_reissued_identity",
+      "config": {
+        "identities": 4,
+        "max_outstanding": 4,
+        "capacity": 2,
+        "lifetime": 1.0,
+        "max_staleness": 16,
+        "clip_norm": 10.0,
+        "eta_model": 1.0,
+        "specification": "D2_PRIME_DESIGN:2.1/phase0.1+0.2-v1"
+      },
+      "config_id": "f1b8a404532030cbf2d2b2a26446a8226164dc981bdbffdfc93b0f34bc71fcd7",
+      "initial_model": [
+        10.0,
+        20.0
+      ],
+      "replies": [],
+      "final_model": [
+        10.0,
+        20.0
+      ],
+      "version": 0,
+      "outstanding": 1,
+      "tasks": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 1.0,
+          "config_id": "f1b8a404532030cbf2d2b2a26446a8226164dc981bdbffdfc93b0f34bc71fcd7",
+          "state": "cancelled"
+        },
+        {
+          "task_id": 1,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 0.5,
+          "expires_at": 1.5,
+          "config_id": "f1b8a404532030cbf2d2b2a26446a8226164dc981bdbffdfc93b0f34bc71fcd7",
+          "state": "issued"
+        }
+      ],
+      "trace": [
+        [
+          "issue",
+          0.0,
+          0
+        ],
+        [
+          "cancelled",
+          0.0,
+          0
+        ],
+        [
+          "issue",
+          0.5,
+          1
+        ]
+      ],
+      "model_ledger": [],
+      "batches": [],
+      "fixture_sha256": "88c2720f1aa7abac0b434909f3bff15b033fb4589d4e318c9ba0b689c4f6e8a3",
+      "trajectory_sha256": "afe700f93a0d50dff0d7177c0b6a15415693c7b8616885dc61d65d834ae713ed"
+    },
+    {
+      "case": "test_old_snapshot_retention_and_collection",
+      "config": {
+        "identities": 4,
+        "max_outstanding": 4,
+        "capacity": 1,
+        "lifetime": 5.0,
+        "max_staleness": 16,
+        "clip_norm": 10.0,
+        "eta_model": 1.0,
+        "specification": "D2_PRIME_DESIGN:2.1/phase0.1+0.2-v1"
+      },
+      "config_id": "a38a57a9edc652d33c39840e986a4159d68c8bf7958eab2729eb0ee0ba81acc1",
+      "initial_model": [
+        10.0,
+        20.0
+      ],
+      "replies": [
+        {
+          "task_id": 1,
+          "identity": 1,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        }
+      ],
+      "final_model": [
+        11.0,
+        18.0
+      ],
+      "version": 1,
+      "outstanding": 0,
+      "tasks": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a38a57a9edc652d33c39840e986a4159d68c8bf7958eab2729eb0ee0ba81acc1",
+          "state": "cancelled"
+        },
+        {
+          "task_id": 1,
+          "identity": 1,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a38a57a9edc652d33c39840e986a4159d68c8bf7958eab2729eb0ee0ba81acc1",
+          "state": "consumed"
+        }
+      ],
+      "trace": [
+        [
+          "issue",
+          0.0,
+          0
+        ],
+        [
+          "issue",
+          0.0,
+          1
+        ],
+        [
+          "arrive",
+          0.0,
+          1
+        ],
+        [
+          "consumed",
+          0.0,
+          1
+        ],
+        [
+          "cancelled",
+          0.0,
+          0
+        ]
+      ],
+      "model_ledger": [
+        {
+          "task_id": 1,
+          "identity": 1,
+          "at": 0.0,
+          "source_version": 0,
+          "a": 1.0
+        }
+      ],
+      "batches": [
+        {
+          "at": 0.0,
+          "version_before": 0,
+          "version_after": 1,
+          "candidates": [
+            {
+              "task_id": 1,
+              "identity": 1,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            }
+          ],
+          "coefficients": [
+            1.0
+          ]
+        }
+      ],
+      "fixture_sha256": "a89a43db32fad5187af6e42467d55ace1298a486eb19634418ef7b8a235cadf5",
+      "trajectory_sha256": "7f670df6e902593242f3db2e7571d21584528353cf886314b1292b7ae2592450"
+    },
+    {
+      "case": "test_source_model_is_server_owned_and_frozen",
+      "config": {
+        "identities": 4,
+        "max_outstanding": 4,
+        "capacity": 1,
+        "lifetime": 5.0,
+        "max_staleness": 1,
+        "clip_norm": 10.0,
+        "eta_model": 1.0,
+        "specification": "D2_PRIME_DESIGN:2.1/phase0.1+0.2-v1"
+      },
+      "config_id": "0c68296494ad5d66c6a704653cea0b748313224e4b5c2f4729ba835f29d357ed",
+      "initial_model": [
+        10.0,
+        20.0
+      ],
+      "replies": [
+        {
+          "task_id": 1,
+          "identity": 1,
+          "source_version": 0,
+          "local_model": [
+            14.0,
+            20.0
+          ]
+        },
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        }
+      ],
+      "final_model": [
+        14.5,
+        19.0
+      ],
+      "version": 2,
+      "outstanding": 0,
+      "tasks": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "0c68296494ad5d66c6a704653cea0b748313224e4b5c2f4729ba835f29d357ed",
+          "state": "consumed"
+        },
+        {
+          "task_id": 1,
+          "identity": 1,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "0c68296494ad5d66c6a704653cea0b748313224e4b5c2f4729ba835f29d357ed",
+          "state": "consumed"
+        }
+      ],
+      "trace": [
+        [
+          "issue",
+          0.0,
+          0
+        ],
+        [
+          "issue",
+          0.0,
+          1
+        ],
+        [
+          "arrive",
+          0.0,
+          1
+        ],
+        [
+          "consumed",
+          0.0,
+          1
+        ],
+        [
+          "arrive",
+          0.0,
+          0
+        ],
+        [
+          "consumed",
+          0.0,
+          0
+        ]
+      ],
+      "model_ledger": [
+        {
+          "task_id": 1,
+          "identity": 1,
+          "at": 0.0,
+          "source_version": 0,
+          "a": 1.0
+        },
+        {
+          "task_id": 0,
+          "identity": 0,
+          "at": 0.0,
+          "source_version": 0,
+          "a": 0.5
+        }
+      ],
+      "batches": [
+        {
+          "at": 0.0,
+          "version_before": 0,
+          "version_after": 1,
+          "candidates": [
+            {
+              "task_id": 1,
+              "identity": 1,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -4.0,
+                0.0
+              ],
+              "clipped_delta": [
+                -4.0,
+                0.0
+              ]
+            }
+          ],
+          "coefficients": [
+            1.0
+          ]
+        },
+        {
+          "at": 0.0,
+          "version_before": 1,
+          "version_after": 2,
+          "candidates": [
+            {
+              "task_id": 0,
+              "identity": 0,
+              "source_version": 0,
+              "staleness": 1,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            }
+          ],
+          "coefficients": [
+            0.5
+          ]
+        }
+      ],
+      "fixture_sha256": "4c8323d282c1242bbd117251c2ef3632d56293b2482044cdf2cbda0eadb05708",
+      "trajectory_sha256": "7c2fe8aced94e71b3b8ac4e3775e9defc0d435bf1d2a53a677f81f2ad461794c"
+    },
+    {
+      "case": "test_staleness_expiry_reclaims_unreturned_task",
+      "config": {
+        "identities": 4,
+        "max_outstanding": 4,
+        "capacity": 1,
+        "lifetime": 5.0,
+        "max_staleness": 0,
+        "clip_norm": 10.0,
+        "eta_model": 1.0,
+        "specification": "D2_PRIME_DESIGN:2.1/phase0.1+0.2-v1"
+      },
+      "config_id": "0afe2a06bd07f0cdf3e359e0f2b07c3264e1ca201f5c8b22b3f06a839b4ce908",
+      "initial_model": [
+        10.0,
+        20.0
+      ],
+      "replies": [
+        {
+          "task_id": 1,
+          "identity": 1,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        }
+      ],
+      "final_model": [
+        11.0,
+        18.0
+      ],
+      "version": 1,
+      "outstanding": 1,
+      "tasks": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "0afe2a06bd07f0cdf3e359e0f2b07c3264e1ca201f5c8b22b3f06a839b4ce908",
+          "state": "expired"
+        },
+        {
+          "task_id": 1,
+          "identity": 1,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "0afe2a06bd07f0cdf3e359e0f2b07c3264e1ca201f5c8b22b3f06a839b4ce908",
+          "state": "consumed"
+        },
+        {
+          "task_id": 2,
+          "identity": 0,
+          "source_version": 1,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "0afe2a06bd07f0cdf3e359e0f2b07c3264e1ca201f5c8b22b3f06a839b4ce908",
+          "state": "issued"
+        }
+      ],
+      "trace": [
+        [
+          "issue",
+          0.0,
+          0
+        ],
+        [
+          "issue",
+          0.0,
+          1
+        ],
+        [
+          "arrive",
+          0.0,
+          1
+        ],
+        [
+          "consumed",
+          0.0,
+          1
+        ],
+        [
+          "expired",
+          0.0,
+          0
+        ],
+        [
+          "issue",
+          0.0,
+          2
+        ]
+      ],
+      "model_ledger": [
+        {
+          "task_id": 1,
+          "identity": 1,
+          "at": 0.0,
+          "source_version": 0,
+          "a": 1.0
+        }
+      ],
+      "batches": [
+        {
+          "at": 0.0,
+          "version_before": 0,
+          "version_after": 1,
+          "candidates": [
+            {
+              "task_id": 1,
+              "identity": 1,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            }
+          ],
+          "coefficients": [
+            1.0
+          ]
+        }
+      ],
+      "fixture_sha256": "a89a43db32fad5187af6e42467d55ace1298a486eb19634418ef7b8a235cadf5",
+      "trajectory_sha256": "13207fb9744957e1ea35df65f6ba423e81bbb3e41604c99b430d952f404aa776"
+    },
+    {
+      "case": "test_zero_delay_and_arrival_passivity",
+      "config": {
+        "identities": 4,
+        "max_outstanding": 4,
+        "capacity": 2,
+        "lifetime": 5.0,
+        "max_staleness": 16,
+        "clip_norm": 10.0,
+        "eta_model": 1.0,
+        "specification": "D2_PRIME_DESIGN:2.1/phase0.1+0.2-v1"
+      },
+      "config_id": "647921d5800d04fac86811eef2dd60f6f42a51b37fe6e5f94b93ca26717ee2db",
+      "initial_model": [
+        10.0,
+        20.0
+      ],
+      "replies": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        },
+        {
+          "task_id": 1,
+          "identity": 1,
+          "source_version": 0,
+          "local_model": [
+            12.0,
+            16.0
+          ]
+        }
+      ],
+      "final_model": [
+        11.5,
+        17.0
+      ],
+      "version": 1,
+      "outstanding": 0,
+      "tasks": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "647921d5800d04fac86811eef2dd60f6f42a51b37fe6e5f94b93ca26717ee2db",
+          "state": "consumed"
+        },
+        {
+          "task_id": 1,
+          "identity": 1,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "647921d5800d04fac86811eef2dd60f6f42a51b37fe6e5f94b93ca26717ee2db",
+          "state": "consumed"
+        }
+      ],
+      "trace": [
+        [
+          "issue",
+          0.0,
+          0
+        ],
+        [
+          "issue",
+          0.0,
+          1
+        ],
+        [
+          "arrive",
+          0.0,
+          0
+        ],
+        [
+          "arrive",
+          0.0,
+          1
+        ],
+        [
+          "consumed",
+          0.0,
+          0
+        ],
+        [
+          "consumed",
+          0.0,
+          1
+        ]
+      ],
+      "model_ledger": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "at": 0.0,
+          "source_version": 0,
+          "a": 0.5
+        },
+        {
+          "task_id": 1,
+          "identity": 1,
+          "at": 0.0,
+          "source_version": 0,
+          "a": 0.5
+        }
+      ],
+      "batches": [
+        {
+          "at": 0.0,
+          "version_before": 0,
+          "version_after": 1,
+          "candidates": [
+            {
+              "task_id": 0,
+              "identity": 0,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -1.0,
+                2.0
+              ],
+              "clipped_delta": [
+                -1.0,
+                2.0
+              ]
+            },
+            {
+              "task_id": 1,
+              "identity": 1,
+              "source_version": 0,
+              "staleness": 0,
+              "delta": [
+                -2.0,
+                4.0
+              ],
+              "clipped_delta": [
+                -2.0,
+                4.0
+              ]
+            }
+          ],
+          "coefficients": [
+            0.5,
+            0.5
+          ]
+        }
+      ],
+      "fixture_sha256": "662748d890e17594c4535de3e5e9df3d01b8b8346cc678f7fc84edb049c3e983",
+      "trajectory_sha256": "f102b0d8e985eeaaecbc606ae842ee36111ed07dd406fee5b3a31a521f6bf281"
+    },
+    {
+      "case": "test_zero_score_rejects_without_version",
+      "config": {
+        "identities": 4,
+        "max_outstanding": 4,
+        "capacity": 1,
+        "lifetime": 5.0,
+        "max_staleness": 16,
+        "clip_norm": 10.0,
+        "eta_model": 1.0,
+        "specification": "D2_PRIME_DESIGN:2.1/phase0.1+0.2-v1"
+      },
+      "config_id": "a38a57a9edc652d33c39840e986a4159d68c8bf7958eab2729eb0ee0ba81acc1",
+      "initial_model": [
+        10.0,
+        20.0
+      ],
+      "replies": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "local_model": [
+            11.0,
+            18.0
+          ]
+        }
+      ],
+      "final_model": [
+        10.0,
+        20.0
+      ],
+      "version": 0,
+      "outstanding": 0,
+      "tasks": [
+        {
+          "task_id": 0,
+          "identity": 0,
+          "source_version": 0,
+          "issued_at": 0.0,
+          "expires_at": 5.0,
+          "config_id": "a38a57a9edc652d33c39840e986a4159d68c8bf7958eab2729eb0ee0ba81acc1",
+          "state": "rejected"
+        }
+      ],
+      "trace": [
+        [
+          "issue",
+          0.0,
+          0
+        ],
+        [
+          "arrive",
+          0.0,
+          0
+        ],
+        [
+          "rejected",
+          0.0,
+          0
+        ]
+      ],
+      "model_ledger": [],
+      "batches": [],
+      "fixture_sha256": "778e98728e28b6f8501d49c3250dbc0b4d341b6028e03601ebde4e97314079d3",
+      "trajectory_sha256": "568f3455f5fdb5596ccf76ef2fb42868f3579e288c7f1308b71f2a14e64ad2a1"
+    }
+  ],
+  "checks": [
+    {
+      "case": "test_buffer_and_ingress_cancellation_reclaims_slots",
+      "label": "fill after cancelling buffer",
+      "actual": [
+        1
+      ],
+      "expected": [
+        1
+      ]
+    },
+    {
+      "case": "test_buffer_and_ingress_cancellation_reclaims_slots",
+      "label": "cancel ingress leaves candidate",
+      "actual": [
+        1
+      ],
+      "expected": [
+        1
+      ]
+    },
+    {
+      "case": "test_buffer_and_ingress_cancellation_reclaims_slots",
+      "label": "buffer/ingress terminal states",
+      "actual": [
+        "cancelled",
+        "expired",
+        "lost",
+        "expired"
+      ],
+      "expected": [
+        "cancelled",
+        "expired",
+        "lost",
+        "expired"
+      ]
+    },
+    {
+      "case": "test_buffer_and_ingress_cancellation_reclaims_slots",
+      "label": "all waiting slots reclaimed",
+      "actual": [
+        0,
+        [],
+        []
+      ],
+      "expected": [
+        0,
+        [],
+        []
+      ]
+    },
+    {
+      "case": "test_buffer_and_ingress_cancellation_reclaims_slots",
+      "label": "waiting cancellation model",
+      "actual": [
+        10.0,
+        20.0
+      ],
+      "expected": [
+        10.0,
+        20.0
+      ]
+    },
+    {
+      "case": "test_cancelling_vectors_still_advance_version",
+      "label": "positive contributions cancel",
+      "actual": [
+        10.0,
+        20.0
+      ],
+      "expected": [
+        10.0,
+        20.0
+      ]
+    },
+    {
+      "case": "test_cancelling_vectors_still_advance_version",
+      "label": "commit sequence despite zero displacement",
+      "actual": [
+        1,
+        2,
+        1
+      ],
+      "expected": [
+        1,
+        2,
+        1
+      ]
+    },
+    {
+      "case": "test_clipping_has_independent_norm_oracle",
+      "label": "clipped writeback",
+      "actual": [
+        10.6,
+        20.8
+      ],
+      "expected": [
+        10.6,
+        20.8
+      ]
+    },
+    {
+      "case": "test_clock_and_configuration_guards",
+      "label": "clock unchanged",
+      "actual": 1.0,
+      "expected": 1.0
+    },
+    {
+      "case": "test_duplicate_before_and_after_commit",
+      "label": "duplicate queued",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "case": "test_duplicate_before_and_after_commit",
+      "label": "duplicate consumed",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "case": "test_duplicate_before_and_after_commit",
+      "label": "one write only",
+      "actual": [
+        11.0,
+        18.0
+      ],
+      "expected": [
+        11.0,
+        18.0
+      ]
+    },
+    {
+      "case": "test_duplicate_before_and_after_commit",
+      "label": "one ledger receipt",
+      "actual": [
+        1,
+        0,
+        1
+      ],
+      "expected": [
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "case": "test_equal_time_order_independent_of_enqueue_order",
+      "label": "ordered batch arithmetic",
+      "actual": [
+        12.5,
+        20.0
+      ],
+      "expected": [
+        12.5,
+        20.0
+      ]
+    },
+    {
+      "case": "test_equal_time_order_independent_of_enqueue_order",
+      "label": "ordered batch arithmetic",
+      "actual": [
+        12.5,
+        20.0
+      ],
+      "expected": [
+        12.5,
+        20.0
+      ]
+    },
+    {
+      "case": "test_equal_time_order_independent_of_enqueue_order",
+      "label": "independent expected order",
+      "actual": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [
+          0,
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [
+          0,
+          1,
+          2,
+          3
+        ]
+      ]
+    },
+    {
+      "case": "test_expiry_endpoint_and_buffered_expiry",
+      "label": "expiry wins arrival tie",
+      "actual": [
+        "expired",
+        [],
+        0
+      ],
+      "expected": [
+        "expired",
+        [],
+        0
+      ]
+    },
+    {
+      "case": "test_expiry_endpoint_and_buffered_expiry",
+      "label": "before endpoint",
+      "actual": "arrived",
+      "expected": "arrived"
+    },
+    {
+      "case": "test_expiry_endpoint_and_buffered_expiry",
+      "label": "buffered expiry",
+      "actual": [
+        [],
+        [],
+        0,
+        0
+      ],
+      "expected": [
+        [],
+        [],
+        0,
+        0
+      ]
+    },
+    {
+      "case": "test_expiry_endpoint_and_buffered_expiry",
+      "label": "expired writeback",
+      "actual": [
+        10.0,
+        20.0
+      ],
+      "expected": [
+        10.0,
+        20.0
+      ]
+    },
+    {
+      "case": "test_forty_arrivals_two_twenty_batches",
+      "label": "first capacity/order",
+      "actual": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "expected": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ]
+    },
+    {
+      "case": "test_forty_arrivals_two_twenty_batches",
+      "label": "forty outstanding including waiting",
+      "actual": 40,
+      "expected": 40
+    },
+    {
+      "case": "test_forty_arrivals_two_twenty_batches",
+      "label": "first independent batch",
+      "actual": [
+        11.0,
+        18.0
+      ],
+      "expected": [
+        11.0,
+        18.0
+      ]
+    },
+    {
+      "case": "test_forty_arrivals_two_twenty_batches",
+      "label": "second capacity/order",
+      "actual": [
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+      ],
+      "expected": [
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+      ]
+    },
+    {
+      "case": "test_forty_arrivals_two_twenty_batches",
+      "label": "old model retained",
+      "actual": [
+        10.0,
+        20.0
+      ],
+      "expected": [
+        10.0,
+        20.0
+      ]
+    },
+    {
+      "case": "test_forty_arrivals_two_twenty_batches",
+      "label": "two-batch scalar oracle",
+      "actual": [
+        11.5,
+        17.0
+      ],
+      "expected": [
+        11.5,
+        17.0
+      ]
+    },
+    {
+      "case": "test_forty_arrivals_two_twenty_batches",
+      "label": "batch versions",
+      "actual": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "expected": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ]
+    },
+    {
+      "case": "test_forty_arrivals_two_twenty_batches",
+      "label": "source/staleness",
+      "actual": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "expected": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "case": "test_forty_arrivals_two_twenty_batches",
+      "label": "capacity and final slots",
+      "actual": [
+        [
+          20,
+          20
+        ],
+        0
+      ],
+      "expected": [
+        [
+          20,
+          20
+        ],
+        0
+      ]
+    },
+    {
+      "case": "test_global_and_identity_limits",
+      "label": "no excess tasks",
+      "actual": [
+        2,
+        2
+      ],
+      "expected": [
+        2,
+        2
+      ]
+    },
+    {
+      "case": "test_global_and_identity_limits",
+      "label": "monotone task id after failed issue",
+      "actual": 2,
+      "expected": 2
+    },
+    {
+      "case": "test_invalid_packets_have_zero_extra_effect",
+      "label": "invalid receive",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "case": "test_invalid_packets_have_zero_extra_effect",
+      "label": "invalid model",
+      "actual": [
+        10.0,
+        20.0
+      ],
+      "expected": [
+        10.0,
+        20.0
+      ]
+    },
+    {
+      "case": "test_invalid_packets_have_zero_extra_effect",
+      "label": "invalid ledger/version/slots",
+      "actual": [
+        [],
+        0,
+        1
+      ],
+      "expected": [
+        [],
+        0,
+        1
+      ]
+    },
+    {
+      "case": "test_invalid_packets_have_zero_extra_effect",
+      "label": "invalid receive",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "case": "test_invalid_packets_have_zero_extra_effect",
+      "label": "invalid model",
+      "actual": [
+        10.0,
+        20.0
+      ],
+      "expected": [
+        10.0,
+        20.0
+      ]
+    },
+    {
+      "case": "test_invalid_packets_have_zero_extra_effect",
+      "label": "invalid ledger/version/slots",
+      "actual": [
+        [],
+        0,
+        1
+      ],
+      "expected": [
+        [],
+        0,
+        1
+      ]
+    },
+    {
+      "case": "test_invalid_packets_have_zero_extra_effect",
+      "label": "invalid receive",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "case": "test_invalid_packets_have_zero_extra_effect",
+      "label": "invalid model",
+      "actual": [
+        10.0,
+        20.0
+      ],
+      "expected": [
+        10.0,
+        20.0
+      ]
+    },
+    {
+      "case": "test_invalid_packets_have_zero_extra_effect",
+      "label": "invalid ledger/version/slots",
+      "actual": [
+        [],
+        0,
+        1
+      ],
+      "expected": [
+        [],
+        0,
+        1
+      ]
+    },
+    {
+      "case": "test_invalid_packets_have_zero_extra_effect",
+      "label": "invalid receive",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "case": "test_invalid_packets_have_zero_extra_effect",
+      "label": "invalid model",
+      "actual": [
+        10.0,
+        20.0
+      ],
+      "expected": [
+        10.0,
+        20.0
+      ]
+    },
+    {
+      "case": "test_invalid_packets_have_zero_extra_effect",
+      "label": "invalid ledger/version/slots",
+      "actual": [
+        [],
+        0,
+        1
+      ],
+      "expected": [
+        [],
+        0,
+        1
+      ]
+    },
+    {
+      "case": "test_invalid_packets_have_zero_extra_effect",
+      "label": "invalid receive",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "case": "test_invalid_packets_have_zero_extra_effect",
+      "label": "invalid model",
+      "actual": [
+        10.0,
+        20.0
+      ],
+      "expected": [
+        10.0,
+        20.0
+      ]
+    },
+    {
+      "case": "test_invalid_packets_have_zero_extra_effect",
+      "label": "invalid ledger/version/slots",
+      "actual": [
+        [],
+        0,
+        1
+      ],
+      "expected": [
+        [],
+        0,
+        1
+      ]
+    },
+    {
+      "case": "test_invalid_packets_have_zero_extra_effect",
+      "label": "valid task survives spoof",
+      "actual": "issued",
+      "expected": "issued"
+    },
+    {
+      "case": "test_invalid_vector_and_coefficient_leave_writeback_unchanged",
+      "label": "invalid vector",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "case": "test_invalid_vector_and_coefficient_leave_writeback_unchanged",
+      "label": "invalid vector",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "case": "test_invalid_vector_and_coefficient_leave_writeback_unchanged",
+      "label": "invalid vector",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "case": "test_invalid_vector_and_coefficient_leave_writeback_unchanged",
+      "label": "invalid vector",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "case": "test_invalid_vector_and_coefficient_leave_writeback_unchanged",
+      "label": "invalid coefficient model",
+      "actual": [
+        10.0,
+        20.0
+      ],
+      "expected": [
+        10.0,
+        20.0
+      ]
+    },
+    {
+      "case": "test_invalid_vector_and_coefficient_leave_writeback_unchanged",
+      "label": "invalid coefficient receipt",
+      "actual": [
+        [],
+        0,
+        "arrived"
+      ],
+      "expected": [
+        [],
+        0,
+        "arrived"
+      ]
+    },
+    {
+      "case": "test_invalid_vector_and_coefficient_leave_writeback_unchanged",
+      "label": "invalid coefficient model",
+      "actual": [
+        10.0,
+        20.0
+      ],
+      "expected": [
+        10.0,
+        20.0
+      ]
+    },
+    {
+      "case": "test_invalid_vector_and_coefficient_leave_writeback_unchanged",
+      "label": "invalid coefficient receipt",
+      "actual": [
+        [],
+        0,
+        "arrived"
+      ],
+      "expected": [
+        [],
+        0,
+        "arrived"
+      ]
+    },
+    {
+      "case": "test_invalid_vector_and_coefficient_leave_writeback_unchanged",
+      "label": "invalid coefficient model",
+      "actual": [
+        10.0,
+        20.0
+      ],
+      "expected": [
+        10.0,
+        20.0
+      ]
+    },
+    {
+      "case": "test_invalid_vector_and_coefficient_leave_writeback_unchanged",
+      "label": "invalid coefficient receipt",
+      "actual": [
+        [],
+        0,
+        "arrived"
+      ],
+      "expected": [
+        [],
+        0,
+        "arrived"
+      ]
+    },
+    {
+      "case": "test_invalid_vector_and_coefficient_leave_writeback_unchanged",
+      "label": "invalid coefficient model",
+      "actual": [
+        10.0,
+        20.0
+      ],
+      "expected": [
+        10.0,
+        20.0
+      ]
+    },
+    {
+      "case": "test_invalid_vector_and_coefficient_leave_writeback_unchanged",
+      "label": "invalid coefficient receipt",
+      "actual": [
+        [],
+        0,
+        "arrived"
+      ],
+      "expected": [
+        [],
+        0,
+        "arrived"
+      ]
+    },
+    {
+      "case": "test_loss_cancel_and_expiry_reclaim_slots",
+      "label": "terminal state",
+      "actual": [
+        "lost",
+        0
+      ],
+      "expected": [
+        "lost",
+        0
+      ]
+    },
+    {
+      "case": "test_loss_cancel_and_expiry_reclaim_slots",
+      "label": "late old reply",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "case": "test_loss_cancel_and_expiry_reclaim_slots",
+      "label": "new task not released by old reply",
+      "actual": [
+        1,
+        1,
+        "issued"
+      ],
+      "expected": [
+        1,
+        1,
+        "issued"
+      ]
+    },
+    {
+      "case": "test_loss_cancel_and_expiry_reclaim_slots",
+      "label": "terminal model",
+      "actual": [
+        10.0,
+        20.0
+      ],
+      "expected": [
+        10.0,
+        20.0
+      ]
+    },
+    {
+      "case": "test_loss_cancel_and_expiry_reclaim_slots",
+      "label": "terminal ledger",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "case": "test_loss_cancel_and_expiry_reclaim_slots",
+      "label": "terminal state",
+      "actual": [
+        "cancelled",
+        0
+      ],
+      "expected": [
+        "cancelled",
+        0
+      ]
+    },
+    {
+      "case": "test_loss_cancel_and_expiry_reclaim_slots",
+      "label": "late old reply",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "case": "test_loss_cancel_and_expiry_reclaim_slots",
+      "label": "new task not released by old reply",
+      "actual": [
+        1,
+        1,
+        "issued"
+      ],
+      "expected": [
+        1,
+        1,
+        "issued"
+      ]
+    },
+    {
+      "case": "test_loss_cancel_and_expiry_reclaim_slots",
+      "label": "terminal model",
+      "actual": [
+        10.0,
+        20.0
+      ],
+      "expected": [
+        10.0,
+        20.0
+      ]
+    },
+    {
+      "case": "test_loss_cancel_and_expiry_reclaim_slots",
+      "label": "terminal ledger",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "case": "test_loss_cancel_and_expiry_reclaim_slots",
+      "label": "terminal state",
+      "actual": [
+        "expired",
+        0
+      ],
+      "expected": [
+        "expired",
+        0
+      ]
+    },
+    {
+      "case": "test_loss_cancel_and_expiry_reclaim_slots",
+      "label": "late old reply",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "case": "test_loss_cancel_and_expiry_reclaim_slots",
+      "label": "new task not released by old reply",
+      "actual": [
+        1,
+        1,
+        "issued"
+      ],
+      "expected": [
+        1,
+        1,
+        "issued"
+      ]
+    },
+    {
+      "case": "test_loss_cancel_and_expiry_reclaim_slots",
+      "label": "terminal model",
+      "actual": [
+        10.0,
+        20.0
+      ],
+      "expected": [
+        10.0,
+        20.0
+      ]
+    },
+    {
+      "case": "test_loss_cancel_and_expiry_reclaim_slots",
+      "label": "terminal ledger",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "case": "test_old_expiry_event_cannot_cancel_reissued_identity",
+      "label": "old timer isolation",
+      "actual": [
+        "issued",
+        1
+      ],
+      "expected": [
+        "issued",
+        1
+      ]
+    },
+    {
+      "case": "test_old_snapshot_retention_and_collection",
+      "label": "active old snapshot",
+      "actual": [
+        10.0,
+        20.0
+      ],
+      "expected": [
+        10.0,
+        20.0
+      ]
+    },
+    {
+      "case": "test_old_snapshot_retention_and_collection",
+      "label": "current snapshot retained",
+      "actual": [
+        11.0,
+        18.0
+      ],
+      "expected": [
+        11.0,
+        18.0
+      ]
+    },
+    {
+      "case": "test_source_model_is_server_owned_and_frozen",
+      "label": "old source delta",
+      "actual": [
+        -1.0,
+        2.0
+      ],
+      "expected": [
+        -1.0,
+        2.0
+      ]
+    },
+    {
+      "case": "test_source_model_is_server_owned_and_frozen",
+      "label": "source binding",
+      "actual": [
+        0,
+        [
+          10.0,
+          20.0
+        ]
+      ],
+      "expected": [
+        0,
+        [
+          10.0,
+          20.0
+        ]
+      ]
+    },
+    {
+      "case": "test_source_model_is_server_owned_and_frozen",
+      "label": "reference metadata",
+      "actual": [
+        0.0,
+        0.25,
+        0.0
+      ],
+      "expected": [
+        0.0,
+        0.25,
+        0.0
+      ]
+    },
+    {
+      "case": "test_source_model_is_server_owned_and_frozen",
+      "label": "stale write against current model",
+      "actual": [
+        14.5,
+        19.0
+      ],
+      "expected": [
+        14.5,
+        19.0
+      ]
+    },
+    {
+      "case": "test_source_model_is_server_owned_and_frozen",
+      "label": "task metadata",
+      "actual": [
+        0,
+        0,
+        0.0,
+        5.0,
+        "0c68296494ad5d66c6a704653cea0b748313224e4b5c2f4729ba835f29d357ed"
+      ],
+      "expected": [
+        0,
+        0,
+        0.0,
+        5.0,
+        "0c68296494ad5d66c6a704653cea0b748313224e4b5c2f4729ba835f29d357ed"
+      ]
+    },
+    {
+      "case": "test_staleness_expiry_reclaims_unreturned_task",
+      "label": "stale in-flight task",
+      "actual": [
+        "expired",
+        0
+      ],
+      "expected": [
+        "expired",
+        0
+      ]
+    },
+    {
+      "case": "test_staleness_expiry_reclaims_unreturned_task",
+      "label": "reclaimed identity",
+      "actual": 1,
+      "expected": 1
+    },
+    {
+      "case": "test_zero_delay_and_arrival_passivity",
+      "label": "arrival leaves model unchanged",
+      "actual": [
+        10.0,
+        20.0
+      ],
+      "expected": [
+        10.0,
+        20.0
+      ]
+    },
+    {
+      "case": "test_zero_delay_and_arrival_passivity",
+      "label": "arrival ledger",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "case": "test_zero_delay_and_arrival_passivity",
+      "label": "synchronous mean",
+      "actual": [
+        11.5,
+        17.0
+      ],
+      "expected": [
+        11.5,
+        17.0
+      ]
+    },
+    {
+      "case": "test_zero_delay_and_arrival_passivity",
+      "label": "negative source delta",
+      "actual": [
+        -1.0,
+        2.0
+      ],
+      "expected": [
+        -1.0,
+        2.0
+      ]
+    },
+    {
+      "case": "test_zero_delay_and_arrival_passivity",
+      "label": "consumed once",
+      "actual": [
+        "consumed",
+        "consumed"
+      ],
+      "expected": [
+        "consumed",
+        "consumed"
+      ]
+    },
+    {
+      "case": "test_zero_score_rejects_without_version",
+      "label": "empty contribution",
+      "actual": [
+        0,
+        [],
+        0,
+        "rejected"
+      ],
+      "expected": [
+        0,
+        [],
+        0,
+        "rejected"
+      ]
+    },
+    {
+      "case": "test_zero_score_rejects_without_version",
+      "label": "zero coefficient model",
+      "actual": [
+        10.0,
+        20.0
+      ],
+      "expected": [
+        10.0,
+        20.0
+      ]
+    }
+  ],
+  "file_sha256": {
+    "d2_prime/__init__.py": "cbedeacd01f100ba3de099407c0195d2b08f732ab24a0a6e6c93b9149e46140e",
+    "d2_prime/protocol.py": "65602c1c6c2b4c1a4ec6dddd21f5b02c8e7c4123b472aacdbc78b2195ab43239",
+    "tests/test_d2_prime_protocol.py": "5969c2938350a9a2bc8f06aeb4d5937ca7559abf6fa5210e944cb59ead4a04b7",
+    "docs/D2_PRIME_CHECKPOINTS_TRIMMED.md": "0f51f365153671ac5e0319a3d0851f393d2afc0fb2291282c34aa40fd83b8346",
+    "docs/D2_PRIME_CHECKPOINTS.md": "f4333d737e7b240f076097ddc7425d0b99e45c3bd0de325a0c1e5049f4fd2213",
+    "docs/D2_PRIME_DESIGN.md": "4a91ff313b7e639b562b1fa19208d96f73398a60b1d137e046c9527627b67cee",
+    "docs/D2_PRIME_DECISIONS.md": "58f560ecd5e122c0701c9b2eded031418f0b2eadcae3ebc12198e065f1722153",
+    "docs/RESEARCH_INNOVATIONS.md": "df03a1428576dab562f42719cab6114c1310c5ea092fe7f4ad92d5fa8b7e38fd",
+    "scripts/verify_d2_prime_zero_training.py": "e55d0e9032bdfe4788bcea88c533dbf9dc4f063a26958ecfd551c20dfd07510a",
+    "outputs/d2_prime_zero_training_20261008/run_7069mu9d/results.json": "ba8910752b01db0d80e9dc211d11916f95588e92cb01e43e423dd7e9ff39d3f5"
+  }
+}
