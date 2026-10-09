@@ -8,6 +8,7 @@ Example: python run_flgo_byzantine.py --task ./mnist_20 --create-mnist \
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import sys
@@ -43,6 +44,10 @@ class ByzantineLogger(SimpleLogger):
             summary.get("benign_mean_error_norm"))
         self.output["byz_aggregator_stats"].append(
             summary.get("aggregator_stats", {}))
+        if self.coordinator.byz_aggregator == "rfa":
+            # Dedicated contract: never embed full weights in legacy scalar stats.
+            self.output["byz_rfa_contribution"].append(
+                copy.deepcopy(summary.get("rfa_contribution")))
 
     def get_output_name(self, suffix=".json"):
         base = super().get_output_name(suffix="")

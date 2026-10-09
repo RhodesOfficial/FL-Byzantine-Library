@@ -28,6 +28,7 @@ from aggregators.d1_category_coverage import D1CategoryCoverage
 from aggregators.fedavg import fedAVG
 from aggregators.krum import Krum
 from aggregators.rfa import RFA
+from aggregators.rfa_contributions import bind_final_mix, verify_model_writeback
 from aggregators.sign_sgd import SignSGD
 from aggregators.trimmed_mean import TM
 from attacks.alie import craft_alie_update
@@ -64,6 +65,7 @@ class AggregationContext:
 # The seven existing names retain their construction and call paths.
 AGGREGATOR_REQUIREMENTS = {
     "krum": AggregatorRequirements(fixed_n=True),
+    "rfa": AggregatorRequirements(option_keys=("byz_rfa_steps", "byz_rfa_nu")),
     "d1": AggregatorRequirements(
         root_data=True, runtime_context=True,
         option_keys=("byz_d1_num_classes", "byz_d1_mode", "byz_d1_clip_norm",
@@ -204,6 +206,8 @@ class Server(BasicServer):
         self.byz_malicious_ids = frozenset(int(x) for x in rng.choice(
             self.num_clients, count, replace=False))
         self.byz_last_round = {}
+        self.byz_last_contribution = None
+        self._byz_rfa_attempt = 0
         self._byz_aggregator_instance = None
         self._byz_aggregator_shape = None
         self._byz_root_data = None
@@ -215,12 +219,36 @@ class Server(BasicServer):
         received = self.communicate(self.selected_clients)
         models = received.get("model", [])
         if not models:
+            if self.byz_aggregator == "rfa":
+                self._clear_rfa_contribution()
             self.byz_last_round = {"received": 0, "malicious": 0}
             return False
         self.model = self.aggregate(models)
         return True
 
     def aggregate(self, models: list, *args, **kwargs):
+        if self.byz_aggregator != "rfa":
+            return self._aggregate_impl(models, *args, **kwargs)
+        self._byz_rfa_attempt += 1
+        self._clear_rfa_contribution()
+        try:
+            if not models:
+                raise ValueError("empty synchronous RFA batch")
+            if len(set(self.received_clients)) != len(self.received_clients):
+                raise ValueError("duplicate identity in synchronous RFA batch")
+            return self._aggregate_impl(models, *args, **kwargs)
+        except Exception:
+            self._clear_rfa_contribution()
+            raise
+
+    def _clear_rfa_contribution(self):
+        self.byz_last_contribution = None
+        self.byz_last_round = {}
+        instance = self._byz_aggregator_instance
+        if instance is not None:
+            instance.invalidate_contributions()
+
+    def _aggregate_impl(self, models: list, *args, **kwargs):
         if not models:
             return self.model
         if len(models) != len(self.received_clients):
@@ -265,12 +293,26 @@ class Server(BasicServer):
                 self._byz_aggregator_instance = _build_aggregator(
                     self.byz_aggregator, n, f, self.option)
             self._byz_aggregator_shape = shape_key
+        expected_call_id = (self._byz_aggregator_instance._call_sequence + 1
+                            if self.byz_aggregator == "rfa" else None)
         aggregate = self._byz_aggregator_instance(updates)
         if aggregate.shape != base.shape or not torch.isfinite(aggregate).all().item():
             raise ValueError("aggregator returned an invalid update")
         if self.byz_aggregator == "sign":
             aggregate = aggregate * float(self.option.get(
                 "byz_server_step", self.option["learning_rate"]))
+        result_model = None
+        if self.byz_aggregator == "rfa":
+            record, decomposition = bind_final_mix(
+                self._byz_aggregator_instance, updates, self.received_clients,
+                aggregate, expected_call_id, self._byz_rfa_attempt)
+            result_model = _model_from_update(self.model, aggregate)
+            record["writeback_checks"] = verify_model_writeback(
+                decomposition, base, aggregate, _parameter_vector(result_model))
+            # Truth is attached only after all algorithm and mandatory checks.
+            for client in record["clients"]:
+                client["is_malicious"] = client["client_id"] in self.byz_malicious_ids
+            self.byz_last_contribution = record
         benign_error = (aggregate - torch.stack(benign).mean(dim=0)).norm().item() if benign else None
         self.byz_last_round = {"received": n, "malicious": len(malicious_positions),
                                "assumed_malicious": f, "attack": self.byz_attack,
@@ -279,7 +321,9 @@ class Server(BasicServer):
         stats = _aggregator_stats(self._byz_aggregator_instance)
         if stats:
             self.byz_last_round["aggregator_stats"] = stats
-        return _model_from_update(self.model, aggregate)
+        if self.byz_aggregator == "rfa":
+            self.byz_last_round["rfa_contribution"] = self.byz_last_contribution
+        return result_model if result_model is not None else _model_from_update(self.model, aggregate)
 
 
 class Client(BasicClient):

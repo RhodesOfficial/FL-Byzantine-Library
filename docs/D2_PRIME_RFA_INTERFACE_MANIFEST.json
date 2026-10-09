@@ -1,0 +1,2228 @@
+{
+  "formal_verdict": "PASS",
+  "acceptance_authority": {
+    "source": "user_message",
+    "instruction": "验收通过，请将astra的D2_PRIME_RFA_CONTRIBUTION_RULING.md一并做commit",
+    "scope": "RFA contribution interface prerequisite only; no training or calibration",
+    "commit_message": "phase1-pre: RFA contribution interface"
+  },
+  "baseline_commit": "b832abed31b5e34b0c0e51f09860245bb3278ab6",
+  "ruling_date": "2026-10-09",
+  "interpreter": "E:\\anaconda3\\python.exe",
+  "python_version": "3.12.8 | packaged by Anaconda, Inc. | (main, Dec 11 2024, 16:48:34) [MSC v.1929 64 bit (AMD64)]",
+  "torch_version": "2.5.1",
+  "configuration": {
+    "inputs": "fixed tensors only",
+    "training_runs": 0,
+    "task": null,
+    "algorithm_semantics": "rfa_final_mix_v1",
+    "float64_atol": 1e-10,
+    "float64_rtol": 1e-08,
+    "training_authority": "ruling sections 4 training input and 5.1/5.3; user explicitly rejects IR50 authorization; future DESIGN section 6 IR5 alpha1"
+  },
+  "tests_run": 7,
+  "failures": 0,
+  "errors": 0,
+  "command_argv": [
+    "E:\\anaconda3\\python.exe",
+    "-B",
+    "tests/test_rfa_contribution_interface.py",
+    "--manifest",
+    "docs/D2_PRIME_RFA_INTERFACE_MANIFEST.json"
+  ],
+  "unittest_output": "test_consumer_failure_clears_and_observation_isolation (__main__.InterfaceChecks.test_consumer_failure_clears_and_observation_isolation) ... ok\ntest_failures_and_freshness (__main__.InterfaceChecks.test_failures_and_freshness) ... ok\ntest_identity_and_actual_bridge_writeback (__main__.InterfaceChecks.test_identity_and_actual_bridge_writeback) ... ok\ntest_mandatory_negative_records_and_model_errors (__main__.InterfaceChecks.test_mandatory_negative_records_and_model_errors) ... ok\ntest_multiround_anchor_and_provenance (__main__.InterfaceChecks.test_multiround_anchor_and_provenance) ... ok\ntest_old_compatibility_boundaries_and_groups (__main__.InterfaceChecks.test_old_compatibility_boundaries_and_groups) ... ok\ntest_single_anchor (__main__.InterfaceChecks.test_single_anchor) ... ok\n\n----------------------------------------------------------------------\nRan 7 tests in 0.296s\n\nOK\n",
+  "observed_assertions_satisfied": true,
+  "legacy_source_sha256": "7dee7e0487ec83503ad802617fb78f3aec72717025fd5f1e81d18d04e9143c35",
+  "sha256": {
+    "docs/D2_PRIME_RFA_CONTRIBUTION_RULING.md": "e9d2ff52e782fbacd2838a25f22e4a51f596baa41b9acdfb1eed5de3ba69a592",
+    "docs/D2_PRIME_PHASE1_REPORT.md": "4b18aa66de6b29cf686d22e76fe35bdcf4aeb8b3685e097cf55d1398c27a721d",
+    "docs/D2_PRIME_PHASE1_MANIFEST.json": "ed2b8722a08af986f2be3ea3239153c45e90daa220be34ac4711185c920d3756",
+    "aggregators/rfa.py": "6207127b992fded11ca3806bfa537e9566f2dba59f69efbbcf99841311cedcfc",
+    "aggregators/rfa_contributions.py": "794a679ecaa4621bd14d926972f6cbd3cb272673ce41f83bbe88c16b90ae4655",
+    "flgo_byzantine/algorithm.py": "407d0be9731afae9675b242d7ee00c4edfb69c62f859478513533ec66de16b09",
+    "run_flgo_byzantine.py": "63eabd38f0cf951f9d1219f0e7b3c6fd90fdd5776894eb0786477592671f3592",
+    "tests/test_rfa_contribution_interface.py": "556e99ce8f402f24631116852513557a3d45a054f997085c86b182351755df80"
+  },
+  "evidence": {
+    "observation_isolation": {
+      "consumer_failures": [
+        {
+          "case": "missing",
+          "rejected": true,
+          "weights_after": null,
+          "boundary_after": null
+        },
+        {
+          "case": "length",
+          "rejected": true,
+          "weights_after": null,
+          "boundary_after": null
+        },
+        {
+          "case": "stale",
+          "rejected": true,
+          "weights_after": null,
+          "boundary_after": null
+        }
+      ],
+      "logging_switches": [
+        false,
+        true
+      ],
+      "python_numpy_torch_cpu_rng_unchanged": true,
+      "record_same_object_on_reads": true,
+      "actual_logger_dedicated_record_equal": true,
+      "logger_record_independent_copy": true,
+      "optional_getter_fault_model": [
+        14.5
+      ],
+      "optional_fault_contribution_preserved": true,
+      "old_stats_fields": [
+        "average_malicious_beta",
+        "average_benign_beta"
+      ]
+    },
+    "failures": [
+      {
+        "case": "T_zero",
+        "exception": "T must be a positive integer",
+        "weights_after": null,
+        "trace_after": null,
+        "stats_after": {
+          "average_malicious_beta": 0,
+          "average_benign_beta": 0
+        }
+      },
+      {
+        "case": "T_negative",
+        "exception": "T must be a positive integer",
+        "weights_after": null,
+        "trace_after": null,
+        "stats_after": {
+          "average_malicious_beta": 0,
+          "average_benign_beta": 0
+        }
+      },
+      {
+        "case": "T_fraction",
+        "exception": "T must be a positive integer",
+        "weights_after": null,
+        "trace_after": null,
+        "stats_after": {
+          "average_malicious_beta": 0,
+          "average_benign_beta": 0
+        }
+      },
+      {
+        "case": "T_bool",
+        "exception": "T must be a positive integer",
+        "weights_after": null,
+        "trace_after": null,
+        "stats_after": {
+          "average_malicious_beta": 0,
+          "average_benign_beta": 0
+        }
+      },
+      {
+        "case": "nu_zero",
+        "exception": "nu must be finite and positive",
+        "weights_after": null,
+        "trace_after": null,
+        "stats_after": {
+          "average_malicious_beta": 0,
+          "average_benign_beta": 0
+        }
+      },
+      {
+        "case": "nu_negative",
+        "exception": "nu must be finite and positive",
+        "weights_after": null,
+        "trace_after": null,
+        "stats_after": {
+          "average_malicious_beta": 0,
+          "average_benign_beta": 0
+        }
+      },
+      {
+        "case": "nu_nan",
+        "exception": "nu must be finite and positive",
+        "weights_after": null,
+        "trace_after": null,
+        "stats_after": {
+          "average_malicious_beta": 0,
+          "average_benign_beta": 0
+        }
+      },
+      {
+        "case": "nu_inf",
+        "exception": "nu must be finite and positive",
+        "weights_after": null,
+        "trace_after": null,
+        "stats_after": {
+          "average_malicious_beta": 0,
+          "average_benign_beta": 0
+        }
+      },
+      {
+        "case": "nu_bool",
+        "exception": "nu must be finite and positive",
+        "weights_after": null,
+        "trace_after": null,
+        "stats_after": {
+          "average_malicious_beta": 0,
+          "average_benign_beta": 0
+        }
+      },
+      {
+        "case": "empty",
+        "exception": "require nonempty inputs",
+        "weights_after": null,
+        "trace_after": null,
+        "stats_after": {
+          "average_malicious_beta": 0,
+          "average_benign_beta": 0
+        }
+      },
+      {
+        "case": "input_nan",
+        "exception": "inputs and initial z must share finite shape/dtype/device",
+        "weights_after": null,
+        "trace_after": null,
+        "stats_after": {
+          "average_malicious_beta": 0,
+          "average_benign_beta": 0
+        }
+      },
+      {
+        "case": "input_inf",
+        "exception": "inputs and initial z must share finite shape/dtype/device",
+        "weights_after": null,
+        "trace_after": null,
+        "stats_after": {
+          "average_malicious_beta": 0,
+          "average_benign_beta": 0
+        }
+      },
+      {
+        "case": "norm_overflow_den_zero",
+        "exception": "invalid beta/normalization denominator",
+        "weights_after": null,
+        "trace_after": null,
+        "stats_after": {
+          "average_malicious_beta": 0,
+          "average_benign_beta": 0
+        }
+      },
+      {
+        "case": "beta_overflow_den_nonfinite",
+        "exception": "invalid beta/normalization denominator",
+        "weights_after": null,
+        "trace_after": null,
+        "stats_after": {
+          "average_malicious_beta": 0,
+          "average_benign_beta": 0
+        }
+      },
+      {
+        "case": "shape",
+        "rejected": true
+      },
+      {
+        "case": "dtype",
+        "rejected": true
+      },
+      {
+        "case": "device",
+        "rejected": true
+      },
+      {
+        "case": "empty_vector",
+        "rejected": true
+      },
+      {
+        "case": "integer",
+        "rejected": true
+      },
+      {
+        "case": "zero_alpha_denominator",
+        "rejected": true
+      },
+      {
+        "case": "ID_length",
+        "exception": "FLGo received-client IDs do not match returned models",
+        "boundary_record_after": null
+      },
+      {
+        "case": "ID_duplicate",
+        "exception": "duplicate identity in synchronous RFA batch",
+        "boundary_record_after": null
+      },
+      {
+        "case": "empty_bridge",
+        "exception": "empty synchronous RFA batch",
+        "boundary_record_after": null
+      }
+    ],
+    "identity_bridge": {
+      "inputs": [
+        [
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ],
+        [
+          -1.0,
+          0.0
+        ]
+      ],
+      "ids": [
+        41,
+        7,
+        103
+      ],
+      "theta": [
+        16.0,
+        32.0
+      ],
+      "expected_scalar_weights": [
+        0.27924077994387353,
+        0.4415184401122529,
+        0.27924077994387353
+      ],
+      "actual_new_parameters": [
+        16.0,
+        31.558481216430664
+      ],
+      "independent_reference_parameters": [
+        16.0,
+        31.558481216430664
+      ],
+      "record": {
+        "bridge_call_id": 1,
+        "rfa_call_id": 1,
+        "semantics": "rfa_final_mix_v1",
+        "T": 2,
+        "nu": 1e-06,
+        "input_direction": "server_parameters-minus-client_parameters",
+        "model_displacement": "minus-aggregate; C_i=-w_i*u_i",
+        "aggregate_reconstruction_error": 0.0,
+        "final_betas": [
+          0.3162277936935425,
+          0.5000000596046448,
+          0.3162277936935425
+        ],
+        "denominator": 1.132455587387085,
+        "clients": [
+          {
+            "position": 0,
+            "client_id": 41,
+            "weight": 0.27924078702926636,
+            "model_coefficient": -0.27924078702926636,
+            "input_fingerprint": "f527974c66e8542228fbab084cdcb6589f550e700b49691fbbb7809e892cce4c",
+            "contribution_norm": 0.27924078702926636,
+            "is_malicious": false
+          },
+          {
+            "position": 1,
+            "client_id": 7,
+            "weight": 0.44151848554611206,
+            "model_coefficient": -0.44151848554611206,
+            "input_fingerprint": "86d70432c14c28bc747ccb9b6243a6410cda2faeca3e3894547d287a467100e9",
+            "contribution_norm": 0.44151848554611206,
+            "is_malicious": true
+          },
+          {
+            "position": 2,
+            "client_id": 103,
+            "weight": 0.27924078702926636,
+            "model_coefficient": -0.27924078702926636,
+            "input_fingerprint": "0aa06146e87e1b76778f8b1db0572960c32a29cdd398d29d118d25749822da1c",
+            "contribution_norm": 0.27924078702926636,
+            "is_malicious": false
+          }
+        ],
+        "writeback_checks": {
+          "E_alg": 0.0,
+          "d_norm": 0.44151848554611206,
+          "q_norm": 2.980232238769531e-07,
+          "E_model": 2.980232238769531e-07,
+          "delta_norm": 0.44151878356933594,
+          "layer1_absolute_bound": 4.415185855461121e-06,
+          "layer2_absolute_bound": 4.713210079338074e-06,
+          "tau_rel": 1.0674993351891931e-05,
+          "model_relative_error": 6.749955720290475e-07,
+          "layer1_pass": true,
+          "writeback_exact": true,
+          "layer2_pass": true
+        }
+      },
+      "contributions_by_id": {
+        "41": [
+          -0.27924078702926636,
+          -0.0
+        ],
+        "7": [
+          -0.0,
+          -0.44151848554611206
+        ],
+        "103": [
+          0.27924078702926636,
+          -0.0
+        ]
+      },
+      "permuted_record": {
+        "bridge_call_id": 1,
+        "rfa_call_id": 1,
+        "semantics": "rfa_final_mix_v1",
+        "T": 2,
+        "nu": 1e-06,
+        "input_direction": "server_parameters-minus-client_parameters",
+        "model_displacement": "minus-aggregate; C_i=-w_i*u_i",
+        "aggregate_reconstruction_error": 0.0,
+        "final_betas": [
+          0.3162277936935425,
+          0.3162277936935425,
+          0.5000000596046448
+        ],
+        "denominator": 1.132455587387085,
+        "clients": [
+          {
+            "position": 0,
+            "client_id": 103,
+            "weight": 0.27924078702926636,
+            "model_coefficient": -0.27924078702926636,
+            "input_fingerprint": "0aa06146e87e1b76778f8b1db0572960c32a29cdd398d29d118d25749822da1c",
+            "contribution_norm": 0.27924078702926636,
+            "is_malicious": true
+          },
+          {
+            "position": 1,
+            "client_id": 41,
+            "weight": 0.27924078702926636,
+            "model_coefficient": -0.27924078702926636,
+            "input_fingerprint": "f527974c66e8542228fbab084cdcb6589f550e700b49691fbbb7809e892cce4c",
+            "contribution_norm": 0.27924078702926636,
+            "is_malicious": true
+          },
+          {
+            "position": 2,
+            "client_id": 7,
+            "weight": 0.44151848554611206,
+            "model_coefficient": -0.44151848554611206,
+            "input_fingerprint": "86d70432c14c28bc747ccb9b6243a6410cda2faeca3e3894547d287a467100e9",
+            "contribution_norm": 0.44151848554611206,
+            "is_malicious": false
+          }
+        ],
+        "writeback_checks": {
+          "E_alg": 0.0,
+          "d_norm": 0.44151848554611206,
+          "q_norm": 2.980232238769531e-07,
+          "E_model": 2.980232238769531e-07,
+          "delta_norm": 0.44151878356933594,
+          "layer1_absolute_bound": 4.415185855461121e-06,
+          "layer2_absolute_bound": 4.713210079338074e-06,
+          "tau_rel": 1.0674993351891931e-05,
+          "model_relative_error": 6.749955720290475e-07,
+          "layer1_pass": true,
+          "writeback_exact": true,
+          "layer2_pass": true
+        }
+      },
+      "truth_only_changes_diagnostic": true,
+      "root_read_calls": 0
+    },
+    "mandatory_negatives": [
+      {
+        "case": "weights_missing",
+        "exception": "missing or inconsistent mandatory RFA final weights"
+      },
+      {
+        "case": "weights_wrong_length",
+        "exception": "missing or inconsistent mandatory RFA final weights"
+      },
+      {
+        "case": "old_call",
+        "exception": "stale RFA call or parameter/semantics mismatch"
+      },
+      {
+        "case": "wrong_input_order",
+        "exception": "RFA trace does not describe the actual ordered inputs/output"
+      },
+      {
+        "case": "invalid_denominator",
+        "exception": "invalid RFA final coefficients/denominator"
+      },
+      {
+        "case": "uniform_fitted",
+        "exception": "weights do not match the captured final beta normalization"
+      },
+      {
+        "case": "wrong_weights",
+        "exception": "weights do not match the captured final beta normalization"
+      },
+      {
+        "case": "wrong_semantics",
+        "exception": "stale RFA call or parameter/semantics mismatch"
+      },
+      {
+        "case": "previous_success_same_inputs",
+        "old_call_id": 1,
+        "current_call_id": 2,
+        "rejected": true
+      },
+      {
+        "case": "first_iteration_weights",
+        "wrong_weights": [
+          0.3333333333333333,
+          0.3333333333333333,
+          0.3333333333333333
+        ],
+        "rejected": true
+      },
+      {
+        "case": "next_iteration_weights",
+        "wrong_weights": [
+          0.25269566161292834,
+          0.4946086767741433,
+          0.25269566161292834
+        ],
+        "rejected": true
+      },
+      {
+        "case": "reconstructible_but_not_final_beta",
+        "reconstruction_matches": true,
+        "rejected": true
+      },
+      {
+        "case": "omitted_client",
+        "exception": "pre-write contribution decomposition failed: {'E_alg': 0.75, 'd_norm': 1.5, 'q_norm': 0.0, 'E_model': 0.75, 'delta_norm': 1.5, 'layer1_absolute_bound': 1.5000001000000001e-05, 'layer2_absolute_bound': 1.5000002000000003e-05, 'tau_rel': 1.0000001333333335e-05, 'model_relative_error': 0.5, 'layer1_pass': False, 'writeback_exact': True, 'layer2_pass': False}"
+      },
+      {
+        "case": "flipped_sign",
+        "exception": "pre-write contribution decomposition failed: {'E_alg': 3.0, 'd_norm': 1.5, 'q_norm': 0.0, 'E_model': 3.0, 'delta_norm': 1.5, 'layer1_absolute_bound': 1.5000001000000001e-05, 'layer2_absolute_bound': 1.5000002000000003e-05, 'tau_rel': 1.0000001333333335e-05, 'model_relative_error': 2.0, 'layer1_pass': False, 'writeback_exact': True, 'layer2_pass': False}"
+      },
+      {
+        "case": "swapped_weights",
+        "exception": "pre-write contribution decomposition failed: {'E_alg': 1.0, 'd_norm': 1.5, 'q_norm': 0.0, 'E_model': 1.0, 'delta_norm': 1.5, 'layer1_absolute_bound': 1.5000001000000001e-05, 'layer2_absolute_bound': 1.5000002000000003e-05, 'tau_rel': 1.0000001333333335e-05, 'model_relative_error': 0.6666666666666666, 'layer1_pass': False, 'writeback_exact': True, 'layer2_pass': False}"
+      },
+      {
+        "case": "wrong_actual_parameter_writeback",
+        "rejected": true
+      }
+    ],
+    "float32_layers": {
+      "exact_case": {
+        "E_alg": 0.0,
+        "d_norm": 1.5,
+        "q_norm": 0.0,
+        "E_model": 0.0,
+        "delta_norm": 1.5,
+        "layer1_absolute_bound": 1.5000001000000001e-05,
+        "layer2_absolute_bound": 1.5000002000000003e-05,
+        "tau_rel": 1.0000001333333335e-05,
+        "model_relative_error": 0.0,
+        "layer1_pass": true,
+        "writeback_exact": true,
+        "layer2_pass": true
+      },
+      "rounding_stress": {
+        "E_alg": 0.0,
+        "d_norm": 1.5,
+        "q_norm": 1.5,
+        "E_model": 1.5,
+        "delta_norm": 0.0,
+        "layer1_absolute_bound": 1.5000001000000001e-05,
+        "layer2_absolute_bound": 1.500015000002,
+        "tau_rel": null,
+        "model_relative_error": null,
+        "layer1_pass": true,
+        "writeback_exact": true,
+        "layer2_pass": true
+      },
+      "client_contributions": [
+        -0.75,
+        -0.75
+      ],
+      "q_assigned_to_clients": false
+    },
+    "multi_anchor": {
+      "inputs": [
+        [
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ],
+        [
+          -1.0,
+          0.0
+        ]
+      ],
+      "T": 2,
+      "nu": 1e-06,
+      "expected_weights": [
+        0.27924077994387353,
+        0.4415184401122529,
+        0.27924077994387353
+      ],
+      "actual_weights": [
+        0.2792407799438736,
+        0.44151844011225294,
+        0.2792407799438736
+      ],
+      "first_z": [
+        0.0,
+        0.3333333333333333
+      ],
+      "expected_z": [
+        0.0,
+        0.4415184401122529
+      ],
+      "actual_z": [
+        0.0,
+        0.44151844011225294
+      ],
+      "independent_iterations": [
+        {
+          "betas": [
+            0.3333333333333333,
+            0.3333333333333333,
+            0.3333333333333333
+          ],
+          "denominator": 1.0,
+          "weights": [
+            0.3333333333333333,
+            0.3333333333333333,
+            0.3333333333333333
+          ],
+          "z": [
+            0.0,
+            0.3333333333333333
+          ]
+        },
+        {
+          "betas": [
+            0.3162277660168379,
+            0.49999999999999994,
+            0.3162277660168379
+          ],
+          "denominator": 1.1324555320336758,
+          "weights": [
+            0.27924077994387353,
+            0.4415184401122529,
+            0.27924077994387353
+          ],
+          "z": [
+            0.0,
+            0.4415184401122529
+          ]
+        },
+        {
+          "betas": [
+            0.30493407835662273,
+            0.5968564716806983,
+            0.30493407835662273
+          ],
+          "denominator": 1.206724628393944,
+          "weights": [
+            0.25269566161292834,
+            0.4946086767741433,
+            0.25269566161292834
+          ],
+          "z": [
+            0.0,
+            0.4946086767741433
+          ]
+        }
+      ],
+      "actual_trace": {
+        "call_id": 1,
+        "semantics": "rfa_final_mix_v1",
+        "input_fingerprints": [
+          "0a2bdd4286bb393b391b8fb8f5e7b3b7c5174fc91ffe6cd05b7cd650a8830084",
+          "cbcb5e69dd32499a22c4422e19205b7ca126e2eca13ecb4502b501e79e66934c",
+          "dc30af35856ee23a53165374d1c916fa852516372b6800362e3f8fc0b0fa2f66"
+        ],
+        "output_fingerprint": "0fe95578f85512c0ad050aaeb6c36348ae5ed735a67ba87834cdbb7a6d569eef",
+        "shape": [
+          2
+        ],
+        "dtype": "torch.float64",
+        "device": "cpu",
+        "T": 2,
+        "nu": 1e-06,
+        "final_betas": [
+          0.3162277660168379,
+          0.4999999999999999,
+          0.3162277660168379
+        ],
+        "denominator": 1.1324555320336755,
+        "weights": [
+          0.2792407799438736,
+          0.44151844011225294,
+          0.2792407799438736
+        ]
+      },
+      "next_iteration_max_weight_difference": 0.05309023666189039,
+      "saved_record_independent_after_next_call": true
+    },
+    "compatibility_and_boundaries": {
+      "cases": [
+        {
+          "m": 1,
+          "T": 3,
+          "dtype": "torch.float64",
+          "inputs": [
+            [
+              2.0,
+              -1.0
+            ]
+          ],
+          "old_z": [
+            2.0,
+            -1.0
+          ],
+          "new_z": [
+            2.0,
+            -1.0
+          ],
+          "bitwise_equal": true,
+          "weights": [
+            1.0
+          ],
+          "sum_weights": 1.0,
+          "aggregate_reconstruction_error": 0.0,
+          "old_stats_equal": true,
+          "groups_checked": [
+            0,
+            1,
+            5,
+            7
+          ],
+          "actual_final_trace": {
+            "call_id": 1,
+            "semantics": "rfa_final_mix_v1",
+            "input_fingerprints": [
+              "119d5e7dca71b515c46a8924b586ca61208199e8917555849d9e75c710c90327"
+            ],
+            "output_fingerprint": "119d5e7dca71b515c46a8924b586ca61208199e8917555849d9e75c710c90327",
+            "shape": [
+              2
+            ],
+            "dtype": "torch.float64",
+            "device": "cpu",
+            "T": 3,
+            "nu": 1e-06,
+            "final_betas": [
+              1000000.0
+            ],
+            "denominator": 1000000.0,
+            "weights": [
+              1.0
+            ]
+          },
+          "independent_scalar_final": {
+            "betas": [
+              1000000.0
+            ],
+            "denominator": 1000000.0,
+            "weights": [
+              1.0
+            ],
+            "z": [
+              2.0,
+              -1.0
+            ]
+          }
+        },
+        {
+          "m": 3,
+          "T": 2,
+          "dtype": "torch.float64",
+          "inputs": [
+            [
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ],
+          "old_z": [
+            0.0,
+            0.0
+          ],
+          "new_z": [
+            0.0,
+            0.0
+          ],
+          "bitwise_equal": true,
+          "weights": [
+            0.3333333333333333,
+            0.3333333333333333,
+            0.3333333333333333
+          ],
+          "sum_weights": 1.0,
+          "aggregate_reconstruction_error": 0.0,
+          "old_stats_equal": true,
+          "groups_checked": [
+            0,
+            1,
+            5,
+            7
+          ],
+          "actual_final_trace": {
+            "call_id": 1,
+            "semantics": "rfa_final_mix_v1",
+            "input_fingerprints": [
+              "9cc96deb5ec7c4b84ba54d0be73842054353de7f376534c40c86a7d96b95ae2a",
+              "9cc96deb5ec7c4b84ba54d0be73842054353de7f376534c40c86a7d96b95ae2a",
+              "9cc96deb5ec7c4b84ba54d0be73842054353de7f376534c40c86a7d96b95ae2a"
+            ],
+            "output_fingerprint": "9cc96deb5ec7c4b84ba54d0be73842054353de7f376534c40c86a7d96b95ae2a",
+            "shape": [
+              2
+            ],
+            "dtype": "torch.float64",
+            "device": "cpu",
+            "T": 2,
+            "nu": 1e-06,
+            "final_betas": [
+              333333.3333333333,
+              333333.3333333333,
+              333333.3333333333
+            ],
+            "denominator": 1000000.0,
+            "weights": [
+              0.3333333333333333,
+              0.3333333333333333,
+              0.3333333333333333
+            ]
+          },
+          "independent_scalar_final": {
+            "betas": [
+              333333.3333333333,
+              333333.3333333333,
+              333333.3333333333
+            ],
+            "denominator": 1000000.0,
+            "weights": [
+              0.3333333333333333,
+              0.3333333333333333,
+              0.3333333333333333
+            ],
+            "z": [
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "m": 5,
+          "T": 3,
+          "dtype": "torch.float64",
+          "inputs": [
+            [
+              2.0,
+              -1.0
+            ],
+            [
+              2.0,
+              -1.0
+            ],
+            [
+              2.0,
+              -1.0
+            ],
+            [
+              2.0,
+              -1.0
+            ],
+            [
+              2.0,
+              -1.0
+            ]
+          ],
+          "old_z": [
+            2.0,
+            -1.0
+          ],
+          "new_z": [
+            2.0,
+            -1.0
+          ],
+          "bitwise_equal": true,
+          "weights": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "sum_weights": 1.0,
+          "aggregate_reconstruction_error": 0.0,
+          "old_stats_equal": true,
+          "groups_checked": [
+            0,
+            1,
+            5,
+            7
+          ],
+          "actual_final_trace": {
+            "call_id": 1,
+            "semantics": "rfa_final_mix_v1",
+            "input_fingerprints": [
+              "119d5e7dca71b515c46a8924b586ca61208199e8917555849d9e75c710c90327",
+              "119d5e7dca71b515c46a8924b586ca61208199e8917555849d9e75c710c90327",
+              "119d5e7dca71b515c46a8924b586ca61208199e8917555849d9e75c710c90327",
+              "119d5e7dca71b515c46a8924b586ca61208199e8917555849d9e75c710c90327",
+              "119d5e7dca71b515c46a8924b586ca61208199e8917555849d9e75c710c90327"
+            ],
+            "output_fingerprint": "119d5e7dca71b515c46a8924b586ca61208199e8917555849d9e75c710c90327",
+            "shape": [
+              2
+            ],
+            "dtype": "torch.float64",
+            "device": "cpu",
+            "T": 3,
+            "nu": 1e-06,
+            "final_betas": [
+              200000.00000000003,
+              200000.00000000003,
+              200000.00000000003,
+              200000.00000000003,
+              200000.00000000003
+            ],
+            "denominator": 1000000.0000000001,
+            "weights": [
+              0.2,
+              0.2,
+              0.2,
+              0.2,
+              0.2
+            ]
+          },
+          "independent_scalar_final": {
+            "betas": [
+              200000.00000000003,
+              200000.00000000003,
+              200000.00000000003,
+              200000.00000000003,
+              200000.00000000003
+            ],
+            "denominator": 1000000.0000000001,
+            "weights": [
+              0.2,
+              0.2,
+              0.2,
+              0.2,
+              0.2
+            ],
+            "z": [
+              2.0,
+              -1.0
+            ]
+          }
+        },
+        {
+          "m": 2,
+          "T": 4,
+          "dtype": "torch.float64",
+          "inputs": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              -1.0,
+              0.0
+            ]
+          ],
+          "old_z": [
+            0.0,
+            0.0
+          ],
+          "new_z": [
+            0.0,
+            0.0
+          ],
+          "bitwise_equal": true,
+          "weights": [
+            0.5,
+            0.5
+          ],
+          "sum_weights": 1.0,
+          "aggregate_reconstruction_error": 0.0,
+          "old_stats_equal": true,
+          "groups_checked": [
+            0,
+            1,
+            5,
+            7
+          ],
+          "actual_final_trace": {
+            "call_id": 1,
+            "semantics": "rfa_final_mix_v1",
+            "input_fingerprints": [
+              "0a2bdd4286bb393b391b8fb8f5e7b3b7c5174fc91ffe6cd05b7cd650a8830084",
+              "dc30af35856ee23a53165374d1c916fa852516372b6800362e3f8fc0b0fa2f66"
+            ],
+            "output_fingerprint": "9cc96deb5ec7c4b84ba54d0be73842054353de7f376534c40c86a7d96b95ae2a",
+            "shape": [
+              2
+            ],
+            "dtype": "torch.float64",
+            "device": "cpu",
+            "T": 4,
+            "nu": 1e-06,
+            "final_betas": [
+              0.5,
+              0.5
+            ],
+            "denominator": 1.0,
+            "weights": [
+              0.5,
+              0.5
+            ]
+          },
+          "independent_scalar_final": {
+            "betas": [
+              0.5,
+              0.5
+            ],
+            "denominator": 1.0,
+            "weights": [
+              0.5,
+              0.5
+            ],
+            "z": [
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "m": 7,
+          "T": 5,
+          "dtype": "torch.float64",
+          "inputs": [
+            [
+              1.0,
+              1.0
+            ],
+            [
+              2.0,
+              -1.0
+            ],
+            [
+              3.0,
+              1.0
+            ],
+            [
+              4.0,
+              -1.0
+            ],
+            [
+              5.0,
+              1.0
+            ],
+            [
+              6.0,
+              -1.0
+            ],
+            [
+              7.0,
+              1.0
+            ]
+          ],
+          "old_z": [
+            3.9055452518917,
+            0.10977727388872417
+          ],
+          "new_z": [
+            3.9055452518917,
+            0.10977727388872417
+          ],
+          "bitwise_equal": true,
+          "weights": [
+            0.08663402196987717,
+            0.11889195240729047,
+            0.21459263002813814,
+            0.22196102331418044,
+            0.1758394384316618,
+            0.10425838733416698,
+            0.07782254651468497
+          ],
+          "sum_weights": 1.0,
+          "aggregate_reconstruction_error": 4.449557262054371e-16,
+          "old_stats_equal": true,
+          "groups_checked": [
+            0,
+            1,
+            5,
+            7
+          ],
+          "actual_final_trace": {
+            "call_id": 1,
+            "semantics": "rfa_final_mix_v1",
+            "input_fingerprints": [
+              "ee291decddebccce2f5cffeb6f468b0cd2bbf07bae788d13df2c8f76d7fd7643",
+              "119d5e7dca71b515c46a8924b586ca61208199e8917555849d9e75c710c90327",
+              "f480c3d4f291175e5427271cd1e585c8af093f1b515cbea64d16eb55ac89bcce",
+              "77c1d3af138e09eb27d2029734f7c6f091e9d2b4d0f0046387cde3331fa68404",
+              "54b467c178bc636df12f73ead68518fc827a1cf4970e7d912caee53308e07dcb",
+              "de84fce1f38a288bd1b65c2b5c9ebfccb76d61b0e8fd2ce50026bda534d5c0c1",
+              "357e1aec1e0bdc5322ea3c51e92dde56a8c9ca0d5c0f6094d4347d85b0215157"
+            ],
+            "output_fingerprint": "de617ad6b50bbb7c06da0cd5328244cba83f856d2839ad043387c83d66c0712f",
+            "shape": [
+              2
+            ],
+            "dtype": "torch.float64",
+            "device": "cpu",
+            "T": 5,
+            "nu": 1e-06,
+            "final_betas": [
+              0.048360147345120424,
+              0.06636690997175188,
+              0.11978817295295412,
+              0.12390129822299759,
+              0.09815567785361648,
+              0.058198278907079355,
+              0.04344147634668552
+            ],
+            "denominator": 0.5582119616002054,
+            "weights": [
+              0.08663402196987717,
+              0.11889195240729047,
+              0.21459263002813814,
+              0.22196102331418044,
+              0.1758394384316618,
+              0.10425838733416698,
+              0.07782254651468497
+            ]
+          },
+          "independent_scalar_final": {
+            "betas": [
+              0.04836014734512042,
+              0.06636690997175186,
+              0.1197881729529541,
+              0.1239012982229976,
+              0.09815567785361651,
+              0.05819827890707936,
+              0.04344147634668553
+            ],
+            "denominator": 0.5582119616002054,
+            "weights": [
+              0.08663402196987716,
+              0.11889195240729045,
+              0.2145926300281381,
+              0.22196102331418047,
+              0.17583943843166186,
+              0.104258387334167,
+              0.07782254651468498
+            ],
+            "z": [
+              3.9055452518917,
+              0.10977727388872419
+            ]
+          }
+        },
+        {
+          "m": 3,
+          "T": 2,
+          "dtype": "torch.float64",
+          "inputs": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0
+            ],
+            [
+              -1.0,
+              0.0
+            ]
+          ],
+          "old_z": [
+            0.0,
+            0.44151844011225294
+          ],
+          "new_z": [
+            0.0,
+            0.44151844011225294
+          ],
+          "bitwise_equal": true,
+          "weights": [
+            0.2792407799438736,
+            0.44151844011225294,
+            0.2792407799438736
+          ],
+          "sum_weights": 1.0,
+          "aggregate_reconstruction_error": 0.0,
+          "old_stats_equal": true,
+          "groups_checked": [
+            0,
+            1,
+            5,
+            7
+          ],
+          "actual_final_trace": {
+            "call_id": 1,
+            "semantics": "rfa_final_mix_v1",
+            "input_fingerprints": [
+              "0a2bdd4286bb393b391b8fb8f5e7b3b7c5174fc91ffe6cd05b7cd650a8830084",
+              "cbcb5e69dd32499a22c4422e19205b7ca126e2eca13ecb4502b501e79e66934c",
+              "dc30af35856ee23a53165374d1c916fa852516372b6800362e3f8fc0b0fa2f66"
+            ],
+            "output_fingerprint": "0fe95578f85512c0ad050aaeb6c36348ae5ed735a67ba87834cdbb7a6d569eef",
+            "shape": [
+              2
+            ],
+            "dtype": "torch.float64",
+            "device": "cpu",
+            "T": 2,
+            "nu": 1e-06,
+            "final_betas": [
+              0.3162277660168379,
+              0.4999999999999999,
+              0.3162277660168379
+            ],
+            "denominator": 1.1324555320336755,
+            "weights": [
+              0.2792407799438736,
+              0.44151844011225294,
+              0.2792407799438736
+            ]
+          },
+          "independent_scalar_final": {
+            "betas": [
+              0.3162277660168379,
+              0.49999999999999994,
+              0.3162277660168379
+            ],
+            "denominator": 1.1324555320336758,
+            "weights": [
+              0.27924077994387353,
+              0.4415184401122529,
+              0.27924077994387353
+            ],
+            "z": [
+              0.0,
+              0.4415184401122529
+            ]
+          }
+        },
+        {
+          "m": 1,
+          "T": 3,
+          "dtype": "torch.float32",
+          "inputs": [
+            [
+              2.0,
+              -1.0
+            ]
+          ],
+          "old_z": [
+            2.0,
+            -1.0
+          ],
+          "new_z": [
+            2.0,
+            -1.0
+          ],
+          "bitwise_equal": true,
+          "weights": [
+            1.0
+          ],
+          "sum_weights": 1.0,
+          "aggregate_reconstruction_error": 0.0,
+          "old_stats_equal": true,
+          "groups_checked": [
+            0,
+            1,
+            5,
+            7
+          ],
+          "actual_final_trace": {
+            "call_id": 1,
+            "semantics": "rfa_final_mix_v1",
+            "input_fingerprints": [
+              "07dd42ce67b3e88298b4f5772acd8d1a4f9886aa0f5f19a55b327240a54b03b6"
+            ],
+            "output_fingerprint": "07dd42ce67b3e88298b4f5772acd8d1a4f9886aa0f5f19a55b327240a54b03b6",
+            "shape": [
+              2
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "T": 3,
+            "nu": 1e-06,
+            "final_betas": [
+              1000000.0
+            ],
+            "denominator": 1000000.0,
+            "weights": [
+              1.0
+            ]
+          },
+          "independent_scalar_final": {
+            "betas": [
+              1000000.0
+            ],
+            "denominator": 1000000.0,
+            "weights": [
+              1.0
+            ],
+            "z": [
+              2.0,
+              -1.0
+            ]
+          }
+        },
+        {
+          "m": 3,
+          "T": 2,
+          "dtype": "torch.float32",
+          "inputs": [
+            [
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ],
+          "old_z": [
+            0.0,
+            0.0
+          ],
+          "new_z": [
+            0.0,
+            0.0
+          ],
+          "bitwise_equal": true,
+          "weights": [
+            0.3333333333333333,
+            0.3333333333333333,
+            0.3333333333333333
+          ],
+          "sum_weights": 1.0,
+          "aggregate_reconstruction_error": 0.0,
+          "old_stats_equal": true,
+          "groups_checked": [
+            0,
+            1,
+            5,
+            7
+          ],
+          "actual_final_trace": {
+            "call_id": 1,
+            "semantics": "rfa_final_mix_v1",
+            "input_fingerprints": [
+              "e1c6ad6d0c963bea677aad73ee0244f4e81efda224fe7c1ae618a0ab9469bf2d",
+              "e1c6ad6d0c963bea677aad73ee0244f4e81efda224fe7c1ae618a0ab9469bf2d",
+              "e1c6ad6d0c963bea677aad73ee0244f4e81efda224fe7c1ae618a0ab9469bf2d"
+            ],
+            "output_fingerprint": "e1c6ad6d0c963bea677aad73ee0244f4e81efda224fe7c1ae618a0ab9469bf2d",
+            "shape": [
+              2
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "T": 2,
+            "nu": 1e-06,
+            "final_betas": [
+              333333.3333333333,
+              333333.3333333333,
+              333333.3333333333
+            ],
+            "denominator": 1000000.0,
+            "weights": [
+              0.3333333333333333,
+              0.3333333333333333,
+              0.3333333333333333
+            ]
+          },
+          "independent_scalar_final": {
+            "betas": [
+              333333.3333333333,
+              333333.3333333333,
+              333333.3333333333
+            ],
+            "denominator": 1000000.0,
+            "weights": [
+              0.3333333333333333,
+              0.3333333333333333,
+              0.3333333333333333
+            ],
+            "z": [
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "m": 5,
+          "T": 3,
+          "dtype": "torch.float32",
+          "inputs": [
+            [
+              2.0,
+              -1.0
+            ],
+            [
+              2.0,
+              -1.0
+            ],
+            [
+              2.0,
+              -1.0
+            ],
+            [
+              2.0,
+              -1.0
+            ],
+            [
+              2.0,
+              -1.0
+            ]
+          ],
+          "old_z": [
+            2.0,
+            -1.0
+          ],
+          "new_z": [
+            2.0,
+            -1.0
+          ],
+          "bitwise_equal": true,
+          "weights": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "sum_weights": 1.0,
+          "aggregate_reconstruction_error": 0.0,
+          "old_stats_equal": true,
+          "groups_checked": [
+            0,
+            1,
+            5,
+            7
+          ],
+          "actual_final_trace": {
+            "call_id": 1,
+            "semantics": "rfa_final_mix_v1",
+            "input_fingerprints": [
+              "07dd42ce67b3e88298b4f5772acd8d1a4f9886aa0f5f19a55b327240a54b03b6",
+              "07dd42ce67b3e88298b4f5772acd8d1a4f9886aa0f5f19a55b327240a54b03b6",
+              "07dd42ce67b3e88298b4f5772acd8d1a4f9886aa0f5f19a55b327240a54b03b6",
+              "07dd42ce67b3e88298b4f5772acd8d1a4f9886aa0f5f19a55b327240a54b03b6",
+              "07dd42ce67b3e88298b4f5772acd8d1a4f9886aa0f5f19a55b327240a54b03b6"
+            ],
+            "output_fingerprint": "07dd42ce67b3e88298b4f5772acd8d1a4f9886aa0f5f19a55b327240a54b03b6",
+            "shape": [
+              2
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "T": 3,
+            "nu": 1e-06,
+            "final_betas": [
+              200000.00000000003,
+              200000.00000000003,
+              200000.00000000003,
+              200000.00000000003,
+              200000.00000000003
+            ],
+            "denominator": 1000000.0000000001,
+            "weights": [
+              0.2,
+              0.2,
+              0.2,
+              0.2,
+              0.2
+            ]
+          },
+          "independent_scalar_final": {
+            "betas": [
+              200000.00000000003,
+              200000.00000000003,
+              200000.00000000003,
+              200000.00000000003,
+              200000.00000000003
+            ],
+            "denominator": 1000000.0000000001,
+            "weights": [
+              0.2,
+              0.2,
+              0.2,
+              0.2,
+              0.2
+            ],
+            "z": [
+              2.0,
+              -1.0
+            ]
+          }
+        },
+        {
+          "m": 2,
+          "T": 4,
+          "dtype": "torch.float32",
+          "inputs": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              -1.0,
+              0.0
+            ]
+          ],
+          "old_z": [
+            0.0,
+            0.0
+          ],
+          "new_z": [
+            0.0,
+            0.0
+          ],
+          "bitwise_equal": true,
+          "weights": [
+            0.5,
+            0.5
+          ],
+          "sum_weights": 1.0,
+          "aggregate_reconstruction_error": 0.0,
+          "old_stats_equal": true,
+          "groups_checked": [
+            0,
+            1,
+            5,
+            7
+          ],
+          "actual_final_trace": {
+            "call_id": 1,
+            "semantics": "rfa_final_mix_v1",
+            "input_fingerprints": [
+              "f527974c66e8542228fbab084cdcb6589f550e700b49691fbbb7809e892cce4c",
+              "0aa06146e87e1b76778f8b1db0572960c32a29cdd398d29d118d25749822da1c"
+            ],
+            "output_fingerprint": "e1c6ad6d0c963bea677aad73ee0244f4e81efda224fe7c1ae618a0ab9469bf2d",
+            "shape": [
+              2
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "T": 4,
+            "nu": 1e-06,
+            "final_betas": [
+              0.5,
+              0.5
+            ],
+            "denominator": 1.0,
+            "weights": [
+              0.5,
+              0.5
+            ]
+          },
+          "independent_scalar_final": {
+            "betas": [
+              0.5,
+              0.5
+            ],
+            "denominator": 1.0,
+            "weights": [
+              0.5,
+              0.5
+            ],
+            "z": [
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "m": 7,
+          "T": 5,
+          "dtype": "torch.float32",
+          "inputs": [
+            [
+              1.0,
+              1.0
+            ],
+            [
+              2.0,
+              -1.0
+            ],
+            [
+              3.0,
+              1.0
+            ],
+            [
+              4.0,
+              -1.0
+            ],
+            [
+              5.0,
+              1.0
+            ],
+            [
+              6.0,
+              -1.0
+            ],
+            [
+              7.0,
+              1.0
+            ]
+          ],
+          "old_z": [
+            3.905545711517334,
+            0.10977727174758911
+          ],
+          "new_z": [
+            3.905545711517334,
+            0.10977727174758911
+          ],
+          "bitwise_equal": true,
+          "weights": [
+            0.08663401752710342,
+            0.11889193952083588,
+            0.21459263563156128,
+            0.22196105122566223,
+            0.17583943903446198,
+            0.10425839573144913,
+            0.07782255113124847
+          ],
+          "sum_weights": 1.0000000298023224,
+          "aggregate_reconstruction_error": 2.760739224202768e-07,
+          "old_stats_equal": true,
+          "groups_checked": [
+            0,
+            1,
+            5,
+            7
+          ],
+          "actual_final_trace": {
+            "call_id": 1,
+            "semantics": "rfa_final_mix_v1",
+            "input_fingerprints": [
+              "e761a81e653f07fae51d15429dc004529521ef2c2c7d689951f2efcd7be1d9d3",
+              "07dd42ce67b3e88298b4f5772acd8d1a4f9886aa0f5f19a55b327240a54b03b6",
+              "4393d5f4abb5f03164c47d9382f812cd9213f65839ad5ee75b9669357872b181",
+              "7fa519c15d63d15666d296c453e4e3fde372d190b325ab8750a68009ae793ff1",
+              "57c67e17e3858dab30cd4fcf9041ee17e5512a1f7956ec672e88197ea6a7ea20",
+              "f9782af1d7013dc1137265c5d439e72448cdec83f906cbbe9e4b8602cc35e9ab",
+              "8d401a53938d8f12603b3f7df06b78c477832ed7e17b12411bfc7f3435e567ff"
+            ],
+            "output_fingerprint": "7fccf4c7196e22170e6526c5dc47e9ae24014b37ebef774c8dfcfc0c10740c88",
+            "shape": [
+              2
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "T": 5,
+            "nu": 1e-06,
+            "final_betas": [
+              0.04836014658212662,
+              0.06636690348386765,
+              0.11978817731142044,
+              0.12390131503343582,
+              0.0981556847691536,
+              0.05819828435778618,
+              0.04344148188829422
+            ],
+            "denominator": 0.5582119822502136,
+            "weights": [
+              0.08663401752710342,
+              0.11889193952083588,
+              0.21459263563156128,
+              0.22196105122566223,
+              0.17583943903446198,
+              0.10425839573144913,
+              0.07782255113124847
+            ]
+          },
+          "independent_scalar_final": {
+            "betas": [
+              0.04836014734512042,
+              0.06636690997175186,
+              0.1197881729529541,
+              0.1239012982229976,
+              0.09815567785361651,
+              0.05819827890707936,
+              0.04344147634668553
+            ],
+            "denominator": 0.5582119616002054,
+            "weights": [
+              0.08663402196987716,
+              0.11889195240729045,
+              0.2145926300281381,
+              0.22196102331418047,
+              0.17583943843166186,
+              0.104258387334167,
+              0.07782254651468498
+            ],
+            "z": [
+              3.9055452518917,
+              0.10977727388872419
+            ]
+          }
+        },
+        {
+          "m": 3,
+          "T": 2,
+          "dtype": "torch.float32",
+          "inputs": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0
+            ],
+            [
+              -1.0,
+              0.0
+            ]
+          ],
+          "old_z": [
+            0.0,
+            0.44151848554611206
+          ],
+          "new_z": [
+            0.0,
+            0.44151848554611206
+          ],
+          "bitwise_equal": true,
+          "weights": [
+            0.27924078702926636,
+            0.44151848554611206,
+            0.27924078702926636
+          ],
+          "sum_weights": 1.0000000596046448,
+          "aggregate_reconstruction_error": 0.0,
+          "old_stats_equal": true,
+          "groups_checked": [
+            0,
+            1,
+            5,
+            7
+          ],
+          "actual_final_trace": {
+            "call_id": 1,
+            "semantics": "rfa_final_mix_v1",
+            "input_fingerprints": [
+              "f527974c66e8542228fbab084cdcb6589f550e700b49691fbbb7809e892cce4c",
+              "86d70432c14c28bc747ccb9b6243a6410cda2faeca3e3894547d287a467100e9",
+              "0aa06146e87e1b76778f8b1db0572960c32a29cdd398d29d118d25749822da1c"
+            ],
+            "output_fingerprint": "8b32bce85a84951666a5d05291d3bb739c38c28251d9bbd991cc1b5955a92ce4",
+            "shape": [
+              2
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "T": 2,
+            "nu": 1e-06,
+            "final_betas": [
+              0.3162277936935425,
+              0.5000000596046448,
+              0.3162277936935425
+            ],
+            "denominator": 1.132455587387085,
+            "weights": [
+              0.27924078702926636,
+              0.44151848554611206,
+              0.27924078702926636
+            ]
+          },
+          "independent_scalar_final": {
+            "betas": [
+              0.3162277660168379,
+              0.49999999999999994,
+              0.3162277660168379
+            ],
+            "denominator": 1.1324555320336758,
+            "weights": [
+              0.27924077994387353,
+              0.4415184401122529,
+              0.27924077994387353
+            ],
+            "z": [
+              0.0,
+              0.4415184401122529
+            ]
+          }
+        }
+      ],
+      "continuous_batches": [
+        {
+          "m": 7,
+          "call_id": 1,
+          "weights": [
+            0.08301445851827001,
+            0.20165323191249068,
+            0.4699075312456189,
+            0.1085167815800266,
+            0.06134122264164379,
+            0.04275452496308228,
+            0.03281224913886776
+          ]
+        },
+        {
+          "m": 1,
+          "call_id": 2,
+          "weights": [
+            1.0
+          ]
+        },
+        {
+          "m": 5,
+          "call_id": 3,
+          "weights": [
+            0.10185027394448755,
+            0.6385228712673642,
+            0.1495639157923556,
+            0.06694191392319139,
+            0.04312102507260122
+          ]
+        },
+        {
+          "m": 3,
+          "call_id": 4,
+          "weights": [
+            0.3108808290155441,
+            0.5440414507772019,
+            0.14507772020725387
+          ]
+        }
+      ]
+    },
+    "single_anchor": {
+      "inputs": [
+        [
+          1
+        ],
+        [
+          3
+        ]
+      ],
+      "T": 1,
+      "nu": 1e-06,
+      "expected_weights": [
+        0.75,
+        0.25
+      ],
+      "actual_weights": [
+        0.75,
+        0.25
+      ],
+      "expected_z": [
+        1.5
+      ],
+      "actual_z": [
+        1.5
+      ],
+      "uniform_negative_z": 2.0,
+      "uniform_negative_rejected": true,
+      "default_helper_items": 3,
+      "explicit_helper_items": 4,
+      "trace": {
+        "call_id": 1,
+        "semantics": "rfa_final_mix_v1",
+        "input_fingerprints": [
+          "01c869021ccb07bd8722c18435690592eb37ce97469a66a7f9c92a11aff7f1b0",
+          "28ca8e45890dbe82ad8bf128a23d45db07a26f26577eb110a715e86e1e45a209"
+        ],
+        "output_fingerprint": "b8c90c33aeb8abfa6f9933d7e4a19feae374e0ec3470265e46baecea72f67399",
+        "shape": [
+          1
+        ],
+        "dtype": "torch.float64",
+        "device": "cpu",
+        "T": 1,
+        "nu": 1e-06,
+        "final_betas": [
+          0.5,
+          0.16666666666666666
+        ],
+        "denominator": 0.6666666666666666,
+        "weights": [
+          0.75,
+          0.25
+        ]
+      }
+    }
+  },
+  "prior_failures": [
+    {
+      "case": "multiround_exact_equality",
+      "record_status": "retroactively transcribed from this conversation; absent in original manifest",
+      "source_chunk_id": "d533c6",
+      "exact_execution_timestamp": null,
+      "code_before": "saved = a.last_client_weights\na(tensors([[2.]]))\nself.assertEqual(saved, tuple(w))",
+      "code_after": "saved = a.last_client_weights\na(tensors([[2.]]))\nself.close(saved, w)",
+      "after_source": "tests/test_rfa_contribution_interface.py:113-116 (saved_trace metadata was added separately)",
+      "actual": [
+        0.2792407799438736,
+        0.44151844011225294,
+        0.2792407799438736
+      ],
+      "expected": [
+        0.27924077994387353,
+        0.4415184401122529,
+        0.27924077994387353
+      ],
+      "max_absolute_difference": 5.551115123125783e-17,
+      "failure": "AssertionError: Tuples differ",
+      "original_failure_source_line": 112,
+      "comparison_after": {
+        "atol": 1e-10,
+        "rtol": 1e-08
+      }
+    },
+    {
+      "case": "single_dimension_overflow_assumption",
+      "record_status": "retroactively transcribed from this conversation; absent in original manifest",
+      "source_chunk_id": "d533c6",
+      "exact_execution_timestamp": null,
+      "code_before": "(\"norm_overflow_den_zero\", {}, [[1e308]])\n# shared assertion in case loop:\nwith self.assertRaises(ValueError) as caught:\n    a(tensors(rows))",
+      "code_after": "(\"norm_overflow_den_zero\", {}, [[1e308, 1e308]])\n# shared assertion is unchanged:\nwith self.assertRaises(ValueError) as caught:\n    a(tensors(rows))",
+      "after_source": "tests/test_rfa_contribution_interface.py:234,242-243",
+      "expected_first_run": "ValueError",
+      "actual_first_run": "no ValueError; AssertionError: ValueError not raised",
+      "original_failure_source_line": 223,
+      "first_run_z_not_printed_or_archived": true,
+      "supplementary_reprobe": {
+        "source_chunk_id": "2f43e3",
+        "input": [
+          1e+308
+        ],
+        "norm": 1e+308,
+        "z": [
+          1e+308
+        ],
+        "weights": [
+          1.0
+        ],
+        "final_betas": [
+          1e-308
+        ],
+        "denominator": 1e-308,
+        "note": "new fixed-tensor reprobe, not claimed as archived first-run values"
+      }
+    }
+  ],
+  "supplementary_clarifications": {
+    "recorded_on": "2026-10-09",
+    "probe_source_chunk_id": "2f43e3",
+    "interpreter": "E:\\anaconda3\\python.exe",
+    "training_runs": 0,
+    "production_and_test_files_unchanged": true,
+    "Q2": {
+      "classification": "c: clarification of wording in preceding user task output requirements",
+      "source": "preceding RFA contribution interface user task, output requirements",
+      "quote": "实际运行的锚点/负例（单轮 `[1],[3]` 锚点、多轮三维锚点、边界与分组无关性、身份一致性、失败新鲜度）",
+      "exact_message_timestamp": null,
+      "date_context": "2026-10-09 interface report",
+      "ruling_text": "三个二维输入 (1,0),(0,1),(-1,0)",
+      "first_test_used_two_dimensions": true,
+      "astra_dialogue_in_this_task": false,
+      "correction": "remove unnecessary contrast phrase from report; no claim that ruling or user mathematical reading was wrong"
+    },
+    "Q3": [
+      {
+        "case": "consistent_three_fields_distinct",
+        "inputs": [
+          [
+            1
+          ],
+          [
+            3
+          ]
+        ],
+        "real_aggregate": [
+          1.5
+        ],
+        "forged_betas": [
+          0.25,
+          0.75
+        ],
+        "forged_denominator": 1.0,
+        "forged_weights": [
+          0.25,
+          0.75
+        ],
+        "sum_weights": 1.0,
+        "beta_normalization_error": 0.0,
+        "outcome": "rejected at reconstruction",
+        "exception": "RFA aggregate reconstruction failed (float64)",
+        "reconstructed_aggregate": [
+          2.5
+        ]
+      },
+      {
+        "case": "consistent_three_fields_duplicate",
+        "inputs": [
+          [
+            1
+          ],
+          [
+            1
+          ]
+        ],
+        "real_aggregate": [
+          1.0
+        ],
+        "forged_betas": [
+          0.2,
+          0.8
+        ],
+        "forged_denominator": 1.0,
+        "forged_weights": [
+          0.2,
+          0.8
+        ],
+        "sum_weights": 1.0,
+        "beta_normalization_error": 0.0,
+        "outcome": "accepted",
+        "reconstruction_error": 0.0
+      },
+      {
+        "case": "scaled_betas_and_den_same_weights",
+        "inputs": [
+          [
+            1
+          ],
+          [
+            3
+          ]
+        ],
+        "real_aggregate": [
+          1.5
+        ],
+        "forged_betas": [
+          1.0,
+          0.3333333333333333
+        ],
+        "forged_denominator": 1.3333333333333333,
+        "forged_weights": [
+          0.75,
+          0.25
+        ],
+        "outcome": "accepted",
+        "reconstruction_error": 0.0
+      },
+      {
+        "case": "aggregate_changed_old_fingerprint",
+        "inputs": [
+          [
+            1
+          ],
+          [
+            3
+          ]
+        ],
+        "real_aggregate": [
+          1.5
+        ],
+        "passed_aggregate": [
+          2.5
+        ],
+        "forged_betas": [
+          0.25,
+          0.75
+        ],
+        "forged_denominator": 1.0,
+        "forged_weights": [
+          0.25,
+          0.75
+        ],
+        "rewrite_output_fingerprint": false,
+        "outcome": "rejected at output fingerprint",
+        "exception": "RFA trace does not describe the actual ordered inputs/output"
+      },
+      {
+        "case": "aggregate_and_fingerprint_changed",
+        "inputs": [
+          [
+            1
+          ],
+          [
+            3
+          ]
+        ],
+        "real_aggregate": [
+          1.5
+        ],
+        "passed_aggregate": [
+          2.5
+        ],
+        "forged_betas": [
+          0.25,
+          0.75
+        ],
+        "forged_denominator": 1.0,
+        "forged_weights": [
+          0.25,
+          0.75
+        ],
+        "rewrite_output_fingerprint": true,
+        "outcome": "accepted",
+        "reconstruction_error": 0.0,
+        "writeback_E_alg": 0.0,
+        "writeback_E_model": 0.0,
+        "writeback_exact": true,
+        "theta": [
+          16.0
+        ],
+        "forged_new_model": [
+          13.5
+        ],
+        "true_rfa_new_model": [
+          14.5
+        ]
+      }
+    ],
+    "Q4": {
+      "definition": "aggregators/contribution_diagnostics.py:21",
+      "implementation": "aggregators/contribution_diagnostics.py:92",
+      "authority": "docs/D2_PRIME_RFA_CONTRIBUTION_RULING.md section 5.2, line 182",
+      "derivation": "d=-aggregate, norm(d)=norm(aggregate); pre-write E_alg bound unchanged"
+    },
+    "Q5": {
+      "existing_test_coverage": "test_consumer_failure_clears_and_observation_isolation: three sequential consumer-validation failures then success; not a dedicated assertion of two RFA-core failures then success",
+      "supplementary_same_instance_calls": [
+        {
+          "case": "empty",
+          "expected_call_id": 1,
+          "sequence_after": 1,
+          "record_after": null,
+          "outcome": "rejected"
+        },
+        {
+          "case": "nan",
+          "expected_call_id": 2,
+          "sequence_after": 2,
+          "record_after": null,
+          "outcome": "rejected"
+        },
+        {
+          "case": "success",
+          "expected_call_id": 3,
+          "sequence_after": 3,
+          "record_call_id": 3,
+          "z": [
+            1.5
+          ],
+          "outcome": "accepted"
+        }
+      ],
+      "ordering_assumption": "serial calls on the same instance; concurrent shared-instance use not verified"
+    },
+    "Q6": [
+      {
+        "base_literal": [
+          16.0,
+          32.0
+        ],
+        "base_float32": [
+          16.0,
+          32.0
+        ],
+        "actual_z_float32": [
+          0.0,
+          0.44151848554611206
+        ],
+        "manual_z_float32": [
+          0.0,
+          0.4415184259414673
+        ],
+        "actual_new": [
+          16.0,
+          31.558481216430664
+        ],
+        "literal_manual_reference": [
+          16.0,
+          31.558481216430664
+        ],
+        "literal_reference_equal_actual": true,
+        "same_actual_operands_reference": [
+          16.0,
+          31.558481216430664
+        ],
+        "same_actual_operands_equal_actual": true,
+        "writeback_q": [
+          0.0,
+          -2.980232238769531e-07
+        ]
+      },
+      {
+        "base_literal": [
+          16.1,
+          32.7
+        ],
+        "base_float32": [
+          16.100000381469727,
+          32.70000076293945
+        ],
+        "actual_z_float32": [
+          0.0,
+          0.44151848554611206
+        ],
+        "manual_z_float32": [
+          0.0,
+          0.4415184259414673
+        ],
+        "actual_new": [
+          16.100000381469727,
+          32.25848388671875
+        ],
+        "literal_manual_reference": [
+          16.100000381469727,
+          32.258480072021484
+        ],
+        "literal_reference_equal_actual": false,
+        "same_actual_operands_reference": [
+          16.100000381469727,
+          32.25848388671875
+        ],
+        "same_actual_operands_equal_actual": true,
+        "writeback_q": [
+          0.0,
+          1.6093254089355469e-06
+        ]
+      }
+    ],
+    "limitations": [
+      "The RFA/server implementation, its in-memory trace and trusted receipt IDs are assumed trustworthy; these consistency checks do not authenticate a maliciously rewritten server state.",
+      "Coherent forged coefficients on dependent inputs can pass reconstruction; forged aggregate plus matching fingerprint can also pass subsequent model checks.",
+      "The literal-base/manual-z equality assertion is evidence for its fixed anchor only; it is not a universal bitwise equality claim for arbitrary base values.",
+      "No dedicated checked-in test was added for the new two-core-failures-then-success probe; evidence is recorded here."
+    ]
+  }
+}

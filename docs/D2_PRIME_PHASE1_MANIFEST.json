@@ -1,0 +1,158 @@
+{
+  "gate": "1.1-1.4 clipped sync calibration",
+  "date": "2026-10-09",
+  "status": "FAIL",
+  "failure_scope": "RFA contribution-output prerequisite; calibration experiments not executed",
+  "stop_reason": "User requires stopping when actual per-client RFA contribution-weight interface is unavailable",
+  "base_commit": "b832abed31b5e34b0c0e51f09860245bb3278ab6",
+  "branch": "feature/d2-prime-async",
+  "interpreter": "E:\\anaconda3\\python.exe",
+  "torch_version": "2.5.1",
+  "prechecks": {
+    "branch": "PASS",
+    "initial_worktree_clean": "PASS",
+    "latest_phase05_07_commit": "PASS",
+    "required_files": "PASS",
+    "rfa_path": "aggregators/rfa.py"
+  },
+  "hashes": {
+    "docs/D2_PRIME_CHECKPOINTS_TRIMMED.md": "0f51f365153671ac5e0319a3d0851f393d2afc0fb2291282c34aa40fd83b8346",
+    "docs/D2_PRIME_CHECKPOINTS.md": "f4333d737e7b240f076097ddc7425d0b99e45c3bd0de325a0c1e5049f4fd2213",
+    "docs/D2_PRIME_DESIGN.md": "4a91ff313b7e639b562b1fa19208d96f73398a60b1d137e046c9527627b67cee",
+    "docs/D2_PRIME_PHASE05_07_REPORT.md": "8edb758c868802f0fa3b059d89a71eed4bf1d1e4b051ad7aa3a657fd257085f9",
+    "docs/D1_EXPERIMENT_COMPLETE_SUMMARY_20261005.md": "f855f4807768cc6fdc2c52cec2193f72854b81fc9893a6777037bf4f35696819",
+    "flgo_byzantine/algorithm.py": "ddc3e98f969e5775635645615626e3ee6bc1d399cd181fdd9f66f4a9a279f854",
+    "aggregators/rfa.py": "3eef98d80f51a1a962159d7690f8390cbca7e80d3464a03febc16f27506c1254",
+    "flgo_byzantine/d1_full_algorithm.py": "eb8e877cac35f976ecbcad3848d1fa1e8212e3a59c53f92933c737ec7b008830",
+    "scripts/run_phase_a_learnability.py": "5a3898c8b8d86c2bfe30f1858677aa2883cae457ff17d02064e24ee5a2fcbb71",
+    "scripts/run_phase_b.py": "d627465df955b1a2400d1e5c065dee3a245d7e778cb3b9a2fb519557c9e576b3",
+    "scripts/validate_phase_b_attack.py": "305542d297754e80526e61b7ef1a8ae1b7bcc7b8eb217352b38650f2bffa4968"
+  },
+  "task_static_check": {
+    "path": "E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\outputs\\d1_3b\\smokeB_20260930\\shared\\tasks\\cifar10\\s1_m20_a0p1_ir50_v2",
+    "clients": 100,
+    "root_size": 2000,
+    "client_pool_size": 11201,
+    "root_client_overlap": 0,
+    "duplicate_client_indices": 0,
+    "partitioner": "dir0.10_err1e-06",
+    "imbalance_ratio": 50,
+    "missing_fraction": 0.2,
+    "lt_counts": [
+      4000,
+      2590,
+      1677,
+      1086,
+      703,
+      455,
+      295,
+      191,
+      124,
+      80
+    ],
+    "root_counts": [
+      689,
+      453,
+      301,
+      202,
+      138,
+      96,
+      69,
+      52,
+      0,
+      0
+    ],
+    "hashes": {
+      "info": "729d58e0a6ecb8439f8b516e08004dcc928e29411072ed473419a79ef552dfe6",
+      "data.json": "e0cdee9451fa2a170554a0517ef5f8b1751e8fd7f527d13b1cc599e5fa3ba3a5"
+    },
+    "coverage": "metadata/index isolation only; no new dataset-label or live-run audit"
+  },
+  "declared_matrix": {
+    "baseline": "RFA fixed by user; not selected by ranking",
+    "development_seed": 101,
+    "main_units": 4,
+    "maximum_units": 6,
+    "optional_10pct_rule": "only after valid wiring and all 30pct methods fall on floor",
+    "rounds_per_full_unit": 300,
+    "actual_units": 0,
+    "actual_training_tasks": 0,
+    "actual_optimizer_steps": 0
+  },
+  "rfa_probe": {
+    "dtype": "float64",
+    "device": "cpu",
+    "input_vectors": [
+      [
+        1.0
+      ],
+      [
+        3.0
+      ]
+    ],
+    "T": 1,
+    "nu": 1e-06,
+    "initial_z": [
+      0.0
+    ],
+    "hand_expected_beta": [
+      0.5,
+      0.16666666666666666
+    ],
+    "hand_expected_final_weights": [
+      0.75,
+      0.25
+    ],
+    "hand_expected_aggregate": [
+      1.5
+    ],
+    "actual_aggregate": [
+      1.5
+    ],
+    "uniform_aggregate": [
+      2.0
+    ],
+    "has_last_client_weights": false,
+    "has_last_contribution_trace": false,
+    "returned_type": "Tensor",
+    "actual_stats": {
+      "average_malicious_beta": 0.3333333333333333,
+      "average_benign_beta": 0
+    },
+    "actual_raw_beta_groups": {
+      "malicious": [
+        0.5,
+        0.16666666666666666
+      ],
+      "benign": []
+    },
+    "interpretation": "raw beta history permits a future exact final-iteration interface; existing output/bridge does not provide it"
+  },
+  "gate_results": {
+    "1.1": "PARTIAL: static isolation/bridge inspection only; RFA interface fails; no sync smoke",
+    "1.2": "NOT_RUN",
+    "1.3": "NOT_RUN",
+    "1.4": "NOT_FROZEN"
+  },
+  "frozen": {
+    "B_predeclared": "RFA",
+    "attack_fraction": null,
+    "B_M": null,
+    "H": null,
+    "beta": null
+  },
+  "historical_credit": {
+    "credited_units": 0,
+    "review_scope": "D1 summary sections II/VII, not a new raw historical-run hash audit",
+    "reasons": [
+      "stage-A passed units use IR5/alpha1/40 clients per round, unlike required IR50/alpha0.1 task",
+      "old Smoke B uses 200 rounds and adaptive_root, unlike new 300-round label-flip calibration",
+      "BR-DRAG/D1 are not RFA; phase0 smoke is not a full synchronous unit"
+    ]
+  },
+  "new_training_outputs": [],
+  "algorithm_or_framework_changes": [],
+  "pushed": false,
+  "committed": false,
+  "next_required_work": "Expose true normalized last-iteration weights, bind to received-client IDs, and independently verify weighted reconstruction; await user confirmation"
+}
