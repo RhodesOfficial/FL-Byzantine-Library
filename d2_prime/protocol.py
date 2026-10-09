@@ -259,10 +259,10 @@ class TaskProtocol:
             self._finish(task.task_id, "expired")
             self._fill()
             return self._reject(reply, "expired")
-        local = torch.as_tensor(reply.local_model, dtype=torch.float64)
+        local = self._local_vector(reply.local_model)
         if local.shape != self._model.shape or not torch.isfinite(local).all():
             return self._reject(reply, "vector")
-        source = torch.tensor(self.snapshot(task.source_version).model, dtype=torch.float64)
+        source = self._source_vector(task.source_version)
         delta = source - local
         norm = delta.norm().item()
         if not torch.isfinite(delta).all() or not math.isfinite(norm):
@@ -280,6 +280,29 @@ class TaskProtocol:
             if self.version - self.tasks[task_id].source_version > self.config.max_staleness:
                 self._finish(task_id, "expired")
         self._fill()
+
+    # Numerical/storage hooks. Defaults preserve the phase-zero representation;
+    # an explicit formal carrier can adapt precision without changing decisions.
+    def _local_vector(self, value):
+        return torch.as_tensor(value, dtype=torch.float64)
+
+    def _source_vector(self, version):
+        return torch.tensor(self.snapshot(version).model, dtype=torch.float64)
+
+    def _empty_displacement(self):
+        return torch.zeros_like(self._model)
+
+    def _write_model(self, displacement):
+        return self._model + displacement
+
+    def _export_displacement(self, displacement):
+        return tuple(displacement.tolist())
+
+    def _store_candidates(self, candidates):
+        return list(candidates)
+
+    def _store_displacement(self, displacement):
+        return self._export_displacement(displacement)
 
     def candidates(self):
         return tuple({"task_id": i, "identity": self.tasks[i].identity,
@@ -383,7 +406,7 @@ class TaskProtocol:
                 waiting.append((c["task_id"], "budget"))
         event = self._prepare_reference_candidates(eligible)
         receipts, scales, rejected, coefficients = [], [], [], {}
-        displacement = torch.zeros_like(self._model)
+        displacement = self._empty_displacement()
         for p in event.proposals:
             if p.g is None:
                 waiting.append((p.task_id, "cold"))
@@ -412,7 +435,7 @@ class TaskProtocol:
                 continue
             receipts.append(Receipt(p.task_id, p.identity, self.now, a, b, a+b))
             displacement -= a*self._updates[p.task_id][1]
-        model_after = self._model + displacement
+        model_after = self._write_model(displacement)
         if not torch.isfinite(displacement).all() or not torch.isfinite(model_after).all():
             raise ValueError("nonfinite model writeback")
         reference_write = write_reference(event, coefficients)
@@ -427,9 +450,9 @@ class TaskProtocol:
         if receipts:
             self.batches.append({"at": self.now, "version_before": self.version,
                 "version_after": self.version+1, "event": event,
-                "candidates": list(eligible),
+                "candidates": self._store_candidates(eligible),
                 "receipts": [asdict(r) for r in receipts], "scales": tuple(scales),
-                "model_displacement": tuple(displacement.tolist()),
+                "model_displacement": self._store_displacement(displacement),
                 "reference_displacement": reference_write.displacement})
             self._model, self._reference = model_after, reference_write.after
             self._budget = budget_after
@@ -444,7 +467,7 @@ class TaskProtocol:
         self._fill()
         self._expire_stale()
         return CommitResult(event, tuple(receipts), tuple(sorted(waiting)), tuple(rejected),
-            tuple(scales), tuple(displacement.tolist()), reference_write.displacement)
+            tuple(scales), self._export_displacement(displacement), reference_write.displacement)
 
     def commit_model(self, coefficients: Mapping[int, float]):
         """Model writeback seam only; NOT a D2 scoring/shared-budget commit."""
