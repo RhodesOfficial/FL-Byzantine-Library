@@ -1,0 +1,624 @@
+BRAFed source excerpts for D2-prime phase 3.0 review.
+Source: paper/Fang 等 - 2026 - A Byzantine-robust asynchronous federated learning method on Non-IID data.pdf
+SHA256: 0a9752e7b549d220e9adad27ec517f08e4d7a65b059fa08e9b8965c42f9ec5ed
+Extraction: pypdf; equations checked against rendered PDF pages.
+Only method / parameter / attack-setting passages; no theory or results extraction.
+
+=== PDF PAGE 4 ===
+3.4 . Details of the proposed method
+Algorithm 1 illustrates the overall training process of the proposed 
+method, which consists of five main phases: system initialization, local 
+model update, malicious gradient detection for online clients, malicious 
+gradient detection and correction for delayed clients, and global model 
+update. The technical details of each phase will be elaborated in the 
+following subsections.
+3.4.1 . System initialization
+The server randomly initializes the global model, which includes con­
+figurations such as the model structure, learning rate, and number of 
+training rounds, and then distributes the initial model parameters to all 
+clients.
+3.4.2 . Local model update
+In training round 𝜏, the server sends the global model 𝑤𝜏 to all 
+clients. Client 𝐶𝑖 selects a small batch data sample 𝑑𝑖 from its local 
+dataset 𝐷𝑖, then computes the loss of current data samples and uses gra­
+dient descent algorithm to optimize the local model for 𝐸 iterations. To 
+prevent the local model 𝑤𝜏
+𝑖  from excessively diverging from the global 
+model 𝑤𝜏 when trained on Non-IID data, we incorporate the discrepancy 
+between the global model and the local model into the local loss function 
+as a regularization term, as shown in Eq. (2), which is mathematically 
+identical to the technique used in FedProx [35]:
+𝑔(𝑤𝜏
+𝑖 ;𝑑 𝑖) =𝑓(𝑤 𝜏
+𝑖 ;𝑑 𝑖) + 𝜀
+2
+‖‖𝑤𝜏
+𝑖 −𝑤 𝜏 ‖‖
+2 (2)
+where 𝑓(𝑤 𝜏
+𝑖 ;𝑑 𝑖) is the local function (i.e., cross entropy loss function), 
+and 𝜀 >0  is the regularization coefficient. This is a widely used tech­
+nique to mitigate the effects of statistical heterogeneity in federated 
+Neurocomputing 698 (2026) 134301 
+4 
+
+=== PDF PAGE 5 ===
+C. Fang, F. Yang, S. Li et al.
+Algorithm 1: BRAFed.
+{ }Input: local datasets 𝐷=𝐷 1, 𝐷2,…, 𝐷, global training 𝑛
+rounds 𝑇, regularization coefficient 𝜀, sensitivity 
+coefficient 𝑘, decay factor 𝜆, gradient weight 𝛼0, 𝛼1, 𝛼2
+Output: global model 𝑤𝑇
+1 //Phase 1: System Initialization
+2 Server randomly initializes global model 𝑤0.
+3 Server distributes 𝑤0 to all available clients.
+4 for round 𝜏∈ [0, 𝑇− 1] do
+5 //Phase 2: Local model update
+6 Server randomly selects a subset of clients C𝜏 to participant 
+in training.
+7 for each client 𝑖∈C 𝜏 in parallel do
+8 ∇𝑤𝜏 ←𝑖 𝐿𝑜𝑐𝑎𝑙𝑈 𝑝𝑑𝑎𝑡𝑒(𝑤𝜏 , 𝐷𝑖, 𝜀)
+9 end 
+10 //Phase 3: Malicious gradient detection for online 
+clients
+11 Let ∇𝑊 𝜏 be the set of gradients from online clients.𝑜
+12 ∇𝑊 𝜏
+′ ←𝑀𝐺𝐷𝑂(∇𝑊 𝜏
+𝑜 , 𝑘, 𝜆)𝑜
+13 //Phase 4: Malicious gradient detection and correction 
+for delayed clients
+14 Let ∇𝑊 𝜏 be the set of delayed gradients𝑑
+15 ∇𝑤𝜏 ,∇𝑤 𝜏 ,∇𝑤 𝜏 ←𝑚 𝑚 1 𝑚2
+𝑀𝐺𝐷𝐶(∇𝑊 𝜏
+𝑑 ,∇𝑊 𝜏
+′ , 𝜇𝑜𝑛𝑙𝑖𝑛𝑒,Σ 𝑜𝑛𝑙𝑖𝑛𝑒, 𝑇 ,𝑜 𝑜𝑛𝑙𝑖𝑛𝑒 𝛼)
+16 //Note: 𝜇𝑜𝑛𝑙𝑖𝑛𝑒,Σ 𝑜𝑛𝑙𝑖𝑛𝑒, 𝑇 are computed from 𝑜𝑛𝑙𝑖𝑛𝑒 ∇𝑊 𝜏 in 𝑜
+MGDO
+17 //Phase 5: Global model update
+18 𝑤𝜏+1 ←𝐺𝑙𝑜𝑏𝑎𝑙𝑈 𝑝𝑑𝑎𝑡𝑒(∇𝑤 𝜏
+𝑚,∇𝑤 𝜏
+𝑚1
+,∇𝑤 𝜏 )𝑚2
+19 end 
+20 return 𝑤𝑇
+learning, helping to prevent the local model from diverging too much 
+from the global model. Thus the global objective function is defined as 
+𝐺(𝑤, 𝐷) = min𝑤 𝐷∼ ̃𝐷𝑔(𝑤, 𝐷). After finishing local training, the resulting 
+gradient, denoted as ∇𝑤𝜏
+𝑖 , is sent to the server, as shown in Algorithm 2.
+3.4.3 . Malicious gradient detection for online clients
+To defend against poisoning attacks launched by malicious online 
+clients, we propose a malicious gradient detection method based on dy­
+namic threshold, as shown in Algorithm 3. The MD is a method used 
+to measure the distance between a point and a data distribution. Unlike 
+simpler distance metrics such as Euclidean distance or cosine similar­
+ity, its key advantage lies in accounting for the correlations and scales 
+across different dimensions of the data [
+36]. This makes it particu­
+larly suitable for detecting outliers in high-dimensional and correlated 
+Algorithm 2: LocalUpdate.
+Input: Global model 𝑤𝜏 in round 𝜏, local dataset 𝐷, local 𝑖
+epochs E, regularization coefficient 𝜀
+Output: Local gradient ∇𝑤𝜏
+𝑖
+1 Client i intializes its local model: 𝑤𝜏 ←𝑖 𝑤𝜏
+2 for local epoch 𝑗∈ [1, 𝐸] do
+3 Sample a mini-batch 𝑑 from local gradient 𝑖 𝐷.𝑖
+4 Compute regularized local loss: 
+𝑔(𝑤𝜏 ;𝑑)𝑓(𝑤 𝜏 ;𝑑) + 𝜀 ‖𝑤𝜏 −𝑤 𝜏 ‖2←𝑖 𝑖 𝑖 𝑖 2 𝑖
+5 Compute gradient: 𝑔←∇ 𝑤𝜏 𝑔(𝑤𝜏 ;
+𝑖 𝑖 𝑑𝑖)
+6 Update local model: 𝑤𝜏 ←𝑤 𝜏 −𝜂⋅𝑖 𝑖 𝑔
+7 end 
+8 Compute the local gradient: ∇𝑤𝜏 ←𝑖 𝑤𝜏 −𝑤 𝜏
+𝑖
+9 return ∇𝑤𝜏
+𝑖
+Algorithm 3: Malicious Gradient Detection for Online Clients 
+(MGDO).
+Input: Current gradients from round { } 𝜏: 
+∇𝑊 𝜏 = ∇𝑜 𝑤𝜏
+1,∇𝑤 𝜏 𝜏
+2,…,∇𝑤, sensitivity coefficient 𝑝 𝑘, 
+decay factor 𝜆
+Output: Benign current gradients ∇𝑊 𝜏
+𝑜′
+1 Compute the mean vector 𝜇 and covariance matrix  of 𝑜𝑛𝑙𝑖𝑛𝑒 Σ𝑜𝑛𝑙𝑖𝑛𝑒
+the current gradients ∇𝑊 𝜏
+𝑜
+2 Initialize an empty list 𝑀𝐷 to store MD values.𝑜𝑛𝑙𝑖𝑛𝑒
+3 for each gradient ∇𝑤𝜏 in ∇𝑖 𝑊 𝜏 do𝑜
+4 Calculate the MD: √
+𝑀𝐷(∇𝑤 𝜏 ) = (∇𝑤 𝜏 −𝜇(∇ 𝜏
+𝑜𝑛𝑙𝑖𝑛𝑒)𝑇 Σ−1 𝑤− )𝑖 𝑖 𝑜𝑛𝑙𝑖𝑛𝑒 𝑖 𝜇𝑜𝑛𝑙𝑖𝑛𝑒
+5 Append 𝑀𝐷(∇𝑤 𝜏 ) to 𝑖 𝑀𝐷 𝑜𝑛𝑙𝑖𝑛𝑒
+6 end 
+7 Compute the mean 𝜇 and standard deviation 𝑀𝐷 𝜎 of the 𝑀𝐷
+values in 𝑀𝐷 𝑜𝑛𝑙𝑖𝑛𝑒
+8 Calculate the dynamic threshold: 𝑇 −𝜆𝑡𝑜𝑛𝑙𝑖𝑛𝑒 =𝜇 𝑀𝐷 +𝑘⋅𝜎 𝑀𝐷 ⋅𝑒
+9 Initialize an empty set ∇𝑊 𝜏 for benign current gradients.𝑜′
+10 for each gradient ∇𝑤𝜏 in ∇𝑖 𝑊 𝜏 do𝑜
+11 if 𝑀𝐷(∇𝑤 𝜏 )≤𝑖 𝑇 then𝑜𝑛𝑙𝑖𝑛𝑒
+12 Add ∇𝑤𝜏 to the benign set ∇ 𝜏
+𝑖 𝑊𝑜′
+13 end 
+14 end 
+15 return ∇𝑊 𝜏
+′𝑜
+gradient distributions. Thus, we employ MD to quantify the deviation 
+of a given gradient from the expected distribution, thereby identify­
+ing potential malicious gradients. Specifically, we first compute the 
+mean vector and covariance matrix of the current gradients 
+∇𝑊 𝜏
+𝑜 ={
+∇𝑤𝜏
+1,∇𝑤 𝜏
+2,…,∇𝑤 𝜏
+𝑝
+}
+ in round 𝜏, where the covariance matrix captures 
+the variance and correlation structure among them. In practice, directly 
+computing the full covariance matrix for high-dimensional gradients is 
+computationally expensive and potentially numerically unstable, par­
+ticularly for modern neural networks with millions of parameters. To 
+address this, we adopt a diagonal approximation, where only the vari­
+ance of each parameter across clients is computed and stored along 
+the diagonal. This reduces the computational complexity from 
+𝑂(𝑑 2) to 
+𝑂(𝑑), with 𝑑 being the total number of model parameters, while avoid­
+ing matrix inversion. Empirically, this approximation maintains the 
+effectiveness of Mahalanobis Distance-based detection while ensuring 
+efficient and stable computation.
+Based on this, the MD is then calculated for each current gradient 
+using Eq. (3).
+𝑀𝐷(∇𝑤 𝜏
+𝑖 ) =
+√
+(∇𝑤𝜏
+𝑖 −𝜇 𝑜𝑛𝑙𝑖𝑛𝑒)𝑇 Σ−1
+𝑜𝑛𝑙𝑖𝑛𝑒(∇𝑤𝜏
+𝑖 −𝜇 𝑜𝑛𝑙𝑖𝑛𝑒) (3)
+where 𝜇𝑜𝑛𝑙𝑖𝑛𝑒 and Σ𝑜𝑛𝑙𝑖𝑛𝑒 are the mean vector and covariance matrix of all 
+current gradients ∇𝑊 𝜏
+𝑜 , respectively, and 𝑇  denotes the transpose oper­
+ation. It can be inferred that gradients with larger MD values indicate 
+greater deviation from the majority of the current gradients.
+However, how to set an appropriate MD threshold for identifying ma­
+licious gradients remains an open challenge. In the early stages of FL, 
+since most client data is Non-IID, the gradients from different clients may 
+vary significantly, resulting in generally high MD values. As the training 
+progresses, the gradients of the clients gradually converge in the same di­
+rection, leading to a decrease in MD values. To account for this dynamic 
+change, we design a dynamic malicious detection threshold, which is 
+jointly determined by the round-dependent decay term and the current 
+distribution statistics of MD values. Let the MD values of all current 
+gradients be 
+𝑀𝐷 𝑜𝑛𝑙𝑖𝑛𝑒 =𝑀𝐷 1, 𝑀𝐷2,…, 𝑀𝐷 𝑝. The mean and standard 
+Neurocomputing 698 (2026) 134301 
+5 
+
+=== PDF PAGE 6 ===
+C. Fang, F. Yang, S. Li et al.
+deviation of 𝑀𝐷 𝑜𝑛𝑙𝑖𝑛𝑒 are calculated as 𝜇𝑀𝐷 = 1
+𝑝
+∑𝑝
+𝑖=1 𝑀𝐷 𝑖 and 𝜎𝑀𝐷 =
+√
+1
+𝑝−1
+∑𝑝
+𝑖=1 (𝑀𝐷 𝑖 −𝜇 𝑀𝐷 )2. Then the threshold can be determined as 
+follows:
+𝑇𝑜𝑛𝑙𝑖𝑛𝑒 =𝜇 𝑀𝐷 +𝑘⋅𝜎 𝑀𝐷 ⋅𝑒 −𝜆𝑡 (4)
+where 𝑘 is a sensitivity coefficient that controls the strictness of mali­
+cious detection, and 𝜆 is a decay factor that governs the rate at which the 
+threshold decreases. Therefore, even in later training stages, if benign 
+gradients remain dispersed under highly Non-IID data, such variability 
+can still be partially reflected by 
+𝜇𝑀𝐷 and 𝜎𝑀𝐷, preventing the thresh­
+old from shrinking independently of the actual gradient distribution. As 
+a result, the adaptive threshold is designed to balance two competing 
+objectives: maintaining sufficient sensitivity to malicious updates while 
+reducing the risk of misclassifying naturally deviated benign gradients 
+as malicious ones in later training stages.
+By discarding current gradients with MD values greater than thresh­
+old 𝑇𝑜𝑛𝑙𝑖𝑛𝑒, the remaining current gradients are regarded as benign and 
+denoted as ∇𝑊 𝜏
+𝑜′.
+3.4.4 . Malicious gradient detection and correction for delayed clients
+In asynchronous FL, the server may receive not only current gradi­
+ents but also delayed gradients in each round of training. These delayed 
+gradients may include malicious gradients sent by Byzantine clients, as 
+well as conflicting gradients from benign clients that deviate from the 
+current update direction. A straightforward approach would be to use 
+MD to directly tackle these issues. However, based on the properties of 
+MD described in 
+Section 3.4.3, MD can only identify malicious gradients 
+with significant anomalies in their numerical distribution; it cannot de­
+tect conflicting gradients that have a normal numerical distribution but 
+deviate in their update direction. Therefore, we propose a malicious gra­
+dient detection and correction method by combining MD with projection 
+correction, as shown in 
+Algorithm 4, which mainly consists of two steps: 
+first, MD is employed to detect obvious malicious gradients, yielding the 
+initially filtered set of benign delayed gradients; second, projection cor­
+rection is applied to the conflicting gradients in the delayed gradients 
+that deviate from the current update direction.
+Specifically, for the delayed gradients ∇𝑊 𝜏
+𝑑 = (∇𝑤 𝜏0
+0 ,∇𝑤 𝜏1
+1 ,…,∇𝑤 𝜏𝑑
+𝑑 )
+received by the server in the 𝜏-th training round, we compute the MD 
+value of each delayed gradient ∇𝑤
+𝜏𝑗
+𝑗 ∈ ∇𝑊 𝜏
+𝑑  relative to the benign 
+current gradients ∇𝑊 𝜏
+𝑜′, rather than to their own distribution. This is 
+because the benign current gradients represent the correct update direc­
+tion for the current training round, thus serving as the benchmark that 
+the delayed gradients should align with. Furthermore, the computational 
+overhead is substantially reduced by reusing the distribution parameters 
+𝜇𝑜𝑛𝑙𝑖𝑛𝑒 and Σ𝑜𝑛𝑙𝑖𝑛𝑒 already computed in Section 3.4.3. Owing to the po­
+tentially wider dispersion of delayed gradients, a looser threshold than 
+𝑇𝑜𝑛𝑙𝑖𝑛𝑒 is also required. Here we set the threshold as 𝑇𝑑𝑒𝑙𝑎𝑦𝑒𝑑 =𝑇 𝑜𝑛𝑙𝑖𝑛𝑒 ⋅𝛼 , 
+where 𝛼 is the scaling factor that satisfies 𝛼 >1 . Consequently, de­
+layed gradients with MD values greater than 𝑇𝑑𝑒𝑙𝑎𝑦𝑒𝑑  are identified as 
+malicious, and we thus obtain the benign delayed gradients ∇𝑊 𝜏
+𝑏𝑑.
+Moreover, since delayed gradients originate from previous training 
+rounds, their update directions may conflict with those of current gra­
+dients, as analyzed in 
+Section 3.3. To solve the potential conflict issue 
+between the current gradient ∇𝑤𝜏
+𝑖 ∈ ∇𝑊 𝜏
+𝑜′ and the delayed gradient 
+∇𝑤
+𝜏𝑗
+𝑗≠𝑖 ∈ ∇𝑊 𝜏
+𝑏𝑑 (i.e., ∇𝑤𝜏
+𝑖 ⋅∇𝑤
+𝜏𝑗
+𝑗 <0 ), we design a projection strat­
+egy to correct the delayed average gradient, enabling it to align with 
+the current average gradient. Specifically, the server calculates the av­
+erage of benign current gradients 
+∇𝑊 𝜏
+𝑜′ (denoted as ∇𝑤𝜏
+𝑚), serving as 
+the benchmark for this correction. Subsequently, the server employs the 
+Deviation function (presented in Eq. (1)) to determine whether the de­
+layed gradient ∇𝑤
+𝜏𝑗
+𝑗 ∈ ∇𝑊 𝜏
+𝑏𝑑 conflicts with ∇𝑤𝜏
+𝑚. For all non-conflicting 
+delayed gradients ∇𝑤
+𝜏𝑗
+𝑗  that satisfy ∇𝑤𝜏
+𝑚 ⋅∇𝑤
+𝜏𝑗
+𝑗 >0
+, we calculate their 
+average value ∇𝑤𝜏
+𝑚1
+. For all conflicting delayed gradients ∇𝑤
+𝜏𝑗
+𝑗  that sat­
+isfy ∇𝑤𝜏
+𝑚 ⋅∇𝑤
+𝜏𝑗
+𝑗 <0
+, we first calculate their average value ∇𝑤𝜏
+𝑚′
+2
+, and 
+Algorithm 4: Malicious Gradient Detection and Correction for 
+Delayed Clients (MGDC).
+Input: delayed gradients ∇𝑊 𝜏, benign current gradients ∇𝑑 𝑊 𝜏, 𝑜′
+current gradient parameters 𝜇 and 𝑜𝑛𝑙𝑖𝑛𝑒 Σ, threshold 𝑜𝑛𝑙𝑖𝑛𝑒
+for current gradient 𝑇, scaling factor 𝑜𝑛𝑙𝑖𝑛𝑒 𝛼
+Output: Average of benign current gradients ∇𝑤𝜏 , 𝑚
+non-conflicting delayed gradients ∇𝑤𝜏 , corrected 𝑚1
+conflicting delayed gradients ∇𝑤𝜏
+𝑚2
+1 Compute the average of benign current gradients: 
+∇𝑤𝜏 ←𝑚 𝑚𝑒𝑎𝑛(∇𝑊 𝜏
+𝑜′ )
+2 Set the delayed gradient detection threshold: 𝑇𝑑𝑒𝑙𝑎𝑦𝑒𝑑 =𝑇 𝑜𝑛𝑙𝑖𝑛𝑒 ⋅𝛼
+3 Initialize empty sets ∇𝑊 𝜏 , ∇𝑛𝑑 𝑊 𝜏  // for categorizing benign 𝑐𝑑
+delayed gradients
+4 //Step 1: Malicious detection via MD
+5 for each delayed gradient ∇
+𝜏
+𝑤 𝑗 ∈ ∇𝑗 𝑊 𝜏 do𝑑
+6 Calculate its MD to the benign current gradient distribution: √
+𝜏
+𝑀𝐷(∇𝑤 𝑗 ) = (∇
+𝜏
+𝑤 𝑗 −𝜇 𝑜𝑛𝑙𝑖𝑛𝑒)
+𝑇
+Σ−1 (∇
+𝜏
+𝑗 𝑗 𝑜𝑛𝑙𝑖𝑛𝑒 𝑤 𝑗 −𝑗 𝜇𝑜𝑛𝑙𝑖𝑛𝑒)
+𝜏
+7 if 𝑀𝐷(∇𝑤 𝑗 )≤𝑗 𝑇 then𝑑𝑒𝑙𝑎𝑦𝑒𝑑
+8 //Step2: Categorize benign gradients
+9 if ∇
+𝜏
+𝑤𝜏 ⋅∇𝑚 𝑤 𝑗
+𝑗 >0 then
+10 Add ∇
+𝜏
+𝑤 𝑗  to ∇ 𝜏
+𝑗 𝑊 //Non-conflicting delayed 𝑛𝑑
+gradients
+11 end 
+12 else
+13 Add ∇
+𝜏
+𝑤 𝑗  to ∇𝑗 𝑊 𝜏  //Conflicting delayed gradients𝑐𝑑
+14 end 
+15 end 
+16 end 
+17 Compute the average of non-conflicting gradients: 
+∇𝑤𝜏 ←𝑚1
+𝑚𝑒𝑎𝑛(∇𝑊 𝜏 )𝑛𝑑
+18 Compute the average of conflicting gradients: 
+∇𝑤𝜏 ←𝑚2
+𝑚𝑒𝑎𝑛(∇𝑊 𝜏 )𝑐𝑑
+19 Correct the average of conflicting gradients via projection: 
+∇𝑤𝜏 ⋅∇ 𝜏
+∇𝑤𝜏 ←∇𝑤 𝜏 −
+𝑚 𝑤2 𝑚
+𝑚2 𝑚2 ‖∇ 𝜏 ‖2 ∇𝑤𝜏
+𝑚‖ 𝑤𝑚‖
+20 return ∇𝑤𝜏 , ∇𝑚 𝑤𝜏 ,∇𝑚1
+𝑤𝜏
+𝑚2
+Fig. 2. Illustration of traditional aggregation and aggregation with corrected 
+gradients.
+then project ∇𝑤𝜏
+𝑚′
+2
+ onto the normal plane of ∇𝑤𝜏
+𝑚 to remove inconsistent 
+gradient components, as shown in Eq. (5).
+∇𝑤𝜏
+𝑚2
+←∇𝑤 𝜏
+𝑚′
+2
+−
+∇𝑤𝜏
+𝑚′
+2
+⋅∇𝑤 𝜏
+𝑚
+∥ ∇𝑤 𝜏
+𝑚∥2 ∇𝑤𝜏
+𝑚 (5)
+As shown in Fig. 2, ∇𝑤𝜏
+𝑖  and ∇𝑤𝜏
+𝑗
+ are two delayed gradients that 
+conflict with the current average gradient ∇𝑤𝜏
+𝑚. It can be observed that 
+Neurocomputing 698 (2026) 134301 
+6 
+
+=== PDF PAGE 7 ===
+3.4.5 . Global model update
+By aggregating the average of benign current gradients ∇𝑤𝜏
+𝑚
+, the 
+average of non-conflicting delayed gradients ∇𝑤𝜏
+𝑚1
+, and the average of 
+corrected conflicting delayed gradients ∇𝑤𝜏
+𝑚2
+, the global gradient can 
+be computed as Eq. (6):
+∇𝑤𝜏 =𝛼 0∇𝑤𝜏
+𝑚 +𝛼 1∇𝑤𝜏
+𝑚1
++𝛼 2∇𝑤𝜏
+𝑚2
+(6)
+where 𝛼0, 𝛼1, 𝛼2 are the weights assigned to ∇𝑤𝜏
+𝑚, ∇𝑤𝜏
+𝑚1
+, and ∇𝑤𝜏
+𝑚2
+, 
+respectively, satisfying 𝛼0 +𝛼 1 +𝛼 2 = 1.
+Based on this, the server updates the global model as shown in 
+Eq. (7):
+𝑤𝜏+1 ←𝑤 𝜏 −𝜂∇𝑤 𝜏 (7)
+where 𝜂 denotes the learning rate. Finally, the server distributes 𝑤𝜏+1 to 
+the clients for the next communication round.
+
+
+=== PDF PAGE 9 ===
+5.1.2 . Attack settings
+Six attack scenarios are considered in this paper, two for data poi­
+soning attacks and four for model poisoning attacks, which are as 
+follows:
+1. Backdoor (BD) attack [ 40]: BD attack is a targeted data poison­
+ing attack. The attacker injects a predefined trigger into part of 
+its local training samples and changes their labels to an attacker-
+specified target class. For CIFAR-100 and COVIDx, the trigger 
+is implemented as a fixed patch pattern attached to the input 
+images; for Shakespeare, the trigger is implemented as a fixed 
+token/character pattern inserted into the input sequence.
+2. Label flipping (LF) attack [23]: LF attack is a data poisoning at­
+tack. We convert the source label 𝑠 of its local sample to the target 
+label 𝑙−𝑠− 1 , where 𝑙 is the total number of labels in the dataset.
+3. Gaussian (GS) attack [22]: GS attack is a model poisoning attack. 
+We replace the raw gradient with random noise sampled from a 
+zero-mean Gaussian distribution (with the standard deviation of 
+the noise set to 200).
+4. Model replacement (MR) attack [41]: The backdoor trigger of MR 
+attack is set up as for backdoor model poisoning attack. Following 
+the work [ 41], in order to mitigate the dilution of the attack 
+effect due to global aggregation, we extend the poisoning local 
+gradients by setting the weight factor 𝛾=𝑛  and send the extended 
+local gradients to the server, where 𝑛 is the total number of clients.
+5. LIE attack [42]: LIE attack is a typical colluding model poisoning 
+attack. The attacker manipulates all malicious clients to provide 
+a range of perturbations. The attacker uses the maximum value 
+𝑧𝑚𝑎𝑥 ←max 𝑧
+(
+Φ(𝑧)< 𝑁−𝑀−𝑠
+𝑁−𝑀
+)
+ to circumvent the defense.
+6. Adaptive attack: It is a powerful model poisoning attack, built on 
+the state-of-the-art adaptive attack framework [ 43] and tailored 
+to BRAFed’s online gradient detection mechanism. We assume 
+that the attacker has full knowledge of the defense rule deployed 
+on the server and can optimize malicious gradients accordingly. 
+For simplicity, we focus only on attacking the current gradi­
+ents, while leaving delayed gradients unchanged. Let the online 
+gradients at round 𝜏 be
+∇𝑊 𝜏
+𝑜 = {∇𝑤 𝜏
+1,∇𝑤 𝜏
+2,…,∇𝑤 𝜏
+𝑝},
+(27)
+where the first 𝑐 clients are Byzantine clients and the remaining 
+𝑝−𝑐 clients are benign ones. The attacker aims to maximize the de­
+viation of the attacked online aggregation from the benign online 
+aggregation along the opposite direction of the benign gradient, 
+while ensuring that the crafted malicious gradients can evade the 
+MGDO detector. Denote the average benign online gradient and 
+its normalized direction by
+̄ 𝑔𝜏
+ℎ = 1
+𝑝−𝑐
+𝑝∑
+𝑖=𝑐+1
+∇𝑤𝜏
+𝑖 , 𝑠 𝜏 =
+̄ 𝑔𝜏
+ℎ
+‖̄ 𝑔𝜏
+ℎ‖ . (28)
+Meanwhile, the benign online mean and covariance are estimated 
+as
+𝜇𝜏
+ℎ = 1
+𝑝−𝑐
+𝑝∑
+𝑖=𝑐+1
+∇𝑤𝜏
+𝑖 ,Σ 𝜏
+ℎ =Cov
+({
+∇𝑤𝜏
+𝑐+1,…,∇𝑤 𝜏
+𝑝
+})
+. (29)
+Accordingly, the adaptive attack is formulated as
+max
+∇𝑤𝜏∗
+1 ,…,∇𝑤𝜏∗𝑐
+(𝑠𝜏 )𝑇 (̄ 𝑔𝜏
+ℎ −̄ 𝑔𝜏
+adv
+) (30)
+subject to
+̄ 𝑔𝜏
+adv = 1
+𝑝
+( 𝑐∑
+𝑖=1
+∇𝑤𝜏∗
+𝑖 +
+𝑝∑
+𝑖=𝑐+1
+∇𝑤𝜏
+𝑖
+)
+,
+(31)
+𝑀𝐷(∇𝑤 𝜏∗
+𝑖 ;𝜇 𝜏
+ℎ,Σ 𝜏
+ℎ)≤𝑇 𝜏
+online, 𝑖= 1,…, 𝑐, (32)
+Under the above approximation, the MD constraint defines an 
+ellipsoidal feasible region, and the strongest feasible malicious 
+gradient is achieved on its boundary. Thus, all Byzantine online 
+clients upload the same crafted gradient:
+∇𝑤𝜏
+adv =𝜇 𝜏
+ℎ −𝑇 𝜏
+online
+Σ𝜏
+ℎ𝑠𝜏
+√
+(𝑠𝜏 )𝑇 Σ𝜏
+ℎ𝑠𝜏
+. (33)
+Therefore, the attacker sets
+∇𝑤𝜏∗
+1 =⋯= ∇𝑤 𝜏∗
+𝑐 = ∇𝑤 𝜏
+adv. (34)
+5.1.3 . Parameter settings
+Our evaluation is conducted on an AMD EPYC 7453 CPU, 64 GB 
+DDR4 memory, and an RTX 4090 GPU with 48 GB VRAM, operating on 
+Ubuntu 20.04 with PyTorch and Python 3.9.
+The Non-IID setting of FL is simulated using the Dirichlet distribu­
+tion, denoted as 𝐷𝑖𝑟(𝑛, 𝛽), where 𝑛 is the number of clients and 𝛽 controls 
+the degree of Non-IIDness in the dataset. A smaller 𝛽 corresponds to a 
+higher degree of Non-IIDness. Among all clients, delayed clients account 
+for a proportion 𝛿. To simulate a more realistic delay environment, we 
+use the Pareto distribution 𝑃 𝑎𝑟𝑒𝑡𝑜(𝑥𝑚 = 3, 𝛼= 1.5) . This distribution 
+models a scenario where the majority of clients have low delays, while 
+a small number of clients experience significantly higher delays. In our 
+experiment, the majority of clients’ delays are concentrated between 3 
+and 10 rounds, while the delays of a few clients reach 15 or even higher. 
+This setting aligns with typical FL scenarios, where most clients have fast 
+or moderate network conditions, but a small subset of clients may expe­
+rience large delays due to factors such as network instability or resource 
+constraints.
+Additionally, the experimental parameters used in this study are 
+listed in Table 2, including the global learning rate 𝜂, number of clients 
+𝑛, total training rounds 𝑇 , Non-IID degree 𝛽, local epochs 𝐸, local batch 
+size 𝐵, delay ratio 𝛿, attack ratio 𝜎, weights in Eq. (6) 𝛼0, 𝛼1, 𝛼2, sensi­
+tivity coefficient 𝑘, decay factor 𝜆, threshold scaling factor 𝛼, and the 
+hyperparameter in Eq. (2) 𝜀. Unless otherwise stated, the parameter val­
+ues in Table 2 are the defaults, which represent the optimal settings 
+obtained through multiple parameter tuning iterations. The experimen­
+tal results reported for this method are averaged over five independent 
+runs. 
+Neurocomputing 698 (2026) 134301 
+9 
+
+=== PDF PAGE 10 ===
+C. Fang, F. Yang, S. Li et al.
+Table 2 
+Parameter setting.
+Parameter Value Parameter Value
+𝜂 0.01 𝛼0 0.6
+n 100 𝛼1 0.25
+𝛽 0.1 𝛼2 0.15
+T 100 for Shakespeare 𝜆 0.04 for Shakespeare
+200 for CIFAR-100 
+and COVIDx
+0.01 for CIFAR-100 
+and COVIDx
+E 1 for Shakespeare B 10 for Shakespeare
+5 for CIFAR-100 and 
+COVIDx
+64 for CIFAR-100 and 
+COVIDx
+𝛿 40% 𝛼 1.2
+𝜎 30% k 3
+𝜀 0.1
+
