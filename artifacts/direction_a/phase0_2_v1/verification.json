@@ -1,0 +1,101 @@
+{
+  "comparison_maxima": {
+    "CPU_float32_vs_CUDA_float32": {
+      "frobenius_absolute": 3.185102781378784e-07,
+      "linf_absolute": 8.940696716308594e-08,
+      "normalized_linf": 8.940696716308594e-08
+    },
+    "complete_vs_encode_head": {
+      "frobenius_absolute": 0.0,
+      "linf_absolute": 0.0,
+      "normalized_linf": 0.0
+    },
+    "independent_scalar_head": {
+      "frobenius_absolute": 1.6945455924684173e-07,
+      "linf_absolute": 5.229451813248964e-08,
+      "normalized_linf": 5.229451813248964e-08
+    },
+    "independent_zero_input_bias": {
+      "frobenius_absolute": 0.0,
+      "linf_absolute": 0.0,
+      "normalized_linf": 0.0
+    },
+    "legacy_vs_logsoftmax": {
+      "frobenius_absolute": 0.0,
+      "linf_absolute": 0.0,
+      "normalized_linf": 0.0
+    },
+    "repeat_complete": {
+      "frobenius_absolute": 0.0,
+      "linf_absolute": 0.0,
+      "normalized_linf": 0.0
+    }
+  },
+  "guard_oracles": [
+    "count bound stops before action",
+    "phase-time bound",
+    "total-time bound"
+  ],
+  "implementation_sha256": {
+    "direction_a/__init__.py": "d6cfa5e9d022f9f703e894798316150bf9a18e4c5d24dabc5f8428257a8e7473",
+    "direction_a/budget.py": "2838f0e8ae591a396acae7b64198cd37ecdfad710fc0d1a8e667474ffb9d6c65",
+    "direction_a/evaluation.py": "6b34031bc7d010397b31000849a0c11b903a7119c406215763f689ddd5a7f7eb",
+    "direction_a/model.py": "6fabfbb5d4510d1ea4f827f8d103472d31dbcec2e10f6f1d61c4c8bff7427990",
+    "direction_a/task.py": "4eb566cd2784a58553b7956072fede14ebb723d7da73dee8f49a1503e917ad2b",
+    "scripts/accept_direction_a_baseline.py": "e1762df130a8d12f2dc4f5224611e9cf460064134acf15360643f3ff642efcd7",
+    "tests/test_direction_a_baseline.py": "b48ae0249ae3296634415977092e0f7e8913ea926b82e54cfceac24d3f0e5882"
+  },
+  "new_model_forwards": 0,
+  "repartition_operations": 0,
+  "status": "pass",
+  "task_reader": [
+    {
+      "identity": "FedPCC-0.2-smoke-CIFAR10-v1",
+      "status": "hash_and_indexed_view_pass"
+    },
+    {
+      "identity": "FedPCC-0.2-candidate-CIFAR10-N20-v1",
+      "status": "hash_and_indexed_view_pass"
+    },
+    {
+      "identity": "FedPCC-0.2-smoke-CIFAR100-v1",
+      "status": "hash_and_indexed_view_pass"
+    },
+    {
+      "identity": "FedPCC-0.2-candidate-CIFAR100-N20-v1",
+      "status": "hash_and_indexed_view_pass"
+    }
+  ],
+  "transform_version": {
+    "CIFAR10": {
+      "augmentation": "none",
+      "input": "uint8 NCHW /255",
+      "mean": [
+        0.4914,
+        0.4822,
+        0.4465
+      ],
+      "scope": "train/validation/test",
+      "std": [
+        0.247,
+        0.243,
+        0.262
+      ]
+    },
+    "CIFAR100": {
+      "augmentation": "none",
+      "input": "uint8 NCHW /255",
+      "mean": [
+        0.5071,
+        0.4867,
+        0.4408
+      ],
+      "scope": "train/validation/test",
+      "std": [
+        0.2675,
+        0.2565,
+        0.2761
+      ]
+    }
+  }
+}

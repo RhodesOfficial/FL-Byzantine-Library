@@ -1,0 +1,118 @@
+{
+  "actual_training_if": 100.0,
+  "allowed_overlap": "global_test is exactly the union of client test views",
+  "artifact_sha256": {
+    "acceptance.json": "498c747d83ccf394343bb0057cac70c11a7f442fc8bf791e3878390bdb5cd796",
+    "counts.json": "6eff06d66712cbacaaa55ed065efc398c4b1361e2a332da2c88685d99432b18d",
+    "data.json": "edb4a533468596e3f475540bbcfdbbda4bea7a7378e4d7f5af3b54892719789c"
+  },
+  "dirichlet_draws_by_class": [
+    [
+      0.01609257222378083,
+      0.9582683542262843,
+      5.24520627058626e-12,
+      0.025639073544689677
+    ],
+    [
+      0.9991749737307513,
+      0.0007404484268881495,
+      1.4643647486581084e-05,
+      6.993419487402327e-05
+    ],
+    [
+      0.0001662426514598108,
+      8.162315247023678e-05,
+      0.46122095314973993,
+      0.53853118104633
+    ],
+    [
+      0.6168715030511293,
+      3.176949246645606e-10,
+      0.05241896254907418,
+      0.33070953408210174
+    ],
+    [
+      0.8053026999802542,
+      7.573288031084879e-14,
+      0.1292760755328442,
+      0.065421224486826
+    ],
+    [
+      1.7442842069852083e-05,
+      1.3290318728546299e-05,
+      0.0002750870844797755,
+      0.999694179754722
+    ],
+    [
+      9.266678717679301e-05,
+      4.877012193144583e-06,
+      0.9974861300620372,
+      0.0024163261385927014
+    ],
+    [
+      0.07029902997162783,
+      2.807621283702556e-06,
+      0.07086452074842926,
+      0.8588336416586593
+    ],
+    [
+      0.964232184364601,
+      0.02933801236147479,
+      0.006429803272542118,
+      1.382070104281027e-12
+    ],
+    [
+      5.683582907729564e-20,
+      0.8552075431614633,
+      0.009721070161091454,
+      0.13507138667744517
+    ]
+  ],
+  "dirichlet_parameter_vector": [
+    0.1,
+    0.1,
+    0.1,
+    0.1
+  ],
+  "if_formula": "max(1,floor(H*IF**(-c/(C-1)))) on final training pool",
+  "label_mapping": {
+    "0": 0,
+    "1": 1,
+    "2": 2,
+    "3": 3,
+    "4": 4,
+    "5": 5,
+    "6": 6,
+    "7": 7,
+    "8": 8,
+    "9": 9
+  },
+  "partitioner": "direction_a.task: PCG64; per-class symmetric Dirichlet; largest remainder",
+  "source_file_sha256": {
+    "E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\easyFL\\flgo\\benchmark\\RAW_DATA\\CIFAR10\\cifar-10-batches-py\\data_batch_1": "54636561a3ce25bd3e19253c6b0d8538147b0ae398331ac4a2d86c6d987368cd",
+    "E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\easyFL\\flgo\\benchmark\\RAW_DATA\\CIFAR10\\cifar-10-batches-py\\data_batch_2": "766b2cef9fbc745cf056b3152224f7cf77163b330ea9a15f9392beb8b89bc5a8",
+    "E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\easyFL\\flgo\\benchmark\\RAW_DATA\\CIFAR10\\cifar-10-batches-py\\data_batch_3": "0f00d98ebfb30b3ec0ad19f9756dc2630b89003e10525f5e148445e82aa6a1f9",
+    "E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\easyFL\\flgo\\benchmark\\RAW_DATA\\CIFAR10\\cifar-10-batches-py\\data_batch_4": "3f7bb240661948b8f4d53e36ec720d8306f5668bd0071dcb4e6c947f78e9682b",
+    "E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\easyFL\\flgo\\benchmark\\RAW_DATA\\CIFAR10\\cifar-10-batches-py\\data_batch_5": "d91802434d8376bbaeeadf58a737e3a1b12ac839077e931237e0dcd43adcb154",
+    "E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\easyFL\\flgo\\benchmark\\RAW_DATA\\CIFAR10\\cifar-10-batches-py\\test_batch": "f53d8d457504f7cff4ea9e021afcf0e0ad8e24a91f3fc42091b8adef61157831"
+  },
+  "source_sizes": {
+    "official_test": 10000,
+    "official_train": 50000
+  },
+  "spec": {
+    "alpha": 0.1,
+    "classes": 10,
+    "clients": 4,
+    "dataset": "CIFAR10",
+    "head_count": 100,
+    "identity": "FedPCC-0.2-smoke-CIFAR10-v1",
+    "imbalance_factor": 100,
+    "seed": 20261012,
+    "test_per_class": 8,
+    "validation_per_class": 2
+  },
+  "state": "smoke",
+  "test_rule": "class-stratified official_test round-robin, independent of training",
+  "validation_rule": "global class-balanced official_train holdout; no client validation duplication"
+}
