@@ -129,6 +129,8 @@
 |E04 round 与 attempt|分别记录更新轮与邀请尝试；空完成尝试也计账；初始更新轮上限 200|attempt 上限待实测；定义与上限见第六、七节。不得用未返回次数证明概率为零|[F §一.2 L67][F-识别]、[§五.1 L230][F-attempt]；[K §0.1 L108][K-01]|
 |E05 实际概率预测|预测只使用此前历史；平滑、截断和历史范围明确；真实概率作为独立诊断|平滑先验、窗口、`p_min` 和有限搜索范围：待实测并选定；G2.1 正式比较前冻结|[F §一.3 L78–90][F-估计]、[§二 A1 L122–123][F-概率]；[I 方向 A §2 L128–143][I-缓存]|
 
+**G1.1 已执行实例补录（登记日期：2026-10-13）。** 这是本合同的建议组织方式：在原字段表后引用一次执行的配置与裁决，不将 smoke 参数改称正式参数。[推断] `FedPCC-G1.1-event-smoke-v1` 的 W01/W02 逻辑工作量代理、W03 本地回环注册、E01–E04 事件参数及有效范围，按 [G1.1 裁决记录 §三](<E:/Federated Machine Learning/FL-Byzantine-Library-astra/docs/DIRECTION_A_G1_1_ADJUDICATION_v1.md>) 登记；运行前配置见 [preregistration.md L9–31](<E:/Federated Machine Learning/FL-Byzantine-Library-astra/artifacts/direction_a/phaseG1_1_v1/preregistration.md:9>)，封存机制见 [mechanism.json L1，binding/mechanism](<E:/Federated Machine Learning/FL-Byzantine-Library-astra/artifacts/direction_a/phaseG1_1_v1/mechanism.json:1>)。本次 smoke 验收成立；正式 G1.1 状态为“证据不足/预算耗尽”（证据不足，未耗尽），依据该裁决 §二。W01/W02 的正式计算协议与成本、正式事件/资源绑定仍待补齐；E05 实际预测器继续留 G2.1，W04–W07 的待办不由本次解除。此次事后登记保留原预登记身份与时间，不追认正式冻结；改变完成机制按 K 回 G1.1，改变 split/count 按 K 回 0.2。
+
 ## 五、评价指标、比较对象与成功命题
 
 ### 5.1 评价与对照的原文引用
@@ -228,7 +230,7 @@ F 的执行依据分别为 [§一.3 L79–86][F-估计]、[§一.4 L98–110][F-
 |既定阶段|预算覆盖对象|定额所需证据与如何确定|当前数值和正式放行状态|F 依据|
 |---|---|---|---|---|
 |0.2|任务/模型/评价口径的核验成本，以及其专用 smoke|按已选任务和模型记录核验工作量；运行前给有限额度，测得成本另存|时间/字节/搜索/修订：待实测并裁定；相关运行不由本合同自动放行|[F §四 L207][F-顺序]|
-|G1.1、G1.2、G1.3|注册、完成事件、冻结类梯度、全端诊断与来源偏差重复；[推断] 包含 G1.2 的骨干生成/候选来源核验、验证与选点、快照保存核对成本，并与梯度测量分项登记，见 [骨干准备归属裁决 §五 L149](<E:/Federated Machine Learning/FL-Byzantine-Library-astra/docs/DIRECTION_A_BACKBONE_PREPARATION_ADJUDICATION_v1.md:149>)|分清注册与每次尝试；按实际支持/工作量记录事件及梯度成本，确定有限 attempt 和重复额度|各项待实测并裁定；正式识别裁决关闭|[F §一.2 L60–69][F-识别]、[§五.2 L241–244][F-未知]|
+|G1.1、G1.2、G1.3|注册、完成事件、冻结类梯度、全端诊断与来源偏差重复；[推断] 包含 G1.2 的骨干生成/候选来源核验、验证与选点、快照保存核对成本，并与梯度测量分项登记，见 [骨干准备归属裁决 §五 L149](<E:/Federated Machine Learning/FL-Byzantine-Library-astra/docs/DIRECTION_A_BACKBONE_PREPARATION_ADJUDICATION_v1.md:149>)|分清注册与每次尝试；按实际支持/工作量记录事件及梯度成本，确定有限 attempt 和重复额度|[推断] G1.1 本次有界事件 smoke 的额度与实耗已登记，见 [G1.1 裁决记录 §三](<E:/Federated Machine Learning/FL-Byzantine-Library-astra/docs/DIRECTION_A_G1_1_ADJUDICATION_v1.md>)及 [run.json L1，limits/counts/phase_seconds](<E:/Federated Machine Learning/FL-Byzantine-Library-astra/artifacts/direction_a/phaseG1_1_v1/run.json:1>)；该次额度不转为正式额度或新运行授权。正式 G1.1 记“证据不足/预算耗尽”（证据不足，未耗尽）；G1.2/G1.3 各项仍待实测并裁定；正式识别裁决关闭|[F §一.2 L60–69][F-识别]、[§五.2 L241–244][F-未知]|
 |P|冻结线性探针及独立验证|绑定合格参考和训练/验证清单，测量探针工作量和验证成本；不与方法输入混账|各项待实测并裁定；正式探针通过关闭|[F §四 L209][F-顺序]|
 |G2.1、G2.2、G2.3|实际概率、缓存校正、条件重复、历史回放及搜索|固定消息/事件与参考，对各版本和对照用同一预算定义；估计实际回放成本后预先定搜索和重复上限|各项待实测并裁定；正式估计优势裁决关闭|[F §一.3 L79–90][F-估计]|
 |T|[推断] 条件命题、误差分解与主张边界审计的时间及修订工作|依据推导核对与审计记录登记实际时间、修订次数并确定额度；若发现目标/实现不一致，按 K §T 第 5 项回对应 G2/G3 节点重验，实验成本登记在相应节点|审计时间上限及最多修订次数：待登记并裁定；独立训练/校准时间、上下行/注册字节、实验搜索预算：不适用（本关交付为推导与审计，实验重验回 G2/G3）；是否通过仍按既定验收判定|本行依据为 [K §T 第 3–6 项 L197–200](<E:/Federated Machine Learning/FL-Byzantine-Library-astra/docs/DIRECTION_A_CHECKPOINTS_v1.md:197>)及 [§一共用规则 L84–85][K-规则]|
