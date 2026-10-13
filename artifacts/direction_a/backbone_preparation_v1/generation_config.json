@@ -1,0 +1,228 @@
+{
+  "BN": {
+    "affine": true,
+    "aggregation": "sample-weight float running_mean/var; max num_batches_tracked",
+    "eps": 1e-05,
+    "local_training": "train mode updates all running buffers",
+    "momentum": 0.1,
+    "reference_readout": "eval, requires_grad False; all buffers retained",
+    "training_mode_certified_by_0.2": false
+  },
+  "base_commit": "54eb6e02f4630df82cfdeb1c352fd5e4520ea5be",
+  "environment": {
+    "cpu_threads": 2,
+    "cublas_workspace_config": ":4096:8",
+    "cuda_runtime": "12.1",
+    "cudnn": 90100,
+    "cudnn_benchmark": false,
+    "deterministic_algorithms": true,
+    "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "numpy": "1.26.4",
+    "python": "E:\\anaconda3\\python.exe",
+    "tf32": false,
+    "torch": "2.5.1"
+  },
+  "implementation_fingerprints": {
+    "direction_a/backbone_preparation.py": {
+      "working_bytes_sha256": "e0298782e037ad0dcf16b14444e84cf0f629df9ac7035b7280947b1cba8aea73"
+    },
+    "direction_a/model.py": {
+      "working_bytes_sha256": "6fabfbb5d4510d1ea4f827f8d103472d31dbcec2e10f6f1d61c4c8bff7427990"
+    },
+    "models/ResNet.py": {
+      "working_bytes_sha256": "73c4b0120c18f258b7bbe8cb87a13fb6b6c6896e0789b53505b141efc40295ce"
+    },
+    "scripts/prepare_direction_a_backbones.py": {
+      "working_bytes_sha256": "dbb1b9a8314ddf187170d71ae00efd3f1809be64b0701914c253303a054d184f"
+    },
+    "tests/test_direction_a_backbone_preparation.py": {
+      "working_bytes_sha256": "ae3ebbcf0accab91e2529a97cf2ac9d3b62a83c802b222c46d625d7fee924888"
+    }
+  },
+  "input_versions": {
+    "docs/DIRECTION_A_0_2_ACCEPTANCE_v1.md": {
+      "sha256": "8907e7a21e6bdf1e205dcc61f41164a5ae77a9a7ec44e2fc06d3eb71ba41aedf",
+      "version": "v1 current preflight working bytes"
+    },
+    "docs/DIRECTION_A_0_2_ADJUDICATION_v1.md": {
+      "sha256": "a61ad0275f92375f3f667761dcc9cec9891bb5abce3dee2fbca3a31dc1dc9f7d",
+      "version": "v1 current preflight working bytes"
+    },
+    "docs/DIRECTION_A_BACKBONE_PREPARATION_ADJUDICATION_v1.md": {
+      "sha256": "c863529137063c5cd9e39485b0445844cd3a837aa07512bf1c76f877d86ffd28",
+      "version": "v1 current preflight working bytes"
+    },
+    "docs/DIRECTION_A_CHECKPOINTS_v1.md": {
+      "sha256": "8fe09ca87e9cdb5dd053a22e8ee3ba02a37d64f72dcc96e8987c338b8c09e98a",
+      "version": "v1 current preflight working bytes"
+    },
+    "docs/DIRECTION_A_G1_1_ADJUDICATION_v1.md": {
+      "sha256": "cd65b23b8ed3e18e37186048a694031df92c2495af0432a30c7ff5ac21b951a4",
+      "version": "v1 current preflight working bytes"
+    },
+    "docs/DIRECTION_A_PROTOCOL_FREEZE_v1.md": {
+      "sha256": "63aa379b5ed68b0bb1f05e9215fcff0ced638c24486522e2d7a4386902a87898",
+      "version": "v1 current preflight working bytes"
+    }
+  },
+  "limits": {
+    "attempts": 180,
+    "backwards": 7200,
+    "cpu_tensor_proxy_bytes": 2147483648,
+    "evidence_bytes": 268435456,
+    "forwards": 7500,
+    "gpu_allocated_bytes": 6442450944,
+    "logical_copy_bytes": 4294967296,
+    "optimizer_steps": 7200,
+    "per_run": {
+      "attempts": 90,
+      "optimizer_steps": 3600
+    },
+    "phase_seconds": {
+      "input": 90,
+      "storage": 90,
+      "train_CIFAR10": 480,
+      "train_CIFAR100": 480,
+      "validation": 90
+    },
+    "retries": 2,
+    "scans": 1024,
+    "wall_seconds": 1200
+  },
+  "max_correction_retries": 1,
+  "model": {
+    "adapter": "direction_a.model.ResNet8Adapter",
+    "backbone_source": "models.ResNet.ResNet_3Layer",
+    "blocks": [
+      1,
+      1,
+      1
+    ],
+    "channels": [
+      32,
+      64,
+      128
+    ],
+    "classes_by_dataset": {
+      "CIFAR10": 10,
+      "CIFAR100": 100
+    },
+    "feature_dim": 128,
+    "head_bias": true,
+    "head_parameter_names": [
+      "linear.weight",
+      "linear.bias"
+    ],
+    "loss": "mean CrossEntropy(raw logits), no class weights",
+    "parameter_dtype": "float32",
+    "shortcut": "B"
+  },
+  "not_certified": [
+    "G1.2 acceptance/class gradients",
+    "G1.3",
+    "P separability",
+    "E1 recovery/lifecycle",
+    "formal G1.1 event mechanism"
+  ],
+  "parent_checkpoint": "G1.2",
+  "preparation_identity": "FedPCC-backbone-preparation-v1",
+  "reference_plan": {
+    "lowest_accuracy_gate": "none specified; no new success threshold introduced",
+    "reference_ids": [
+      "A-backbone-CIFAR10-s2026101321-r0040-v1",
+      "A-backbone-CIFAR10-s2026101321-r0080-v1",
+      "A-backbone-CIFAR100-s2026101322-r0040-v1",
+      "A-backbone-CIFAR100-s2026101322-r0080-v1"
+    ],
+    "rounds": [
+      40,
+      80
+    ],
+    "selection_rule": "all prespecified progress points retained, no metric ranking or threshold"
+  },
+  "source_type": "new ordinary FedAvg training; no existing checkpoint or resumed run",
+  "training": {
+    "N": 20,
+    "aggregation": "ordinary sample-weighted FedAvg over all returning invited clients",
+    "batch_size": 64,
+    "client_sampler_rng": "PCG64(training_seed+2000+client_index), persistent during this run",
+    "communication": "single-host sequential in-memory state copies; no network registration/traffic",
+    "data_seed": 20261012,
+    "failure_or_resume": "no resumed training; any failed attempt remains charged and archived",
+    "initialization": "torch default initialization; manual_seed(training_seed)",
+    "invitation_rng": "PCG64(training_seed+1000), independent fixed-size samples",
+    "learning_rate": {
+      "1-40": 0.05,
+      "41-80": 0.01
+    },
+    "local_optimizer_state": "reset at each invitation",
+    "local_optimizer_steps": 5,
+    "m": 8,
+    "momentum": 0.9,
+    "nesterov": false,
+    "optimizer": "SGD",
+    "participation": "ideal all invited complete; no G1.1 proxy deadline/speed/dropout",
+    "rounds": 80,
+    "sampling": "uniform within sealed client training indices with replacement",
+    "training_seeds": {
+      "CIFAR10": 2026101321,
+      "CIFAR100": 2026101322
+    },
+    "weight_decay": 0.0005,
+    "weights_source": "sealed acceptance.client_train_totals normalized over invited set"
+  },
+  "transforms": {
+    "CIFAR10": {
+      "augmentation": "none",
+      "mean": [
+        0.4914,
+        0.4822,
+        0.4465
+      ],
+      "raw": "uint8 RGB NCHW /255",
+      "same_as_frozen_0.2": true,
+      "scopes": [
+        "train",
+        "validation"
+      ],
+      "std": [
+        0.247,
+        0.243,
+        0.262
+      ]
+    },
+    "CIFAR100": {
+      "augmentation": "none",
+      "mean": [
+        0.5071,
+        0.4867,
+        0.4408
+      ],
+      "raw": "uint8 RGB NCHW /255",
+      "same_as_frozen_0.2": true,
+      "scopes": [
+        "train",
+        "validation"
+      ],
+      "std": [
+        0.2675,
+        0.2565,
+        0.2761
+      ]
+    }
+  },
+  "validation": {
+    "batch_size": 128,
+    "initial_baseline": "recorded separately, not a candidate",
+    "metrics": [
+      "mean CE (nat)",
+      "sample accuracy",
+      "full-C macro recall",
+      "fixed head/middle/tail recall"
+    ],
+    "mode": "eval/inference_mode",
+    "split": "fixed sealed global validation; official_train namespace",
+    "test_used": false
+  },
+  "work_item": "合格骨干准备"
+}

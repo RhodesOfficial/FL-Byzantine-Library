@@ -1,0 +1,174 @@
+{
+  "base_commit": "54eb6e02f4630df82cfdeb1c352fd5e4520ea5be",
+  "cost_ownership": {
+    "budget_row": "existing G1.1/G1.2/G1.3 row",
+    "class_gradient_measurement": "not executed",
+    "components": [
+      "backbone generation",
+      "validation/reference plan",
+      "save/readback"
+    ],
+    "parent_checkpoint": "G1.2",
+    "previous_G1.1_event_smoke": "separate historical ledger retained; not reset or upgraded",
+    "shared_run_counted_once": true
+  },
+  "delivered_at": "2026-10-13T17:05:20.745411+08:00",
+  "generation_config_path": "generation_config.json",
+  "generation_config_sha256": "720ecb999bea965af09162f5282716eb1c7e1703a1af50b7194521c214daff48",
+  "generation_runs": [
+    {
+      "actual_attempts": 80,
+      "actual_updates": 80,
+      "completion": "planned_80_updates_complete",
+      "cost_counting": "one training run, not separately charged for each reference",
+      "dataset": "CIFAR10",
+      "optimizer_steps": 3200,
+      "path": "runs/CIFAR10_run_record.json",
+      "run_id": "FedPCC-backbone-prep-CIFAR10-v1",
+      "shared_reference_rounds": [
+        40,
+        80
+      ]
+    },
+    {
+      "actual_attempts": 80,
+      "actual_updates": 80,
+      "completion": "planned_80_updates_complete",
+      "cost_counting": "one training run, not separately charged for each reference",
+      "dataset": "CIFAR100",
+      "optimizer_steps": 3200,
+      "path": "runs/CIFAR100_run_record.json",
+      "run_id": "FedPCC-backbone-prep-CIFAR100-v1",
+      "shared_reference_rounds": [
+        40,
+        80
+      ]
+    }
+  ],
+  "hash_algorithm": "SHA-256, actual file bytes; state hashes cover name/dtype/shape/tensor bytes",
+  "independent_selfchecks": [
+    "sample-weighted parameters/float BN buffers: manual constants; BN counter max=5",
+    "independent confusion denominators/recall/CE; missing classes not removed",
+    "uniform logits CE=ln(10); no model/gradient qualification test",
+    "per-run attempt, time and byte guards use hand boundary values; no real workload in guard fixtures"
+  ],
+  "input_versions": {
+    "docs/DIRECTION_A_0_2_ACCEPTANCE_v1.md": {
+      "sha256": "8907e7a21e6bdf1e205dcc61f41164a5ae77a9a7ec44e2fc06d3eb71ba41aedf",
+      "version": "v1 current preflight working bytes"
+    },
+    "docs/DIRECTION_A_0_2_ADJUDICATION_v1.md": {
+      "sha256": "a61ad0275f92375f3f667761dcc9cec9891bb5abce3dee2fbca3a31dc1dc9f7d",
+      "version": "v1 current preflight working bytes"
+    },
+    "docs/DIRECTION_A_BACKBONE_PREPARATION_ADJUDICATION_v1.md": {
+      "sha256": "c863529137063c5cd9e39485b0445844cd3a837aa07512bf1c76f877d86ffd28",
+      "version": "v1 current preflight working bytes"
+    },
+    "docs/DIRECTION_A_CHECKPOINTS_v1.md": {
+      "sha256": "8fe09ca87e9cdb5dd053a22e8ee3ba02a37d64f72dcc96e8987c338b8c09e98a",
+      "version": "v1 current preflight working bytes"
+    },
+    "docs/DIRECTION_A_G1_1_ADJUDICATION_v1.md": {
+      "sha256": "cd65b23b8ed3e18e37186048a694031df92c2495af0432a30c7ff5ac21b951a4",
+      "version": "v1 current preflight working bytes"
+    },
+    "docs/DIRECTION_A_PROTOCOL_FREEZE_v1.md": {
+      "sha256": "63aa379b5ed68b0bb1f05e9215fcff0ced638c24486522e2d7a4386902a87898",
+      "version": "v1 current preflight working bytes"
+    }
+  },
+  "missing_items": [],
+  "not_certified": [
+    "G1.2 acceptance/class gradients",
+    "G1.3",
+    "P separability",
+    "E1 recovery/lifecycle",
+    "formal G1.1 event mechanism"
+  ],
+  "parent_checkpoint": "G1.2",
+  "preparation_identity": "FedPCC-backbone-preparation-v1",
+  "preregistration_sha256": "78d52e8ccd9706b02e0c85dc970339716e76045b3fe84c285023c50910eb405d",
+  "qualification": "G1.2 reception/gradient acceptance pending; P not claimed",
+  "references": [
+    {
+      "checkpoint_file_sha256": "4824d4a52a3aa46df594e7600d72cb64eab082a33b376dbebe17057d3081f26c",
+      "checkpoint_integrity": "bitwise complete state readback; no epsilon used",
+      "checkpoint_path": "checkpoints/A-backbone-CIFAR10-s2026101321-r0040-v1.pt",
+      "dataset": "CIFAR10",
+      "qualification": "pending_G1.2_acceptance",
+      "reference_id": "A-backbone-CIFAR10-s2026101321-r0040-v1",
+      "run_id": "FedPCC-backbone-prep-CIFAR10-v1",
+      "state_sha256": "48466c475471fe8a05392a54fbca7fa9eee2d9189b2ca7041e9a72244b6d5fb3",
+      "task_identity": "FedPCC-0.2-candidate-CIFAR10-N20-v1",
+      "training_progress": {
+        "attempts": 40,
+        "optimizer_steps": 1600,
+        "update_round": 40
+      },
+      "validation_record_key": "records/reference_id=A-backbone-CIFAR10-s2026101321-r0040-v1",
+      "validation_record_path": "validation_record.json"
+    },
+    {
+      "checkpoint_file_sha256": "d8e137b9feeda74bb3bf401b64569e0075f3ec52914eb0ccf72d56040965a5ed",
+      "checkpoint_integrity": "bitwise complete state readback; no epsilon used",
+      "checkpoint_path": "checkpoints/A-backbone-CIFAR10-s2026101321-r0080-v1.pt",
+      "dataset": "CIFAR10",
+      "qualification": "pending_G1.2_acceptance",
+      "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+      "run_id": "FedPCC-backbone-prep-CIFAR10-v1",
+      "state_sha256": "c2a11303f977029a840946f1703047288365ec4b6bbb7136db3ad3eb65ad4b44",
+      "task_identity": "FedPCC-0.2-candidate-CIFAR10-N20-v1",
+      "training_progress": {
+        "attempts": 80,
+        "optimizer_steps": 3200,
+        "update_round": 80
+      },
+      "validation_record_key": "records/reference_id=A-backbone-CIFAR10-s2026101321-r0080-v1",
+      "validation_record_path": "validation_record.json"
+    },
+    {
+      "checkpoint_file_sha256": "e778839c234857195c4e00d286b6210d8898d4e1405f504ca2b2a5f0c75a8764",
+      "checkpoint_integrity": "bitwise complete state readback; no epsilon used",
+      "checkpoint_path": "checkpoints/A-backbone-CIFAR100-s2026101322-r0040-v1.pt",
+      "dataset": "CIFAR100",
+      "qualification": "pending_G1.2_acceptance",
+      "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+      "run_id": "FedPCC-backbone-prep-CIFAR100-v1",
+      "state_sha256": "3b4e3a4b03982c4b3bf1c6be16a46999ffc3987934443b59b25370ada831408f",
+      "task_identity": "FedPCC-0.2-candidate-CIFAR100-N20-v1",
+      "training_progress": {
+        "attempts": 40,
+        "optimizer_steps": 1600,
+        "update_round": 40
+      },
+      "validation_record_key": "records/reference_id=A-backbone-CIFAR100-s2026101322-r0040-v1",
+      "validation_record_path": "validation_record.json"
+    },
+    {
+      "checkpoint_file_sha256": "7b6faf5b0a4be006133c72140d60e9d5918d52f8aa953f800b87efab268dccae",
+      "checkpoint_integrity": "bitwise complete state readback; no epsilon used",
+      "checkpoint_path": "checkpoints/A-backbone-CIFAR100-s2026101322-r0080-v1.pt",
+      "dataset": "CIFAR100",
+      "qualification": "pending_G1.2_acceptance",
+      "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+      "run_id": "FedPCC-backbone-prep-CIFAR100-v1",
+      "state_sha256": "5a84b86e6d66a21ea5ea2ebf2e72b41a37db86402e2063cdc5a9b2d34018597a",
+      "task_identity": "FedPCC-0.2-candidate-CIFAR100-N20-v1",
+      "training_progress": {
+        "attempts": 80,
+        "optimizer_steps": 3200,
+        "update_round": 80
+      },
+      "validation_record_key": "records/reference_id=A-backbone-CIFAR100-s2026101322-r0080-v1",
+      "validation_record_path": "validation_record.json"
+    }
+  ],
+  "run_record_path": "run_record.json",
+  "started_at": "2026-10-13T17:04:02.429826+08:00",
+  "status": "candidate_package_complete_source_traceable",
+  "task_binding_path": "task_binding.json",
+  "task_binding_sha256": "194f1ef65a13caf66a64c74a77585c4a932dc5f72c909a21cc5b9290a7649408",
+  "validation_record_path": "validation_record.json",
+  "work_item": "合格骨干准备"
+}
