@@ -1,4 +1,4 @@
-"""One v6 continuation. v5 fitting/statistical arithmetic is imported unchanged.
+"""One v7 continuation. v5 fitting/statistical arithmetic is imported unchanged.
 
 --check (synthetic only), commit sources/registration, --run once, --seal.
 The old formal package is read-only; inherited complete heads never enter fit.
@@ -24,14 +24,17 @@ import scripts.run_direction_a_probe_formal as original
 from direction_a.probe_startup import RecoveryBudget, execute_attempt
 from direction_a.backbone_preparation import windows_memory, tensor_state_sha
 
-OUT = ROOT/'artifacts/direction_a/phaseP_formal_resume_v1'
+OUT = ROOT/'artifacts/direction_a/phaseP_formal_resume_v2'
 OLD = ROOT/'artifacts/direction_a/phaseP_formal_v1'
-BASE = 'ea6a10001998a6062b6365f5e5f3f0df862bca7e'
-RUN_ID = 'FedPCC-P-formal-resume-v1'
+BASE = '10e0b657d616983d41de081863a97bf8332534d5'
+OLD_COMMIT = 'ea6a10001998a6062b6365f5e5f3f0df862bca7e'
+FAILED = ROOT/'artifacts/direction_a/phaseP_formal_resume_v1'
+IMPLEMENTATION_UPPER_SECONDS = 600
+RUN_ID = 'FedPCC-P-formal-resume-v2'
 encode, sha, git = original.encode, original.sha, original.git
 SOURCES = ['scripts/resume_direction_a_probe_formal.py', 'tests/test_direction_a_probe_formal_resume.py', *original.SOURCES]
-LIMITS = {**original.LIMITS, 'wall_seconds':3817.937, 'evidence_bytes':125958273,
-          'scans':333520, 'fits':240, 'backwards':240000, 'optimizer_steps':240000,
+LIMITS = {**original.LIMITS, 'wall_seconds':3597.375, 'evidence_bytes':124420482,
+          'scans':332113, 'fits':240, 'backwards':240000, 'optimizer_steps':240000,
           'forwards':241082, 'encoder_forwards':24, 'feature_samples':3000,
           'windows_peak_working_set_bytes':16*1024**3, 'implementation_revisions':1}
 
@@ -62,7 +65,7 @@ def assert_new_head(rid,seed):
 
 def assert_new_path(path):
     p=Path(path).resolve()
-    if p==OLD.resolve() or OLD.resolve() in p.parents:
+    if any(p==old.resolve() or old.resolve() in p.parents for old in (OLD,FAILED)):
         raise PermissionError('old formal package is immutable')
     local=ROOT/'artifacts_local'/OUT.relative_to(ROOT)
     if not (OUT.resolve() in p.parents or local.resolve() in p.parents):
@@ -73,6 +76,11 @@ class ResumeBudget(RecoveryBudget):
     def write(self,path,value,raw=False):
         assert_new_path(path)
         return super().write(path,value,raw)
+
+    def snapshot(self,now=None):
+        value=super().snapshot(now)
+        if self.context.get('formal_history'): value['formal_history']=self.context['formal_history']
+        return value
 
     def consume(self,field,amount=1,run_id=None):
         super().consume(field,amount,run_id)
@@ -102,16 +110,19 @@ def run_once(context,namespace_factory=None):
 def registration(fingerprints):
     p=original.registration(fingerprints)
     p.update(run_id=RUN_ID,baseline_commit=BASE,limits=LIMITS,
+             protocol_v7_path='docs/DIRECTION_A_P_ADJUDICATION_v7.md',
+             protocol_v7_sha256=sha((ROOT/'docs/DIRECTION_A_P_ADJUDICATION_v7.md').read_bytes()),
              protocol_v6_path='docs/DIRECTION_A_P_ADJUDICATION_v6.md',
              protocol_v6_sha256=sha((ROOT/'docs/DIRECTION_A_P_ADJUDICATION_v6.md').read_bytes()),
              old_source_commit='a12905c9ffdfe65270feb83e587bffa4b90f612a',
              actual_command=[r'E:\anaconda3\python.exe','-B','scripts/resume_direction_a_probe_formal.py','--run'],
-             resume=dict(old_directory=OLD.relative_to(ROOT).as_posix(),old_input_commit=BASE,
+             resume=dict(old_directory=OLD.relative_to(ROOT).as_posix(),old_input_commit=OLD_COMMIT,
                          immutable_old_heads=160,new_heads=240,queue=[dict(reference_id=r,seed=s) for r,s in queue()],
                          head_161='seed 2026101560 starts at zero; no step-462/Adam checkpoint exists',
                          repeated_validation=dict(CIFAR10_r80=dict(samples=1000,encoder=8)),
-                         inherited_floor=dict(seconds=562.063,bytes=8259455,scans=166480),
-                         implementation_program_upper_seconds=180,verification_program_reserve_seconds=20,
+                         inherited_floor=dict(seconds=782.625,bytes=9797246,scans=167887),
+                         implementation_program_upper_seconds=IMPLEMENTATION_UPPER_SECONDS,verification_program_reserve_seconds=20,
+                         implementation_accounting_basis='600 second conservative bound from task start 2026-10-14T22:14:29+08:00, including original non-released 200 second reserve',
                          remaining_fit_estimate='max(0, original 2090.6519772480947 seconds minus sum of 160 stored fit_save_seconds), times frozen 1.8 safety factor',
                          no_automatic_retry=True))
     return p
@@ -126,7 +137,7 @@ def check():
     def tracked_read(path):
         nonlocal peak
         p=path.resolve().as_posix()
-        if any(x in p for x in ['/RAW_DATA/','/checkpoints/','/phaseG1_2_', '/phase0_2_v1/tasks/', '/phaseP_formal_v1/']):
+        if any(x in p for x in ['/RAW_DATA/','/checkpoints/','/phaseG1_2_', '/phase0_2_v1/tasks/', '/phaseP_formal_v1/', '/phaseP_formal_resume_v1/']):
             forbidden.append(p); raise AssertionError('synthetic real input forbidden')
         raw=read(path); counts['scans']+=1; peak=max(peak,len(raw)); return raw
     def tracked_write(path,raw):
@@ -154,7 +165,7 @@ def check():
             if all(x['status']=='PASS' for x in syntax): tests.suite().run(result)
         passed=result.wasSuccessful() and result.testsRun>0 and not forbidden and not torch.cuda.is_initialized() and all(x['status']=='PASS' for x in syntax)
         for name,value in [('syntax_check.json',dict(status='PASS' if all(x['status']=='PASS' for x in syntax) else 'FAIL',invocations=1,files=syntax)),
-                           ('selfchecks.json',dict(status='PASS' if passed else 'FAIL',invocations=1,tests_run=result.testsRun,cases=result.cases,
+                           ('selfchecks.json',dict(status='PASS' if passed else 'FAIL',invocations=1,tests_run=result.testsRun,cases=result.cases,large_archive_actual_bytes=getattr(tests,'LARGE_ARCHIVE_BYTES',None),
                             isolation=dict(real_input_reads=0,CUDA_initialized=torch.cuda.is_initialized(),backwards=0,optimizer_steps=0,forbidden_attempts=forbidden))),
                            ('preregistration.json',registration(fingerprints))]:
             (OUT/name).write_bytes(encode(value))
@@ -179,6 +190,76 @@ def validate_locator(locator,b,root=ROOT):
     p=root/locator['path']; b.scan(); raw=p.read_bytes()
     if len(raw)!=locator['bytes'] or sha(raw)!=locator['sha256']: raise RuntimeError('artifact hash mismatch: '+str(p))
     return p
+
+
+def historical_locator(locator,b,commit,package):
+    path=ROOT/locator['path']
+    if path.resolve().is_relative_to(package.resolve()):
+        return validate_locator(locator,b)
+    b.scan()
+    raw=subprocess.check_output(['git','show',f"{commit}:{locator['path']}"],cwd=ROOT)
+    if len(raw)!=locator['bytes'] or sha(raw)!=locator['sha256']:
+        raise RuntimeError('historical artifact mismatch: '+locator['path'])
+    return dict(path=locator['path'],commit=commit,bytes=len(raw),sha256=sha(raw))
+
+
+FACT_FIELDS=['fits','backwards','optimizer_steps','forwards','encoder_forwards','feature_samples','scans']
+
+
+def inherited_records():
+    # Frozen adjudication facts are usable even if the CPU gate prevents input reads.
+    return [dict(commit=OLD_COMMIT,path=(OLD/'run_record.json').relative_to(ROOT).as_posix(),
+                 seconds=562.063,bytes=8259455,status='failed_terminal_limit',
+                 counts=dict(fits=161,backwards=160461,optimizer_steps=160461,forwards=160793,
+                             encoder_forwards=16,feature_samples=2000,scans=166480),
+                 resources=dict(windows_working_set_peak_bytes=6447243264),unknown_resource_fields=['gpu_allocated_peak_bytes','cpu_known_arrays_tensor_proxy_peak_bytes']),
+            dict(commit=BASE,path=(FAILED/'run_record.json').relative_to(ROOT).as_posix(),
+                 seconds=220.562,bytes=1537791,status='failed_before_real_input',counts=dict(scans=1407),
+                 synthetic_head_forwards=3,resources={},unknown_resource_fields=['windows_working_set_peak_bytes','gpu_allocated_peak_bytes','cpu_known_arrays_tensor_proxy_peak_bytes'])]
+
+
+def combine_history(records):
+    if len(records)!=2 or len({(r['commit'],r['path']) for r in records})!=2:
+        raise RuntimeError('two distinct formal ledgers must be inherited exactly once')
+    facts={}; unknown=[]
+    for field in FACT_FIELDS:
+        total=0
+        for row in records:
+            value=row['counts'].get(field)
+            if value is None:
+                unknown.append(dict(path=row['path'],field=field))
+                # A failed synthetic gate has no real operations; retain raw missing fields.
+                if row['status']=='failed_before_real_input' and field!='scans':
+                    value=row.get('synthetic_head_forwards') if field=='forwards' else 0
+                else: value=None
+            if value is None: total=None; break
+            total+=value
+        facts[field]=total if total is not None else 'unknown'
+    peaks={}
+    for field in ['windows_working_set_peak_bytes','gpu_allocated_peak_bytes','cpu_known_arrays_tensor_proxy_peak_bytes']:
+        values=[r['resources'].get(field) for r in records]
+        known=[v for v in values if isinstance(v,(int,float))]
+        peaks[field]=dict(known_max=max(known) if known else None,unknown_sources=[r['path'] for r,v in zip(records,values) if v is None])
+    return dict(records=records,seconds=sum(r['seconds'] for r in records),bytes=sum(r['bytes'] for r in records),
+                fact_counts=facts,missing_fields_retained=unknown,resource_peaks=peaks,inherited_once=True,
+                missing_failed_gate_real_operations_basis='v7 CPU gate prevented all real fits/updates/encoding; zeros apply only to known unexecuted operations, raw absent fields stay absent; 3 synthetic forwards explicitly added')
+
+
+def read_history(b):
+    rows=inherited_records()
+    for row in rows:
+        path=ROOT/row['path']; b.scan()
+        if git('hash-object',str(path))!=git('rev-parse',f"{row['commit']}:{row['path']}"):
+            raise RuntimeError('historical ledger changed')
+        raw=read_json(path,b)
+        if raw['status']!=row['status'] or abs(raw['new_stage_elapsed_seconds']-row['seconds'])>1e-6 or raw['counts']['evidence_bytes']!=row['bytes']:
+            raise RuntimeError('historical ledger differs from frozen adjudication')
+        for field,value in row['counts'].items():
+            if raw['counts'].get(field)!=value: raise RuntimeError('historical fact differs: '+field)
+        row.update(counts=raw['counts'],resources=raw['resources'],historical_unknowns=raw.get('historical_failure',{}))
+        for field in row['unknown_resource_fields'].copy():
+            if field in raw['resources']: row['unknown_resource_fields'].remove(field)
+    return combine_history(rows)
 
 
 def load_prediction(locator,b):
@@ -212,12 +293,12 @@ def metrics_from_prediction(pred,ce,labels,groups,b):
 
 def verify_old(b):
     index=read_json(OLD/'artifact_hashes.json',b)
-    for name,row in index['files'].items(): validate_locator(dict(path=name,**row),b)
+    for name,row in index['files'].items(): historical_locator(dict(path=name,**row),b,OLD_COMMIT,OLD)
     # Whole tracked old package identity is bound to the baseline commit as well.
-    tracked=git('ls-tree','-r','--name-only',BASE,'artifacts/direction_a/phaseP_formal_v1').splitlines()
+    tracked=git('ls-tree','-r','--name-only',OLD_COMMIT,'artifacts/direction_a/phaseP_formal_v1').splitlines()
     for name in tracked:
         b.scan()
-        if git('hash-object',name)!=git('rev-parse',f'{BASE}:{name}'): raise RuntimeError('old sealed bytes changed: '+name)
+        if git('hash-object',name)!=git('rev-parse',f'{OLD_COMMIT}:{name}'): raise RuntimeError('old sealed bytes changed: '+name)
     saved=read_json(OLD/'results.json',b); inputs=read_json(OLD/'input_checks.json',b)
     mapping=read_json(OLD/'predictions/CIFAR10_mapping.json',b)
     from direction_a import probe_formal as f
@@ -254,16 +335,19 @@ def experiment(context,b):
     original.write_json(OUT/'uncertainty.json',dict(status='not_completed',validation_permutations=0,bootstrap=0),b)
     inputs=dict(status='partial',references=[],inherited_validation_points=2,new_validation_points=2,repeated_validation_points=1)
     old_index=None
+    original.write_json(OUT/'input_checks.json',inputs,b)
+    original.write_json(OUT/'resume_manifest.json',dict(status='planned_not_verified',new_queue=[dict(reference_id=r,seed=s) for r,s in queue()],old_expected_heads=160,head_161='from zero, full 1000 steps; no middle Adam checkpoint'),b)
     try:
+        context['formal_history']=read_history(b)
+        context['old_counts']=context['formal_history']['fact_counts'].copy()
         b.enter('read_only_old_qualification')
         old_index,saved,old_inputs,c10_mapping,joint,tracked=verify_old(b)
         old_ledger=read_json(OLD/'run_record.json',b)
         if old_ledger['status']!='failed_terminal_limit' or old_ledger['counts']['fits']!=161 or old_ledger['counts']['backwards']!=160461 or old_ledger['counts']['optimizer_steps']!=160461 or old_ledger['counts']['scans']!=166480 or old_ledger['counts']['evidence_bytes']!=8259455 or abs(old_ledger['new_stage_elapsed_seconds']-562.063)>1e-6:
             raise RuntimeError('old ledger differs from v6 inherited bounds')
-        context['old_counts']=dict(old_ledger['counts'])
+        context['old_counts']=context['formal_history']['fact_counts'].copy()
         context['old_ledger']=old_ledger
-        b.resources['windows_working_set_peak_bytes']=max(b.resources['windows_working_set_peak_bytes'],old_ledger['resources']['windows_working_set_peak_bytes'])
-        manifest=dict(old_commit=BASE,old_ledger_path=(OLD/'run_record.json').relative_to(ROOT).as_posix(),old_status=old_ledger['status'],old_6GiB_qualification='FAIL',old_criterion_6='FAIL',
+        manifest=dict(old_commit=OLD_COMMIT,failed_resume_commit=BASE,formal_history=context['formal_history'],old_ledger_path=(OLD/'run_record.json').relative_to(ROOT).as_posix(),old_status=old_ledger['status'],old_6GiB_qualification='FAIL',old_criterion_6='FAIL',
                       preserved_heads=joint.copy(),new_queue=[dict(reference_id=r,seed=s) for r,s in queue()],head_161='from zero, full 1000 steps; no middle optimizer checkpoint',old_bytes_verified=True,old_tracked_files=tracked,
                       old_source_commit='a12905c9ffdfe65270feb83e587bffa4b90f612a',G1_2_input_commit=original.G12_COMMIT)
         original.write_json(OUT/'resume_manifest.json',manifest,b)
@@ -289,9 +373,9 @@ def experiment(context,b):
         old_fit=sum(h['fit_save_seconds'] for row in saved['references'] for h in row['heads'])
         remaining=max(0.,p['estimates']['fitting_seconds']-old_fit)*1.8+160+120
         prefit=dict(old_complete_fit_save_seconds=old_fit,remaining_operations_estimate_seconds=remaining,already_spent_resume_seconds=time.monotonic()-b.started,
-                    inherited_seconds=562.063,already_written_resume_bytes=b.counts['evidence_bytes'],remaining_write_estimate_bytes=68*1024**2,terminal_reserve_seconds=120,terminal_reserve_bytes=8*1024**2)
+                    inherited_seconds=782.625,already_written_resume_bytes=b.counts['evidence_bytes'],remaining_write_estimate_bytes=68*1024**2,terminal_reserve_seconds=120,terminal_reserve_bytes=8*1024**2)
         original.write_json(OUT/'prefit_budget.json',prefit,b)
-        if remaining+time.monotonic()-b.started>=3817.937 or 68*1024**2+b.counts['evidence_bytes']>=125958273: raise RuntimeError('insufficient joint budget before fitting')
+        if remaining+time.monotonic()-b.started>=3597.375 or 68*1024**2+b.counts['evidence_bytes']>=124420482: raise RuntimeError('insufficient joint budget before fitting')
         datasets={'CIFAR10':c10_mapping}; predictions={}; new_completed=0
         b.planned_references=reference_ids()
         for a in accepted:
@@ -383,8 +467,8 @@ def experiment(context,b):
     finally:
         original.write_json(OUT/'results.json',results,b)
         if old_index:
-            for name,record in old_index['files'].items(): validate_locator(dict(path=name,**record),b)
-            original.write_json(OUT/'old_preservation.json',dict(status='PASS',old_files=len(old_index['files']),baseline_commit=BASE,old_bytes_unchanged=True),b)
+            for name,record in old_index['files'].items(): historical_locator(dict(path=name,**record),b,OLD_COMMIT,OLD)
+            original.write_json(OUT/'old_preservation.json',dict(status='PASS',old_files=len(old_index['files']),baseline_commit=OLD_COMMIT,old_bytes_unchanged=True),b)
 
 
 def launch():
@@ -396,9 +480,9 @@ def launch():
     name=(OUT/'preregistration.json').relative_to(ROOT).as_posix()
     if git('hash-object',name)!=git('rev-parse',f'HEAD:{name}'): raise RuntimeError('registration not committed')
     history=original.preparation_history()
-    context=dict(output=OUT,run_id=RUN_ID,history=history,limits=LIMITS,started=ENTRY_STARTED-cost['program_seconds']-180-20,
+    context=dict(output=OUT,run_id=RUN_ID,history=history,limits=LIMITS,started=ENTRY_STARTED-cost['program_seconds']-IMPLEMENTATION_UPPER_SECONDS-20,
                  preparation_initial_write_bytes=cost['counts']['write_bytes'],preparation_initial_scans=cost['counts']['scans'],source_write_events=cost['source_write_events'],implementation_revisions=1,
-                 total_wall_seconds=3817.937+history['upper_seconds'],total_write_bytes=125958273+history['bytes'],cumulative_scan_limit=333520+history['scan_upper_bound'],new_preparation_launches=0,new_failed_restarts=0,
+                 total_wall_seconds=3597.375+history['upper_seconds'],total_write_bytes=124420482+history['bytes'],cumulative_scan_limit=332113+history['scan_upper_bound'],new_preparation_launches=0,new_failed_restarts=0,
                  cpu_proxy_upper_bytes=cost['resources']['cpu_proxy_bytes'],cpu_proxy_basis='eight times tracked synthetic buffers; accepted cache inventory envelope',emergency_closure_bytes=1024**2,synthetic_head_forwards=cost['synthetic_head_forwards'],
                  precheck_resource_peaks=dict(windows_working_set_peak_bytes=cost['resources']['windows_peak_bytes'],cpu_known_arrays_tensor_proxy_peak_bytes=cost['resources']['cpu_proxy_bytes']),archive_repo_paths=True,archive_extra_paths=[ROOT/n for n in SOURCES])
     ledger=run_once(context)
@@ -413,12 +497,12 @@ def review(ledger,results):
     science=results.get('scientific_status','FAIL') if completed else 'FAIL'
     fail=sum(x=='FAIL' for x in criteria.values())+int(science!='PASS')
     c=ledger['counts']; r=ledger.get('resources',{})
-    seconds=562.063+ledger.get('new_stage_elapsed_seconds',0); written=8259455+c.get('evidence_bytes',0)
-    lines=['# 交付单：P 正式第2轮保留160头续跑','',f'- 对应任务单的基准 commit：{BASE}','- 本次交付 commit：见本提交','', '## 做了什么（≤5 条）',
-           '- 最小v6恢复入口及一次合成CPU套件，v5科学算术完整复用；源码与预登记先提交。',
+    seconds=782.625+ledger.get('new_stage_elapsed_seconds',0); written=9797246+c.get('evidence_bytes',0)
+    lines=['# 交付单：P 正式第3轮保留160头续跑','',f'- 对应任务单的基准 commit：{BASE}','- 本次交付 commit：见本提交','', '## 做了什么（≤5 条）',
+           '- 最小v7恢复入口及一次合成CPU套件，v5科学算术完整复用；源码与预登记先提交。',
            f"- 旧160头只读复用；新完整头 {ledger.get('progress',{}).get('new_completed_heads',0)}/240，第161头从零重做。",
            '- 四点联合索引、预测CE、推断及累计成本；旧6 GiB失败和未知保留。','', '## 产出文件',
-           '- artifacts/direction_a/phaseP_formal_resume_v1/：恢复源码预登记、语法/CPU/输入检查、manifest、联合索引、results/uncertainty、run_record/artifact_hashes。',
+           '- artifacts/direction_a/phaseP_formal_resume_v2/：恢复源码预登记、语法/CPU/输入检查、manifest、联合索引、results/uncertainty、run_record/artifact_hashes。',
            '- 同目录 heads/、head_results/、predictions/：仅新完整头与原头预测；旧数据跨包定位。','', '## 判据自评',
            '|判据编号|结果 PASS/FAIL|证据位置 / 关键数字|','|---|---|---|']
     evidence={'1':'syntax_check.json / selfchecks.json；一次合成生产生命周期及保护检查',
@@ -436,11 +520,11 @@ def review(ledger,results):
         if s and completed: lines.append(f"|{rid}|{s['R_percent']:.6f}|{s['delta_pp']:.6f}|{s['separability']}|{s['calibration_space']}|")
         else: lines.append(f'|{rid}|未完成|未完成|FAIL|FAIL|')
     lines += ['', '## 实际资源消耗',
-              f"- 旧正式562.063秒/8259455 B/166480扫描；恢复保守{ledger.get('new_stage_elapsed_seconds',0):.6f}秒/{c.get('evidence_bytes',0)} B/{c.get('scans',0)}扫描。",
+              f"- 旧正式562.063秒/8259455 B/166480扫描、失败v1 220.562秒/1537791 B/1407扫描；v2保守{ledger.get('new_stage_elapsed_seconds',0):.6f}秒/{c.get('evidence_bytes',0)} B/{c.get('scans',0)}扫描。",
               f'- 正式总账 {seconds:.6f}/4380秒、{written}/134217728 B；余量 {4380-seconds:.6f}秒、{134217728-written} B。',
-              f"- CUDA峰{r.get('gpu_allocated_peak_bytes',0)} B；跨进程Windows最大峰{max(6447243264,r.get('windows_working_set_peak_bytes',0))} B；CPU代理峰{r.get('cpu_known_arrays_tensor_proxy_peak_bytes',0)} B。",
+              f"- 本轮CUDA峰{r.get('gpu_allocated_peak_bytes','unknown')} B、Windows峰{r.get('windows_working_set_peak_bytes','unknown')} B、CPU代理峰{r.get('cpu_known_arrays_tensor_proxy_peak_bytes','unknown')} B；跨阶段最大峰及缺项见run_record.joint_formal_accounting.resource_peaks。",
               f'- 准备74.9171745秒/11988355 B只继承一次；P累计 {74.9171745+seconds:.6f}秒/{11988355+written} B；旧未知及旧判据6 FAIL保留。',
-              '- 有效400000更新与失败461次保守收费分开，重复r80验证8次/1000例单列；区间仅近似验证抽样。',
+              f"- 新有效更新{c.get('backwards',0)}，完整头{160+ledger.get('progress',{}).get('new_completed_heads',0)}/400；失败461次与CPU前向分列；重复编码及近似区间见证据。",
               f'- 自评FAIL {fail}条；完整性/工程资格与科学得分分开。','','## 阻塞（没有写“无”）',
               '无' if completed else '- '+(ledger.get('error') or results.get('blocked') or 'CPU/入口失败').splitlines()[-1],
               '', '## 异议（没有写“无”）','无','', '## 需要审查者裁决的问题（≤3 条，没有写“无”）',
@@ -451,12 +535,13 @@ def review(ledger,results):
 
 def seal():
     import torch
+    r={}
     cost=json.loads((OUT/'check_cost.json').read_bytes())
     if (OUT/'run_record.json').exists():
         ledger=json.loads((OUT/'run_record.json').read_bytes()); index=json.loads((OUT/'artifact_hashes.json').read_bytes())
         if ledger.get('delivery_verification'): raise FileExistsError('already sealed')
     else:
-        ledger=dict(status='failed_before_real_input',error='CPU gate/launch failed; no retry authorized',counts=dict(evidence_bytes=cost['counts']['write_bytes']+1024**2,scans=cost['counts']['scans']),new_stage_elapsed_seconds=cost['program_seconds']+200,resources=dict(windows_working_set_peak_bytes=cost['resources']['windows_peak_bytes'],gpu_allocated_peak_bytes=0,cpu_known_arrays_tensor_proxy_peak_bytes=cost['resources']['cpu_proxy_bytes']))
+        ledger=dict(status='failed_before_real_input',error='CPU gate/launch failed; no retry authorized',counts=dict(evidence_bytes=cost['counts']['write_bytes']+1024**2,scans=cost['counts']['scans'],fits=0,backwards=0,optimizer_steps=0,forwards=cost['synthetic_head_forwards'],encoder_forwards=0,feature_samples=0,formal_runs=0),new_stage_elapsed_seconds=cost['program_seconds']+IMPLEMENTATION_UPPER_SECONDS+20,resources=dict(windows_working_set_peak_bytes=cost['resources']['windows_peak_bytes'],gpu_allocated_peak_bytes=0,cpu_known_arrays_tensor_proxy_peak_bytes=cost['resources']['cpu_proxy_bytes']))
         files={}
         for path in [*OUT.rglob('*'),*[ROOT/n for n in SOURCES]]:
             if path.is_file():
@@ -470,31 +555,36 @@ def seal():
     if ledger['status']=='completed':
         old_index=json.loads((OLD/'artifact_hashes.json').read_bytes()); scans+=1
         for name,row in old_index['files'].items():
-            raw=(ROOT/name).read_bytes(); scans+=1
-            if len(raw)!=row['bytes'] or sha(raw)!=row['sha256']: error='old sealed artifact changed: '+name; break
+            scans+=1
+            try: historical_locator(dict(path=name,**row),type('Scan',(),{'scan':lambda self:None})(),OLD_COMMIT,OLD)
+            except Exception: error='old sealed artifact changed: '+name; break
     elapsed=time.monotonic()-ENTRY_STARTED+.5
     if elapsed>20: error='verification exceeded precharged 20 second reserve'
     if error: ledger.update(status='failed_no_retry',error=error)
     ledger['counts']['scans']+=scans+10
-    ledger['resources']['windows_working_set_peak_bytes']=max(ledger['resources'].get('windows_working_set_peak_bytes',0),windows_memory()['peak_working_set_bytes'],6447243264)
-    c=ledger['counts']; old=json.loads((OLD/'run_record.json').read_bytes()) if (OUT/'resume_manifest.json').exists() else None
-    old_counts=old['counts'] if old else dict(fits=161,backwards=160461,optimizer_steps=160461,scans=166480)
-    ledger['joint_formal_accounting']=dict(old_seconds=562.063,old_bytes=8259455,new_seconds=ledger['new_stage_elapsed_seconds'],old_counts=old_counts,
-                                           fact_counts={k:old_counts.get(k,0)+c.get(k,0) for k in ['fits','backwards','optimizer_steps','forwards','encoder_forwards','feature_samples','scans']},
-                                           old_terminal_status='failed_terminal_limit',old_6GiB_qualification='FAIL',old_criterion_6='FAIL',effective_complete_heads=160+ledger.get('progress',{}).get('new_completed_heads',0),unknown_history_retained=True,
-                                           implementation_revisions=4,syntax_checks=4,CPU_suites=4,formal_runs=1+c.get('formal_runs',0),duplicate_validation_encoder=8 if c.get('encoder_forwards',0)>=8 else c.get('encoder_forwards',0))
+    ledger['resources']['windows_working_set_peak_bytes']=max(ledger['resources'].get('windows_working_set_peak_bytes',0),windows_memory()['peak_working_set_bytes'])
+    c=ledger['counts']; r=ledger['resources']
+    history=ledger.get('formal_history') or combine_history(inherited_records())
+    facts={k:(history['fact_counts'][k]+c.get(k,0) if isinstance(history['fact_counts'][k],int) else 'unknown') for k in FACT_FIELDS}
+    peaks={k:dict(new_measured=r.get(k),historical=history['resource_peaks'][k],
+                  known_max=max([v for v in [r.get(k),history['resource_peaks'][k]['known_max']] if isinstance(v,(int,float))],default=None)) for k in history['resource_peaks']}
+    ledger['joint_formal_accounting']=dict(inherited=history,new_seconds=ledger['new_stage_elapsed_seconds'],
+        fact_counts=facts,resource_peaks=peaks,old_terminal_status='failed_terminal_limit',failed_resume_status='failed_before_real_input',
+        old_6GiB_qualification='FAIL',old_criterion_6='FAIL',effective_complete_heads=160+ledger.get('progress',{}).get('new_completed_heads',0),
+        unknown_history_retained=True,implementation_revisions=5,syntax_checks=5,CPU_suites=5,
+        formal_runs=1+c.get('formal_runs',0),duplicate_validation_encoder=min(8,c.get('encoder_forwards',0)))
     ledger['delivery_verification']=dict(program_seconds=elapsed,precharged_seconds=20,index_readback='PASS' if error is None else 'FAIL',checked_files=scans,source_commit=git('rev-parse','HEAD'),real_input_reads=0,experiment_runs_new=0)
     # These are mutually distinct: preparation, old formal, new recovery, P total.
-    ledger['joint_formal_accounting']['seconds']=562.063+ledger['new_stage_elapsed_seconds']
+    ledger['joint_formal_accounting']['seconds']=782.625+ledger['new_stage_elapsed_seconds']
     before=c['evidence_bytes']; records=index['files']; ledger_name=(OUT/'run_record.json').relative_to(ROOT).as_posix()
     for _ in range(16):
         reviewer,fail,blocked=review(ledger,results)
         records['docs/workflow/TO_REVIEWER.md']=dict(bytes=len(reviewer),sha256=sha(reviewer))
         records[ledger_name]=dict(bytes=len(encode(ledger)),sha256='0'*64)
         c['evidence_bytes']=before+len(reviewer)+len(encode(ledger))+len(encode(index))
-        ledger['joint_formal_accounting']['bytes']=8259455+c['evidence_bytes']
-        ledger['P_cumulative']=dict(seconds=74.9171745+562.063+ledger['new_stage_elapsed_seconds'],bytes=11988355+8259455+c['evidence_bytes'],preparation_inherited_once=True)
-    if (c['evidence_bytes']>=125958273 or ledger['joint_formal_accounting']['seconds']>=4380 or c['scans']>333520 or ledger['resources']['windows_working_set_peak_bytes']>=16*1024**3): ledger.update(status='failed_terminal_limit',error='seal cumulative resource limit')
+        ledger['joint_formal_accounting']['bytes']=9797246+c['evidence_bytes']
+        ledger['P_cumulative']=dict(seconds=74.9171745+782.625+ledger['new_stage_elapsed_seconds'],bytes=11988355+9797246+c['evidence_bytes'],preparation_inherited_once=True)
+    if (c['evidence_bytes']>=124420482 or ledger['joint_formal_accounting']['seconds']>=4380 or c['scans']>332113 or ledger['resources']['windows_working_set_peak_bytes']>=16*1024**3): ledger.update(status='failed_terminal_limit',error='seal cumulative resource limit')
     reviewer,fail,blocked=review(ledger,results); records['docs/workflow/TO_REVIEWER.md']=dict(bytes=len(reviewer),sha256=sha(reviewer))
     raw=encode(ledger); records[ledger_name]=dict(bytes=len(raw),sha256=sha(raw))
     (ROOT/'docs/workflow/TO_REVIEWER.md').write_bytes(reviewer); (OUT/'run_record.json').write_bytes(raw); (OUT/'artifact_hashes.json').write_bytes(encode(index))

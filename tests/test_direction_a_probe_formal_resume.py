@@ -19,14 +19,58 @@ class Resume(unittest.TestCase):
             def namespace(context):
                 def work(b):
                     self.assertGreaterEqual(b.counts['evidence_bytes'],1024**2)
-                    for i in range(1000): b.write(ctx['output']/f'partial-{i:04d}',b'nonzero',raw=True)
+                    for i in range(1400): b.write(ctx['output']/f'partial-{i:04d}',b'nonzero',raw=True)
                     b.resources['windows_working_set_peak_bytes']=8*1024**3
                     raise RuntimeError('synthetic large partial archive')
                 return dict(LIMITS=ctx['limits'],main=work)
             value=wrapper.run_once(ctx,namespace)
             self.assertEqual(value['status'],'failed_no_retry')
             self.assertEqual(value['resources']['windows_working_set_peak_bytes'],8*1024**3)
-            self.assertGreater((ctx['output']/'artifact_hashes.json').stat().st_size,128*1024)
+            global LARGE_ARCHIVE_BYTES
+            LARGE_ARCHIVE_BYTES=(ctx['output']/'artifact_hashes.json').stat().st_size
+            self.assertGreater(LARGE_ARCHIVE_BYTES,128*1024)
+
+    def test_two_ledgers_once_missing_unknown_and_commit_locator(self):
+        rows=wrapper.inherited_records(); joint=wrapper.combine_history(rows)
+        self.assertEqual(joint['seconds'],782.625)
+        self.assertEqual(joint['bytes'],9797246)
+        self.assertEqual(joint['fact_counts']['forwards'],160796)
+        self.assertEqual(joint['fact_counts']['encoder_forwards'],16)
+        self.assertEqual(joint['fact_counts']['feature_samples'],2000)
+        self.assertTrue(joint['missing_fields_retained'])
+        self.assertNotIn('forwards',rows[1]['counts'])
+        with self.assertRaises(RuntimeError): wrapper.combine_history([rows[0],rows[0]])
+        rows[0]['counts'].pop('forwards')
+        self.assertEqual(wrapper.combine_history(rows)['fact_counts']['forwards'],'unknown')
+        with tempfile.TemporaryDirectory(dir=wrapper.OUT) as folder:
+            path=Path(folder)/'shared'; path.write_bytes(b'new')
+            locator=dict(path=path.relative_to(wrapper.ROOT).as_posix(),bytes=3,sha256=wrapper.sha(b'old'))
+            with patch.object(wrapper.subprocess,'check_output',return_value=b'old') as mock:
+                value=wrapper.historical_locator(locator,arithmetic.SyntheticBudget(),'synthetic_commit',wrapper.OLD)
+                self.assertEqual(value['commit'],'synthetic_commit')
+                self.assertIn('synthetic_commit:',mock.call_args.args[0][2])
+                locator['sha256']=wrapper.sha(b'bad')
+                with self.assertRaises(RuntimeError): wrapper.historical_locator(locator,arithmetic.SyntheticBudget(),'synthetic_commit',wrapper.OLD)
+
+    def test_production_inherits_two_ledgers_and_queue_isolation(self):
+        with tempfile.TemporaryDirectory(dir=wrapper.OUT) as folder:
+            ctx=old.context(Path(folder)/'attempt')
+            ctx['limits']={**wrapper.LIMITS,'evidence_bytes':8*1024**2}
+            ctx['formal_history']=wrapper.combine_history(wrapper.inherited_records())
+            ctx['old_counts']=ctx['formal_history']['fact_counts']
+            ctx['cumulative_scan_limit']=500000
+            def namespace(context):
+                def work(b):
+                    self.assertEqual(b.context['old_counts']['forwards'],160796)
+                    self.assertEqual(len(set(wrapper.expected_old()+wrapper.queue())),400)
+                    with self.assertRaises(RuntimeError): wrapper.assert_new_head(*wrapper.expected_old()[0])
+                    with self.assertRaises(PermissionError): b.write(wrapper.OLD/'synthetic',{})
+                    raise RuntimeError('synthetic immutable history exit')
+                return dict(LIMITS=ctx['limits'],main=work)
+            value=wrapper.run_once(ctx,namespace)
+            self.assertNotEqual(value['status'],'completed')
+            self.assertEqual(value['formal_history']['seconds'],782.625)
+
 
     def test_exact_queue_and_old_set(self):
         q=wrapper.queue(); prior=wrapper.expected_old()
@@ -39,7 +83,7 @@ class Resume(unittest.TestCase):
         for rid,seed in q: wrapper.assert_new_head(rid,seed)
 
     def test_old_write_denied_without_access(self):
-        for path in [wrapper.OLD,wrapper.OLD/'heads/example.pt',wrapper.OLD/'predictions/example.npz']:
+        for path in [wrapper.OLD,wrapper.OLD/'heads/example.pt',wrapper.OLD/'predictions/example.npz',wrapper.FAILED,wrapper.FAILED/'run_record.json']:
             with self.assertRaises(PermissionError): wrapper.assert_new_path(path)
         wrapper.assert_new_path(wrapper.OUT/'heads/new.pt')
 
