@@ -1,44 +1,46 @@
-# 交付单：G1.2 第二段 全20端正式测量与全端目标诊断
+# 交付单：P 可分性探针有界准备（启动失败）
 
-- 对应任务单的基准 commit：bfec9265ad57ac66fd45b90472e572a0e0eda0d3（当前输入13fb24f7865f3a9f3303bdaafb10ae0afbaf8e2b，已验证祖先关系）
+- 对应任务单的基准 commit：298a3e8b22986691acf2ede893c0dee04b610881
 - 本次交付 commit：见本提交
 
 ## 做了什么（≤5 条）
-- 按冻结W02、四个固定参考和两份封存任务，顺序完成全部20端的单次正式测量。
-- 保存80份完整float32端消息、一次编码的特征、NumPy float64类均值及独立逐样本外积全端参照。
-- 落实2e-6通过线，完成自检、消息严格读回、状态/BN及重复读回检查，并核验全部归档哈希与唯一索引。
-- 自动记录预登记、输入身份、累计限额、成本和逐项自评；归档核验时间/写入并入同一累计账本。
-- 准备P方案，未运行探针；只自评G1.2，未裁决来源偏差或方法收益。
+- 核对基准为当前HEAD祖先，读取STATE、任务单和G1.2裁决。
+- 写入训练内部划分、均衡线性头、置乱标签及受限计账的实现和相关自检代码；未经运行验证。
+- 一次启动在Python解析阶段失败，未执行模块语句、自检、特征读取或拟合；没有重跑。
+- 自动保存启动失败、零拟合结果、自检未执行标记、成本记录和文件哈希。
 
 ## 产出文件
-- `artifacts/direction_a/phaseG1_2_full_v1/`（下称F）：本轮完整证据，旧smoke包保持原样。
-- `direction_a/class_gradient_full.py`：冻结容差、全端加权、独立逐样本解析总和及累计资源保护。
-- `scripts/measure_direction_a_class_gradient_full.py`、`scripts/verify_direction_a_full_archive.py`：单次测量及归档校验/累计记账。
-- `tests/test_direction_a_class_gradient_full.py`：不等来源权重手算、独立外积及冻结容差边界测试；连同既有手算/有限差分自检在正式进程内运行，见F/selfchecks.json。
-- `scripts/direction_a_P_plan.md`：脚本写入F/P_plan.md的方案原文。
+- direction_a/probe_preparation.py：训练内部划分、损失、指标与拟合代码，未验证。
+- scripts/prepare_direction_a_probe.py：准备入口，527行缺少外层字典闭合，当前不可执行。
+- tests/test_direction_a_probe_preparation.py：相关解析/前向自检，未执行。
+- scripts/archive_direction_a_probe_startup_failure.ps1：仅归档已发生失败，不运行实验。
+- artifacts/direction_a/phaseP_preparation_v1/startup_failure.txt：原启动错误、退出码与命令耗时。
+- 同目录results.json、selfchecks.json、run_record.json、artifact_hashes.json：失败状态与机器可读记录。
+- preregistration.json、split.json、24个最终头、threshold_basis.md和formal_plan.json未生成。
 
 ## 判据自评
 | 判据编号 | 结果 PASS/FAIL | 证据位置 / 关键数字 |
 |---|---|---|
-| 1 | PASS | F/reference_acceptance.json；四点原包/封存任务/生成与验证记录对应，模型/BN前后及重复读回哈希严格相等，无参数梯度/更新。 |
-| 2 | PASS | F/measurements.json；逐点0–19端；C10每点11165样本/85正类，C100每点9754/593；80扫描、41838编码、1356完整主梯度、220个G_c，缺类列表无伪消息。 |
-| 3 | PASS | F/preregistration.json、environment.json、W02_measurement.json；完整train一次、encode/head=128、eval float32纯CE、CPU float64累加/n_ic后float32消息；范数全部分母/统计齐全，端内无抽样噪声。 |
-| 4 | PASS | F/measurements.json、archive_verification.json及diagnostics/；1356主比较最大3.1449943e-7，480辅助比较最大3.5667195e-7，均≤2e-6；每端最小/最大存在类前≤8样本，含逐样本均值和CPU/CUDA对照。 |
-| 5 | PASS | F/measurements.json的provenance及diagnostics/；220个G_c与4个等权G共224比较，最大1.9243839e-7；独立逐样本外积求和/N_c；来源ID/计数/权重齐全，权重和误差最大0，L2已记录。 |
-| 6 | PASS | F/run_record.json、W02_measurement.json、artifact_hashes.json、archive_verification.json；80消息唯一定位，原归档93文件哈希通过，最终索引纳入账本与归档校验；实际资源见下。旧第四点计时仍缺失。 |
-| 7 | PASS | F/P_plan.md；四点、训练/验证隔离、均衡头/原头/无信息对照、τ_probe事前确定与成本/额度申请程序齐全，无实测门槛或P运行。 |
+|1|FAIL|results.json：未完成四参考/逐端train特征核验；没有新编码或正式评价，原状态未操作|
+|2|FAIL|results.json：划分代码未运行，split.json未生成|
+|3|FAIL|results.json：完成0/24头，没有实际置乱/拟合结果|
+|4|FAIL|startup_failure.txt：解析失败；反向/优化器均0，目标记录和最终头缺失|
+|5|FAIL|results.json：所有实测CE/recall/差值和分母缺失|
+|6|FAIL|run_record.json、artifact_hashes.json：失败账本可定位，但完整头/峰值证据缺失|
+|7|FAIL|threshold_basis.md、formal_plan.json缺失；未冻结τ_probe，未判断P可分性|
 
 ## 实际资源消耗
-- 程序累计30.499秒（正式进程26.703秒，归档校验3.796秒）；CUDA allocated峰137180160 B，Windows working-set峰1570463744 B，CPU已知数组/张量保守代理峰815032704 B。
-- 新证据累计写入253510045 B（含覆盖及128 KiB应急预留），逻辑上下行165341908 B；均低于256 MiB。纯张量、容器元数据、理论下行和诊断成本在F/W02_measurement.json分账。
-- 前向3014、求导/梯度请求各2646、统计扫描9621；80端扫描/41838编码，额外编码0；正式运行1、失败重跑0、实现修订1；训练attempt/优化器/搜索0。
-- 旧成本引用原smoke及resume账本单列；C100 r80旧逐端计时为null，没有回填。
+- 唯一准备启动命令耗时0.4250004秒（执行工具计时，含进程启动/退出）；归档时间、写入和归档进程峰值见run_record.json。
+- 准备运行启动1次，失败重跑0，搜索0，实现修订2次，拟合/反向/优化器/头前向/新编码/通信/类梯度请求均0。
+- Python准备进程的峰值显存/Windows working-set/CPU代理未测得，写null，不声称全部资源检查通过。
+- 旧G1.2成本在results.json.reused_G1_2_costs单列，本轮未实际读取训练特征。
 
 ## 阻塞
-无
+- scripts/prepare_direction_a_probe.py:527存在括号闭合语法错误；模块解析失败导致预注册和运行尚未开始。
+- 任务单禁止失败重跑，且实现修订2次额度已耗尽；停止修订/执行，不自行扩额。修复和重新执行须由审查者重新授权。
 
 ## 异议
 无
 
-## 需要审查者裁决的问题（≤3 条，没有写“无”）
-无
+## 需要审查者裁决的问题（≤3 条，没有写"无"）
+- 是否为语法修复及重新启动另行授权实现修订/运行额度；现有失败记录和成本必须保留，不清零。
