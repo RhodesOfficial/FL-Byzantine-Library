@@ -1,0 +1,181 @@
+{
+  "baseline_commit": "bfec9265ad57ac66fd45b90472e572a0e0eda0d3",
+  "contracts": {
+    "docs/DIRECTION_A_G1_2_ADJUDICATION_v1.md": "c2240e1ee25fd29bcd11e042b41c0c8b160b60ea4a8ac7ce8fc7bb7c561b8e5a",
+    "docs/DIRECTION_A_PROTOCOL_FREEZE_v1.md": "9028ab4fbbbaa9522dd0c877a6c0a7f7d6978b04a0ea778bf4cc89c6b2afa336",
+    "docs/workflow/TO_EXECUTOR.md": "c365c9385366e2793a08146027f3b5233f26fda28a66afb672dc85f101f7788b"
+  },
+  "definitions": {
+    "G": "equal-class mean of G_c",
+    "G_c": "sum_i n_ic/N_c * client class mean",
+    "epsilon": 2e-06,
+    "mode": "eval, float32, pure sum CE; CPU float64 chunk accumulation/n_ic -> float32",
+    "noise": "no within-client subsampling; auxiliary <=8 first samples of min/max present class",
+    "norm": "joint weight+bias Linf / max(1, reference Linf)",
+    "oracle": "NumPy float64 class means; separate individual outer-product sums/N_c"
+  },
+  "input_commit": "13fb24f7865f3a9f3303bdaafb10ae0afbaf8e2b",
+  "limits": {
+    "attempts": 0,
+    "backwards": 10000,
+    "class_gradient_requests": 10000,
+    "client_scans": 80,
+    "cpu_tensor_proxy_bytes": 2147483648,
+    "evidence_bytes": 268435456,
+    "extra_encoded_positions": 0,
+    "feature_samples": 41838,
+    "formal_runs": 1,
+    "forwards": 20000,
+    "gpu_allocated_bytes": 6442450944,
+    "implementation_revisions": 2,
+    "logical_copy_bytes": 268435456,
+    "optimizer_steps": 0,
+    "per_run": {},
+    "phase_seconds": {},
+    "retries": 0,
+    "scans": 20000,
+    "searches": 0,
+    "wall_seconds": 600,
+    "windows_peak_working_set_bytes": 6442450944
+  },
+  "old_costs": {
+    "C100_r80_old_per_client_timing": null,
+    "continuation": "artifacts/direction_a/phaseG1_2_smoke_v1/resume_run_record.json",
+    "original": "artifacts/direction_a/phaseG1_2_smoke_v1/run_record.json",
+    "reason": "lost in old terminated process; never reconstructed"
+  },
+  "references": [
+    {
+      "checkpoint_file_sha256": "4824d4a52a3aa46df594e7600d72cb64eab082a33b376dbebe17057d3081f26c",
+      "checkpoint_integrity": "bitwise complete state readback; no epsilon used",
+      "checkpoint_path": "checkpoints/A-backbone-CIFAR10-s2026101321-r0040-v1.pt",
+      "dataset": "CIFAR10",
+      "qualification": "pending_G1.2_acceptance",
+      "reference_id": "A-backbone-CIFAR10-s2026101321-r0040-v1",
+      "run_id": "FedPCC-backbone-prep-CIFAR10-v1",
+      "state_sha256": "48466c475471fe8a05392a54fbca7fa9eee2d9189b2ca7041e9a72244b6d5fb3",
+      "task_identity": "FedPCC-0.2-candidate-CIFAR10-N20-v1",
+      "training_progress": {
+        "attempts": 40,
+        "optimizer_steps": 1600,
+        "update_round": 40
+      },
+      "validation_record_key": "records/reference_id=A-backbone-CIFAR10-s2026101321-r0040-v1",
+      "validation_record_path": "validation_record.json"
+    },
+    {
+      "checkpoint_file_sha256": "d8e137b9feeda74bb3bf401b64569e0075f3ec52914eb0ccf72d56040965a5ed",
+      "checkpoint_integrity": "bitwise complete state readback; no epsilon used",
+      "checkpoint_path": "checkpoints/A-backbone-CIFAR10-s2026101321-r0080-v1.pt",
+      "dataset": "CIFAR10",
+      "qualification": "pending_G1.2_acceptance",
+      "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+      "run_id": "FedPCC-backbone-prep-CIFAR10-v1",
+      "state_sha256": "c2a11303f977029a840946f1703047288365ec4b6bbb7136db3ad3eb65ad4b44",
+      "task_identity": "FedPCC-0.2-candidate-CIFAR10-N20-v1",
+      "training_progress": {
+        "attempts": 80,
+        "optimizer_steps": 3200,
+        "update_round": 80
+      },
+      "validation_record_key": "records/reference_id=A-backbone-CIFAR10-s2026101321-r0080-v1",
+      "validation_record_path": "validation_record.json"
+    },
+    {
+      "checkpoint_file_sha256": "e778839c234857195c4e00d286b6210d8898d4e1405f504ca2b2a5f0c75a8764",
+      "checkpoint_integrity": "bitwise complete state readback; no epsilon used",
+      "checkpoint_path": "checkpoints/A-backbone-CIFAR100-s2026101322-r0040-v1.pt",
+      "dataset": "CIFAR100",
+      "qualification": "pending_G1.2_acceptance",
+      "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+      "run_id": "FedPCC-backbone-prep-CIFAR100-v1",
+      "state_sha256": "3b4e3a4b03982c4b3bf1c6be16a46999ffc3987934443b59b25370ada831408f",
+      "task_identity": "FedPCC-0.2-candidate-CIFAR100-N20-v1",
+      "training_progress": {
+        "attempts": 40,
+        "optimizer_steps": 1600,
+        "update_round": 40
+      },
+      "validation_record_key": "records/reference_id=A-backbone-CIFAR100-s2026101322-r0040-v1",
+      "validation_record_path": "validation_record.json"
+    },
+    {
+      "checkpoint_file_sha256": "7b6faf5b0a4be006133c72140d60e9d5918d52f8aa953f800b87efab268dccae",
+      "checkpoint_integrity": "bitwise complete state readback; no epsilon used",
+      "checkpoint_path": "checkpoints/A-backbone-CIFAR100-s2026101322-r0080-v1.pt",
+      "dataset": "CIFAR100",
+      "qualification": "pending_G1.2_acceptance",
+      "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+      "run_id": "FedPCC-backbone-prep-CIFAR100-v1",
+      "state_sha256": "5a84b86e6d66a21ea5ea2ebf2e72b41a37db86402e2063cdc5a9b2d34018597a",
+      "task_identity": "FedPCC-0.2-candidate-CIFAR100-N20-v1",
+      "training_progress": {
+        "attempts": 80,
+        "optimizer_steps": 3200,
+        "update_round": 80
+      },
+      "validation_record_key": "records/reference_id=A-backbone-CIFAR100-s2026101322-r0080-v1",
+      "validation_record_path": "validation_record.json"
+    }
+  ],
+  "resource_estimate": {
+    "basis": "sealed counts, complete head array sizes; 14 MB envelope for metadata/serialization/cumulative ledgers; old smoke scaling",
+    "cpu_proxy_bytes": 1900000000,
+    "evidence_bytes_including_reserve": 264000000,
+    "gpu_bytes": 1073741824,
+    "logical_bytes": 100000000,
+    "seconds": 180,
+    "windows_working_set_bytes": 3221225472
+  },
+  "run_id": "FedPCC-G1.2-full-measurement-v1",
+  "scan_plan": {
+    "CIFAR100_per_point": [
+      9754,
+      593
+    ],
+    "CIFAR10_per_point": [
+      11165,
+      85
+    ],
+    "G_c": 220,
+    "client_ids": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "client_scans": 80,
+    "encode_chunk": 128,
+    "encoded_positions": 41838,
+    "extra_encoding": 0,
+    "head_chunk": 128,
+    "main_records": 1356
+  },
+  "source_fingerprints": {
+    "direction_a/backbone_preparation.py": "e0298782e037ad0dcf16b14444e84cf0f629df9ac7035b7280947b1cba8aea73",
+    "direction_a/class_gradient_full.py": "69e606765ed108993a72c7b3785fcfc3746c96814e045034d9849c8cb597be70",
+    "direction_a/class_gradient_smoke.py": "e01b2efa47bedb9ace7e691b4826419f812864fd9a16335cd960561c3e4455bb",
+    "direction_a/model.py": "6fabfbb5d4510d1ea4f827f8d103472d31dbcec2e10f6f1d61c4c8bff7427990",
+    "models/ResNet.py": "73c4b0120c18f258b7bbe8cb87a13fb6b6c6896e0789b53505b141efc40295ce",
+    "scripts/measure_direction_a_class_gradient_full.py": "0e3e056d0ac420edbae426bb77bd89bb28861ff38bdcb565ea6aaab4daec2156",
+    "scripts/measure_direction_a_class_gradient_smoke.py": "0c45a003fef521edd77db3e6e3b4c50119f779af983a3193b50462a29340c713",
+    "tests/test_direction_a_class_gradient_full.py": "4c7f98c907bc0ee018e5b2b402f00fe65e7d09b3f5742141017255eb8d641d7c"
+  },
+  "started_at": "2026-10-14T11:29:03.917925+08:00"
+}
