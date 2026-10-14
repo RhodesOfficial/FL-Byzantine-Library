@@ -1,0 +1,190 @@
+{
+  "CPU_suites": 2,
+  "actual_command": [
+    "E:\\anaconda3\\python.exe",
+    "-B",
+    "scripts/recover_direction_a_probe.py",
+    "--check"
+  ],
+  "cases": [
+    {
+      "case": "startup_tests.StartupTests.test_cumulative_time_limit_includes_synthetic_history",
+      "status": "PASS"
+    },
+    {
+      "case": "startup_tests.StartupTests.test_cumulative_write_limit_includes_synthetic_history",
+      "status": "PASS"
+    },
+    {
+      "case": "startup_tests.StartupTests.test_existing_marker_and_ledger_are_immutable",
+      "status": "PASS"
+    },
+    {
+      "case": "startup_tests.StartupTests.test_missing_inherited_cost_is_rejected_before_writing",
+      "status": "PASS"
+    },
+    {
+      "case": "startup_tests.StartupTests.test_production_after_constructor_nonzero_work",
+      "status": "PASS"
+    },
+    {
+      "case": "startup_tests.StartupTests.test_production_archive_error_nonzero_work",
+      "status": "PASS"
+    },
+    {
+      "case": "startup_tests.StartupTests.test_production_before_constructor",
+      "status": "PASS"
+    },
+    {
+      "case": "startup_tests.StartupTests.test_production_normal_preserves_peaks",
+      "status": "PASS"
+    },
+    {
+      "case": "startup_tests.StartupTests.test_production_terminal_scan_limit",
+      "status": "PASS"
+    },
+    {
+      "case": "startup_tests.StartupTests.test_production_terminal_time_limit",
+      "status": "PASS"
+    },
+    {
+      "case": "startup_tests.StartupTests.test_production_terminal_write_limit",
+      "status": "PASS"
+    },
+    {
+      "case": "startup_tests.StartupTests.test_real_parent_initialization_and_exact_write_inheritance",
+      "status": "PASS"
+    },
+    {
+      "case": "startup_tests.StartupTests.test_repair_history_is_inherited_once",
+      "status": "PASS"
+    },
+    {
+      "case": "startup_tests.StartupTests.test_sealed_directories_rejected_without_access",
+      "status": "PASS"
+    },
+    {
+      "case": "startup_tests.StartupTests.test_time_limit_saves_failure_and_preserves_history",
+      "status": "PASS"
+    },
+    {
+      "case": "startup_tests.StartupTests.test_v2_cumulative_totals_are_not_double_counted",
+      "status": "PASS"
+    },
+    {
+      "case": "startup_tests.StartupTests.test_wrapper_exception_after_budget",
+      "status": "PASS"
+    },
+    {
+      "case": "startup_tests.StartupTests.test_wrapper_exception_before_budget",
+      "status": "PASS"
+    },
+    {
+      "case": "startup_tests.StartupTests.test_wrapper_normal_archive_and_no_retry",
+      "status": "PASS"
+    },
+    {
+      "case": "startup_tests.StartupTests.test_write_limit_rejects_payload_and_records_failed_state",
+      "status": "PASS"
+    }
+  ],
+  "implementation_revisions": 2,
+  "inherited_history": {
+    "bytes": 1159812,
+    "commit": "b702a8416187b50aa130b01fb333db98f81116ac",
+    "reported_seconds": 14.430387899832567,
+    "revisions": 6,
+    "scan_upper": 286,
+    "unknowns": {
+      "CPU_proxy_reason": "v2 used fixed 8MiB without arrays/tensors inventory; only small explicit file buffers recoverable, not a verified full proxy",
+      "v1_overwritten_source_bytes": null,
+      "v1_preparation_peaks": {
+        "archive_known_array_proxy_upper_bytes": 8388608,
+        "archive_windows_working_set_peak_bytes": 93892608,
+        "preparation_cpu_tensor_proxy_peak_bytes": null,
+        "preparation_cuda_allocated_peak_bytes": null,
+        "preparation_windows_working_set_peak_bytes": null
+      },
+      "v2_CPU_array_tensor_proxy_verified": null,
+      "v2_cuda_peak": null,
+      "v2_final_windows_peak": null,
+      "v2_reported_CPU_proxy_bytes": 8388608,
+      "v2_reported_windows_peak_to_sample_bytes": 359088128
+    },
+    "upper_seconds": 15.839174499851651
+  },
+  "isolation": {
+    "CUDA_initialized": false,
+    "data_training_dependencies": "synthetic injected namespace",
+    "forbidden_attempts": [],
+    "production_run_once_called": true,
+    "real_input_reads": 0,
+    "synthetic_costs_separate": true
+  },
+  "resources": {
+    "cpu_proxy_upper_bytes": 1487104,
+    "cuda_allocated_peak_bytes": 0,
+    "windows_working_set_peak_bytes": 359145472
+  },
+  "source_fingerprints": {
+    "direction_a/probe_preparation.py": "b91408f9eb6f5e73af571f844fe8c2245eee2ca515c3ecaa5dc5541e88357958",
+    "direction_a/probe_startup.py": "a559b9fd31d809daa4ad2d45e2611a3ef1069ab62ecbecb04126b095f9fec628",
+    "scripts/prepare_direction_a_probe.py": "ec795cd52fb10f89bac893f53dda68d1ad9ba1c84869ceafd71241cb96689cb4",
+    "scripts/recover_direction_a_probe.py": "d2623769ad39e15c4e00e9f5d77ff4c81f83c07f2e818b754d538570847a9aca",
+    "tests/test_direction_a_probe_preparation.py": "1853224b66b1329e12948e36880994603473f8a2a113bb3bd6f1a150ee8f0e32",
+    "tests/test_direction_a_probe_startup.py": "4535c62dce01e085c9d353dd18a3c420099ed85bee03c086b32a44f577c2c540"
+  },
+  "source_write_events": [
+    {
+      "bytes": 15516,
+      "path": "direction_a/probe_startup.py",
+      "revision": 1,
+      "sha256": "63c197ceca6100df0a64d625a5c1b26b1b021eda1d9a76d6068c53e7eb74ab5a"
+    },
+    {
+      "bytes": 10852,
+      "path": "scripts/recover_direction_a_probe.py",
+      "revision": 1,
+      "sha256": "14f49d058ee06e18e2ced2042aa9ccc13283106b858bcd25c223994dd947e70f"
+    },
+    {
+      "bytes": 43442,
+      "path": "scripts/prepare_direction_a_probe.py",
+      "revision": 1,
+      "sha256": "ec795cd52fb10f89bac893f53dda68d1ad9ba1c84869ceafd71241cb96689cb4"
+    },
+    {
+      "bytes": 14455,
+      "path": "tests/test_direction_a_probe_startup.py",
+      "revision": 1,
+      "sha256": "7e27af5acf6878143a55d3c8ca47fa922e42c009cd1d241b863288c19d347917"
+    },
+    {
+      "bytes": 15516,
+      "path": "direction_a/probe_startup.py",
+      "revision": 1,
+      "write_kind": "intermediate overwrite conservative size bound"
+    },
+    {
+      "bytes": 15877,
+      "path": "direction_a/probe_startup.py",
+      "revision": 2,
+      "sha256": "a559b9fd31d809daa4ad2d45e2611a3ef1069ab62ecbecb04126b095f9fec628"
+    },
+    {
+      "bytes": 12315,
+      "path": "scripts/recover_direction_a_probe.py",
+      "revision": 2,
+      "sha256": "d2623769ad39e15c4e00e9f5d77ff4c81f83c07f2e818b754d538570847a9aca"
+    },
+    {
+      "bytes": 14473,
+      "path": "tests/test_direction_a_probe_startup.py",
+      "revision": 2,
+      "sha256": "4535c62dce01e085c9d353dd18a3c420099ed85bee03c086b32a44f577c2c540"
+    }
+  ],
+  "status": "PASS",
+  "syntax_checks": 2,
+  "tests_run": 20
+}

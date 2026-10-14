@@ -1,270 +1,175 @@
-"""One syntax-only check, then one accounted P-v2 startup, including failure capture.
-
-E:\\anaconda3\\python.exe -B scripts/recover_direction_a_probe.py --syntax-only
-E:\\anaconda3\\python.exe -B scripts/recover_direction_a_probe.py
-
-Never imports/executes experimental modules during the syntax-only check.
-No third launch, reset, v1 modification or runtime science override exists.
-"""
-
+"""P-v3 production orchestration; CPU regression gates single real-input run."""
 import time
-ENTRY_STARTED = time.monotonic()
-
-import ctypes
+ENTRY_STARTED=time.monotonic()
 import hashlib
+import importlib.util
 import json
-import os
 import subprocess
 import sys
-import threading
 import traceback
-from ctypes import wintypes
+import unittest
 from pathlib import Path
+from unittest.mock import patch
 
-sys.dont_write_bytecode = True
-ROOT = Path(__file__).resolve().parents[1]
+sys.dont_write_bytecode=True
+ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
-
-
-def execute_attempt(*args,**kwargs):
-    # Syntax-only invocation must not import the runtime budget or PyTorch.
-    from direction_a.probe_startup import execute_attempt as runtime_attempt
-    return runtime_attempt(*args,**kwargs)
-OUT = ROOT / "artifacts/direction_a/phaseP_preparation_v2"
-BASE = "d7706748e70f63885572aded57fab9e674d1a086"
-OLD = ROOT / "artifacts/direction_a/phaseP_preparation_v1"
-CHECK_PATHS = ["scripts/recover_direction_a_probe.py", "scripts/prepare_direction_a_probe.py",
-               "direction_a/probe_preparation.py", "tests/test_direction_a_probe_preparation.py",
-               "direction_a/probe_startup.py"]
-NEW_SOURCE_WRITES = ["scripts/recover_direction_a_probe.py"]
-# Full resulting file writes from implementation revision 1, measured before
-# applying revision 2. Both overwrites are charged, including this wrapper.
-PRIOR_SOURCE_WRITE_EVENTS = [
-    dict(path="scripts/prepare_direction_a_probe.py", bytes=45184, revision=1,
-         sha256="ac8f8a720dd5adfde726c07c0aa1a1440c4d33d8dc7edbaf4219c63fc539b681"),
-    dict(path="scripts/recover_direction_a_probe.py", bytes=11147, revision=1,
-         sha256="9aea145eabfd11f3f211499b8739ab83cacdb783cb8a6ade265bb85da734c50c"),
-    dict(path="scripts/prepare_direction_a_probe.py", bytes=45742, revision=2,
-         sha256="ee5c00efc455100ed0d15b124ddb96b48b999ea36bd839d5198d57a34c896d47"),
-    dict(path="scripts/recover_direction_a_probe.py", bytes=15370, revision=2,
-         sha256="be5a7f4065d0d96c5daf7d943c265d110f68e781290fd3422a35ae690e147bb9")]
-
+OUT=ROOT/"artifacts/direction_a/phaseP_preparation_v3"
+BASE="2f7b638550c1b986b7fa2ffd3eabcd191e956cc8"
+REPAIR="b702a8416187b50aa130b01fb333db98f81116ac"
+HISTORY_PATH="artifacts/direction_a/phaseP_startup_repair_v1/run_record.json"
+SOURCES=["direction_a/probe_startup.py","scripts/recover_direction_a_probe.py",
+         "scripts/prepare_direction_a_probe.py","tests/test_direction_a_probe_startup.py"]
 
 def encode(value):
-    return (json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True, allow_nan=False)+"\n").encode("utf-8")
+    return (json.dumps(value,ensure_ascii=False,sort_keys=True,indent=2,allow_nan=False)+"\n").encode()
 
+def sha(raw): return hashlib.sha256(raw).hexdigest()
 
-def sha(raw):
-    return hashlib.sha256(raw).hexdigest()
+def execute_attempt(*args,**kwargs):
+    from direction_a.probe_startup import execute_attempt as execute
+    return execute(*args,**kwargs)
 
+def production_namespace(context):
+    ns=dict(__file__=str(ROOT/"scripts/prepare_direction_a_probe.py"),__name__="bounded_probe_runtime",RECOVERY_CONTEXT=context)
+    raw=(ROOT/"scripts/prepare_direction_a_probe.py").read_bytes()
+    exec(compile(raw,ns["__file__"],"exec"),ns)
+    return ns
 
-def git_raw(*args):
-    return subprocess.check_output(["git", *args], cwd=ROOT)
+def run_once(context,namespace_factory=production_namespace):
+    """Both injected CPU work and real training use this factory/work wiring."""
+    ns={}
+    def factory():
+        ns.update(namespace_factory(context))
+        context["limits"]=ns["LIMITS"]
+        from direction_a.probe_startup import RecoveryBudget
+        return RecoveryBudget(context)
+    def work(budget): ns["main"](budget)
+    def archive(budget):
+        if ns.get("archive_callback"): ns["archive_callback"](budget)
+    return execute_attempt(context,factory,work,archive)
 
+def committed_history():
+    raw=subprocess.check_output(["git","show",f"{REPAIR}:{HISTORY_PATH}"],cwd=ROOT)
+    if (ROOT/HISTORY_PATH).read_bytes().replace(b"\r\n",b"\n")!=raw:
+        raise RuntimeError("sealed repair ledger changed")
+    value=json.loads(raw)
+    value.update(commit=REPAIR,ledger_sha256=sha(raw),old_preparation_criterion_6="FAIL")
+    return value
 
-def peak_memory():
-    class Counters(ctypes.Structure):
-        _fields_ = [("cb", wintypes.DWORD), ("PageFaultCount", wintypes.DWORD)] + [
-            (name, ctypes.c_size_t) for name in ("PeakWorkingSetSize", "WorkingSetSize", "QuotaPeakPagedPoolUsage",
-                "QuotaPagedPoolUsage", "QuotaPeakNonPagedPoolUsage", "QuotaNonPagedPoolUsage", "PagefileUsage", "PeakPagefileUsage")]
-    kernel = ctypes.WinDLL("kernel32", use_last_error=True)
-    api = ctypes.WinDLL("psapi", use_last_error=True)
-    kernel.GetCurrentProcess.restype = wintypes.HANDLE
-    api.GetProcessMemoryInfo.argtypes = (wintypes.HANDLE, ctypes.POINTER(Counters), wintypes.DWORD)
-    value = Counters(); value.cb = ctypes.sizeof(value)
-    if not api.GetProcessMemoryInfo(kernel.GetCurrentProcess(), ctypes.byref(value), value.cb):
-        raise OSError(ctypes.get_last_error(), "GetProcessMemoryInfo failed")
-    return int(value.PeakWorkingSetSize)
-
-
-def syntax_only():
-    previous = None
+def check():
+    previous=None; previous_regression=None
     if OUT.exists():
-        if {p.name for p in OUT.iterdir()} != {"syntax_check.json"}:
-            raise RuntimeError("P-v2 startup/output exists: refusing a repeated syntax check")
-        previous = json.loads((OUT/"syntax_check.json").read_bytes())
-        if previous["syntax_check_invocations"] >= 2:
-            raise RuntimeError("pure syntax check cap reached")
-    else:
-        OUT.mkdir(parents=True)
-    records, errors = {}, []
-    for name in CHECK_PATHS:
-        raw = (ROOT/name).read_bytes()
-        try:
-            compile(raw, str(ROOT/name), "exec")
-            status = "PASS"
-        except SyntaxError as exc:
-            errors.append(dict(path=name, error=str(exc)))
-            status = "FAIL"
-        records[name] = dict(bytes=len(raw), sha256=sha(raw), status=status)
-    value = dict(status="FAIL" if errors else "PASS", syntax_check_invocations=1 if previous is None else 2,
-        target_modules_imported=0, experiment_inputs_read=0, fits=0, optimizer_steps=0,
-        check_method="compile(source_bytes, filename, 'exec') only; no module execution",
-        files=records, errors=errors, program_seconds=time.monotonic()-ENTRY_STARTED+0.05,
-        final_write_time_reserved_seconds=0.05, windows_peak_working_set_bytes=peak_memory(),
-        cpu_known_array_proxy_upper_bytes=8*1024**2)
-    if previous is not None:
-        value["prior_checks"] = [previous]
-        value["program_seconds"] += previous["program_seconds"]
-        value["windows_peak_working_set_bytes"] = max(value["windows_peak_working_set_bytes"],previous["windows_peak_working_set_bytes"])
-    # Fixed-length closure measures the syntax evidence write itself.
-    value["evidence_bytes"] = 0
-    for _ in range(8):
-        value["evidence_bytes"] = len(encode(value)) + (0 if previous is None else previous["evidence_bytes"])
-    (OUT/"syntax_check.json").write_bytes(encode(value))
-    print(json.dumps(dict(syntax_check=value["status"], seconds=value["program_seconds"])))
-    return 1 if errors else 0
+        if (OUT/"startup_record.json").exists() or (OUT/"run_record.json").exists(): raise FileExistsError("entry attempt exists; no overwrite")
+        previous=json.loads((OUT/"check_cost.json").read_bytes())
+        previous_regression=json.loads((OUT/"startup_regression.json").read_bytes())
+        if previous_regression["CPU_suites"]>=3: raise RuntimeError("CPU suite cap")
+    OUT.mkdir(parents=True,exist_ok=True)
+    revision=1 if previous is None else previous_regression["implementation_revisions"]+1
+    counts=dict(write_bytes=128*1024,scans=0) if previous is None else dict(previous["counts"])
+    events=[] if previous is None else list(previous["source_write_events"])
+    for name in SOURCES:
+        raw=(ROOT/name).read_bytes(); counts["scans"]+=1
+        if previous is None or sha(raw)!=previous_regression["source_fingerprints"][name]:
+            events.append(dict(path=name,bytes=len(raw),sha256=sha(raw),revision=revision))
+    # First startup-module patch was smaller than its final form; charge final
+    # size again as an explicit conservative bound for that intermediate write.
+    if previous is None:
+        events.append(dict(path=SOURCES[0],bytes=events[0]["bytes"],revision=1,
+                           write_kind="intermediate overwrite conservative size bound"))
+    counts["write_bytes"]+=sum(e["bytes"] for e in events[len(previous["source_write_events"]) if previous else 0:])
+    if previous:
+        counts["write_bytes"]+=sum(p.stat().st_size for p in (OUT/"attempts/check1_sources").glob("*"))
+    forbidden=[]; peak_buffer=max(e["bytes"] for e in events)
+    read,write=Path.read_bytes,Path.write_bytes
+    def tracked_read(path):
+        nonlocal peak_buffer
+        name=str(path.resolve()).replace("\\","/")
+        if any(x in name for x in ("/RAW_DATA/","/checkpoints/","/phaseG1_2_","/phase0_2_v1/tasks/")):
+            forbidden.append(name); raise AssertionError("real experiment read intercepted")
+        raw=read(path); counts["scans"]+=1; peak_buffer=max(peak_buffer,len(raw)); return raw
+    def tracked_write(path,raw):
+        nonlocal peak_buffer
+        from direction_a.probe_startup import PROTECTED
+        p=path.resolve()
+        if any(p==x.resolve() or x.resolve() in p.parents for x in PROTECTED): raise PermissionError("sealed evidence write")
+        if counts["write_bytes"]+len(raw)>=4*1024**2 or time.monotonic()-ENTRY_STARTED>=60:
+            raise RuntimeError("CPU repair resource cap")
+        result=write(path,raw); counts["write_bytes"]+=len(raw); peak_buffer=max(peak_buffer,len(raw)); return result
+    with patch.object(Path,"read_bytes",tracked_read),patch.object(Path,"write_bytes",tracked_write):
+        if previous:
+            attempt_dir=OUT/"attempts"/f"check{previous_regression['CPU_suites']}"
+            attempt_dir.mkdir(parents=True,exist_ok=False)
+            for name in ("syntax_check.json","startup_regression.json","check_cost.json"):
+                (attempt_dir/name).write_bytes((OUT/name).read_bytes())
+        syntax=[]
+        for name in SOURCES+["direction_a/probe_preparation.py","tests/test_direction_a_probe_preparation.py"]:
+            raw=(ROOT/name).read_bytes()
+            try: compile(raw,name,"exec"); status="PASS"; error=None
+            except SyntaxError: status="FAIL"; error=traceback.format_exc()
+            syntax.append(dict(path=name,sha256=sha(raw),status=status,error=error))
+        syntax_ok=all(x["status"]=="PASS" for x in syntax)
+        command=[sys.executable,"-B","scripts/recover_direction_a_probe.py","--check"]
+        invocation=1 if previous is None else previous_regression["CPU_suites"]+1
+        (OUT/"syntax_check.json").write_bytes(encode(dict(status="PASS" if syntax_ok else "FAIL",invocation=invocation,files=syntax,actual_command=command,target_modules_executed=0)))
+        import torch
+        from direction_a.backbone_preparation import windows_memory
+        if torch.cuda.is_initialized(): raise RuntimeError("CPU isolation CUDA already initialized")
+        def deny(name):
+            def blocked(*a,**kw): forbidden.append(name); raise AssertionError(name+" blocked")
+            return blocked
+        class Results(unittest.TestResult):
+            def __init__(self): super().__init__(); self.cases=[]
+            def addSuccess(self,t): super().addSuccess(t); self.cases.append(dict(case=t.id(),status="PASS"))
+            def addError(self,t,e): super().addError(t,e); self.cases.append(dict(case=t.id(),status="FAIL",error=self._exc_info_to_string(e,t)))
+            def addFailure(self,t,e): super().addFailure(t,e); self.cases.append(dict(case=t.id(),status="FAIL",error=self._exc_info_to_string(e,t)))
+        result=Results()
+        with patch.object(torch,"load",deny("torch.load")),patch.object(torch.cuda,"init",deny("CUDA init")),patch.object(torch.cuda,"_lazy_init",deny("CUDA lazy init")),patch.object(torch.Tensor,"cuda",deny("tensor CUDA")),patch.object(torch.nn.functional,"linear",deny("head forward")),patch.object(torch.Tensor,"backward",deny("backward")),patch.object(torch.optim.Adam,"step",deny("optimizer step")):
+            spec=importlib.util.spec_from_file_location("startup_tests",ROOT/"tests/test_direction_a_probe_startup.py")
+            module=importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+            if syntax_ok: unittest.defaultTestLoader.loadTestsFromModule(module).run(result)
+        history=committed_history()
+        proxy=8*peak_buffer+8*sum(e["bytes"] for e in events)
+        peak=windows_memory()["peak_working_set_bytes"]
+        passed=syntax_ok and result.wasSuccessful() and result.testsRun>0 and not forbidden and proxy<64*1024**2 and peak<2*1024**3 and time.monotonic()-ENTRY_STARTED<59
+        evidence=dict(status="PASS" if passed else "FAIL",cases=result.cases,tests_run=result.testsRun,
+            syntax_checks=invocation,CPU_suites=invocation,implementation_revisions=revision,actual_command=command,
+            isolation=dict(forbidden_attempts=forbidden,real_input_reads=0,CUDA_initialized=torch.cuda.is_initialized(),production_run_once_called=True,data_training_dependencies="synthetic injected namespace",synthetic_costs_separate=True),
+            resources=dict(windows_working_set_peak_bytes=peak,cpu_proxy_upper_bytes=proxy,cuda_allocated_peak_bytes=0),
+            inherited_history=dict(commit=REPAIR,reported_seconds=history["cumulative_reported_elapsed_seconds"],upper_seconds=history["cumulative_conservative_elapsed_upper_seconds"],bytes=history["cumulative_accountable_write_bytes"],revisions=6,scan_upper=286,unknowns=history["historical_unknowns"]),
+            source_write_events=events,source_fingerprints={x["path"]:x["sha256"] for x in syntax})
+        (OUT/"startup_regression.json").write_bytes(encode(evidence))
+        cost=dict(status=evidence["status"],program_seconds=time.monotonic()-ENTRY_STARTED+.25+(previous["program_seconds"] if previous else 0),
+            finalization_reserve_seconds=.25,counts=dict(counts),source_write_events=events,resources=evidence["resources"],
+            implementation_revisions=revision,scans_include_synthetic_test_io=True,preflight_shell_program_seconds_upper_bound=20,
+            preflight_basis="read/ancestor/edit/preservation tool program envelopes; conservative total 20s reservation")
+        before=counts["write_bytes"]
+        for _ in range(12): cost["counts"]["write_bytes"]=before+len(encode(cost))
+        (OUT/"check_cost.json").write_bytes(encode(cost))
+    print(json.dumps(dict(status=evidence["status"],tests=result.testsRun,seconds=cost["program_seconds"],bytes=counts["write_bytes"])))
+    return 0 if passed else 1
 
+def launch():
+    regression=json.loads((OUT/"startup_regression.json").read_bytes())
+    if regression["status"]!="PASS": raise RuntimeError("production regression gate FAIL")
+    for name,digest in regression["source_fingerprints"].items():
+        if sha((ROOT/name).read_bytes())!=digest: raise RuntimeError("source changed after regression")
+    if subprocess.run(["git","merge-base","--is-ancestor",BASE,"HEAD"],cwd=ROOT).returncode: raise RuntimeError("baseline mismatch")
+    cost=json.loads((OUT/"check_cost.json").read_bytes())
+    context=dict(output=OUT,run_id="FedPCC-P-preparation-v3",history=committed_history(),
+        started=ENTRY_STARTED-cost["program_seconds"]-cost["preflight_shell_program_seconds_upper_bound"],
+        source_write_events=cost["source_write_events"],implementation_revisions=cost.get("implementation_revisions",1),
+        preparation_initial_write_bytes=cost["counts"]["write_bytes"],preparation_initial_scans=cost["counts"]["scans"]+12,
+        total_wall_seconds=600,total_write_bytes=128*1024**2,new_preparation_launches=1,new_failed_restarts=0,
+        cpu_proxy_upper_bytes=cost["resources"]["cpu_proxy_upper_bytes"],cpu_proxy_basis="CPU regression tracked buffers; maximum with experiment budget cache envelope",
+        archive_repo_paths=True,archive_extra_paths=[ROOT/p for p in SOURCES+["direction_a/probe_preparation.py","tests/test_direction_a_probe_preparation.py","docs/workflow/TO_EXECUTOR.md","docs/workflow/TO_REVIEWER.md"]])
+    context["limits"]=dict(wall_seconds=580,evidence_bytes=120*1024**2,scans=9700,gpu_allocated_bytes=6*1024**3,windows_peak_working_set_bytes=6*1024**3,cpu_tensor_proxy_bytes=2*1024**3)
+    terminal=run_once(context)
+    print(json.dumps(dict(status=terminal["status"],error=terminal["error"],seconds=terminal["new_stage_elapsed_seconds"]),ensure_ascii=False))
+    return 0 if terminal["status"]=="completed" else 1
 
-def failure_without_budget(context, error):
-    """Outer fallback even for parsing/import errors before target budget creation."""
-    report = dict(run_id="FedPCC-P-preparation-v2", status="blocked_startup_failure",
-        fail_count=7, blocked=error, criteria={str(i):"FAIL" for i in range(1,8)},
-        heads=[], completed_heads=0, historical_failure=context["history"],
-        source_write_events=context["source_write_events"],
-        new_stage_elapsed_seconds=time.monotonic()-context["started"]+0.1,
-        new_known_write_bytes=context["preparation_initial_write_bytes"]+128*1024,
-        resources=dict(new_windows_working_set_peak_bytes=peak_memory(),
-                       new_cuda_peak_bytes=None, new_cpu_proxy_upper_bytes=8*1024**2),
-        preparation_launches=2, failed_restarts=1, additional_retry_permitted=False)
-    reviewer = (f"# 交付单：P 准备v2启动失败\n\n- 对应任务单的基准 commit：{BASE}\n"
-        "- 本次交付 commit：见本提交\n\n## 做了什么（≤5 条）\n- 纯语法检查后一次恢复启动失败，无再次启动。\n"
-        "## 产出文件\n- phaseP_preparation_v2/run_record.json、results.json、startup_failure.txt：外层失败捕获。\n"
-        "## 判据自评\n|判据编号|结果 PASS/FAIL|证据|\n|---|---|---|\n"+
-        "\n".join(f"|{i}|FAIL|启动失败，未完成|" for i in range(1,8))+
-        f"\n\n## 实际资源消耗\n- 自动账本见run_record.json；v1历史保留。\n## 阻塞\n{error}\n## 异议\n无\n## 需要审查者裁决的问题\n- 重新执行须另行授权。\n")
-    data = {OUT/"startup_failure.txt":error.encode("utf-8"),
-            OUT/"results.json":encode(report),
-            ROOT/"docs/workflow/TO_REVIEWER.md":reviewer.encode("utf-8")}
-    for path, raw in data.items():
-        path.write_bytes(raw)
-        report["new_known_write_bytes"] += len(raw)
-    index = dict(files={},excluded=["artifact_hashes.json (self)"], historical_failure_commit=BASE)
-    for path in [*OUT.glob("*"), ROOT/"docs/workflow/TO_REVIEWER.md", *[ROOT/p for p in CHECK_PATHS]]:
-        if path.is_file() and path.name not in ("run_record.json","artifact_hashes.json"):
-            raw = path.read_bytes(); name = path.relative_to(ROOT).as_posix()
-            index["files"][name] = dict(path=name,bytes=len(raw),sha256=sha(raw))
-    name = (OUT/"run_record.json").relative_to(ROOT).as_posix()
-    index["files"][name] = dict(path=name,bytes=0,sha256="0"*64)
-    previous = report["new_known_write_bytes"]
-    report["new_stage_elapsed_seconds"] = time.monotonic()-context["started"]+0.1
-    report["cumulative_elapsed_seconds"] = context["history"]["elapsed_seconds"]+report["new_stage_elapsed_seconds"]
-    for _ in range(8):
-        index["files"][name]["bytes"] = len(encode(report))
-        report["new_known_write_bytes"] = previous+len(encode(report))+len(encode(index))
-    report["cumulative_accountable_write_bytes"] = context["history"]["counts"]["evidence_bytes"]+report["new_known_write_bytes"]
-    for _ in range(8):
-        index["files"][name]["bytes"] = len(encode(report))
-        report["new_known_write_bytes"] = previous+len(encode(report))+len(encode(index))
-        report["cumulative_accountable_write_bytes"] = context["history"]["counts"]["evidence_bytes"]+report["new_known_write_bytes"]
-    raw = encode(report); index["files"][name]["sha256"] = sha(raw)
-    (OUT/"run_record.json").write_bytes(raw)
-    (OUT/"artifact_hashes.json").write_bytes(encode(index))
-
-
-def run_once():
-    if (OUT/"run_record.json").exists() or (OUT/"startup_record.json").exists():
-        raise RuntimeError("P-v2 startup ledger exists: refusing another launch")
-    syntax_raw = (OUT/"syntax_check.json").read_bytes()
-    syntax = json.loads(syntax_raw)
-    if syntax["status"] != "PASS":
-        raise RuntimeError("pure syntax check has not passed")
-    if subprocess.run(["git","merge-base","--is-ancestor",BASE,"HEAD"],cwd=ROOT).returncode:
-        raise RuntimeError("baseline commit is not an ancestor of HEAD")
-    for name, record in syntax["files"].items():
-        if sha((ROOT/name).read_bytes()) != record["sha256"]:
-            raise RuntimeError("source changed after syntax check: "+name)
-    history_raw = (OLD/"run_record.json").read_bytes()
-    history = json.loads(history_raw)
-    old_index = json.loads((OLD/"artifact_hashes.json").read_bytes())
-    # Source/reviewer paths in the v1 index resolve against BASE, never newer files.
-    restored_line_endings = {}
-    for name, record in old_index["files"].items():
-        raw = git_raw("show", f"{BASE}:{name}")
-        # Git stores LF; the v1 PowerShell JSON serializer emitted internal CRLF
-        # plus a final LF. Reconstruct only those byte-preserving newline forms,
-        # then require the ORIGINAL archived size/hash. No v1 file is rewritten.
-        alternatives = {"committed_LF":raw, "CRLF":raw.replace(b"\n",b"\r\n")}
-        if raw.endswith(b"\n"):
-            alternatives["internal_CRLF_final_LF"] = raw[:-1].replace(b"\n",b"\r\n")+b"\n"
-        matched = next((kind for kind, candidate in alternatives.items()
-                        if sha(candidate)==record["sha256"] and len(candidate)==record["bytes"]),None)
-        if matched is None:
-            raise RuntimeError("v1 committed failure archive mismatch: "+name)
-        restored_line_endings[name] = dict(committed_LF_sha256=sha(raw), indexed_original_sha256=record["sha256"],
-                                           matching_line_endings=matched, original_bytes=record["bytes"])
-        if name.startswith("artifacts/direction_a/phaseP_preparation_v1/") and sha((ROOT/name).read_bytes()) != record["sha256"]:
-            raise RuntimeError("v1 preserved evidence changed: "+name)
-    history.update(commit=BASE, directory="artifacts/direction_a/phaseP_preparation_v1",
-        ledger_sha256=sha(history_raw), old_source_paths_resolved_at_commit=True,
-        unknown_old_peak_values_retained=True, unknown_old_overwrite_bytes=None,
-        committed_original_line_ending_provenance=restored_line_endings,
-        old_criterion_6="FAIL (never retrospectively upgraded)")
-    source_events = PRIOR_SOURCE_WRITE_EVENTS + [dict(path=name, bytes=(ROOT/name).stat().st_size,
-        sha256=sha((ROOT/name).read_bytes()), revision=2, write_kind="full file after applied implementation revision")
-        for name in NEW_SOURCE_WRITES]
-    initial_bytes = sum(e["bytes"] for e in source_events)+syntax["evidence_bytes"]
-    context = dict(started=ENTRY_STARTED-syntax["program_seconds"], syntax=syntax,
-        history=history, source_write_events=source_events,
-        preparation_initial_write_bytes=initial_bytes,
-        preparation_initial_scans=90,
-        initial_scan_accounting="90-scan conservative envelope: both pure syntax checks, source hashes, v1 committed/working validation including line-ending hashes")
-    context.update(output=OUT,run_id="FedPCC-P-preparation-v2",implementation_revisions=2,
-                   new_preparation_launches=1,new_failed_restarts=1,total_wall_seconds=600,
-                   total_write_bytes=128*1024**2,cpu_proxy_upper_bytes=8*max((ROOT/p).stat().st_size for p in CHECK_PATHS),
-                   cpu_proxy_basis="eight times largest startup source byte buffer; training cache envelope is measured separately")
-    startup = dict(run_id="FedPCC-P-preparation-v2", status="launching", launches_new=1,
-        launches_cumulative=2, failed_restarts_cumulative=1, retry_allowed=False,
-        source_sha256=syntax["files"]["scripts/prepare_direction_a_probe.py"]["sha256"],
-        input_commit=git_raw("rev-parse","HEAD").decode().strip(),
-        historical_failure_commit=BASE, startup_elapsed_seconds=time.monotonic()-context["started"])
-    startup_raw = encode(startup)
-    stop_event = threading.Event()
-    namespace = {"__file__":str(ROOT/"scripts/prepare_direction_a_probe.py"),
-                 "__name__":"bounded_probe_runtime", "RECOVERY_CONTEXT":context}
-    def emergency_report(message):
-        # The slot was included in the new-stage evidence budget before fitting.
-        # Emit a short handoff even if a guard terminates the active process.
-        raw = (f"# 交付单：P准备v2资源触顶\n\n- 对应任务单的基准 commit：{BASE}\n"
-               "- 本次交付 commit：见本提交\n\n## 做了什么\n- 一次恢复运行触顶，保留部分文件，未重跑。\n"
-               "## 产出文件\n- artifacts/direction_a/phaseP_preparation_v2/：部分交付与已消耗账本。\n"
-               "## 判据自评\n|编号|PASS/FAIL|证据|\n|---|---|---|\n"+
-               "\n".join(f"|{i}|FAIL|资源触顶，未完成验收|" for i in range(1,8))+
-               f"\n## 实际资源消耗\n- 见run_record.json及startup_record.json。\n## 阻塞\n{message}\n"
-               "## 异议\n无\n## 需要审查者裁决的问题\n- 完成剩余交付需要另行授权。\n").encode("utf-8")
-        (ROOT/"docs/workflow/TO_REVIEWER.md").write_bytes(raw)
-    context["emergency_report"] = emergency_report
-    def outer_watch():
-        while not stop_event.wait(.1):
-            if time.monotonic()-context["started"] >= 599 or peak_memory() >= 6*1024**3:
-                startup["status"]="blocked_outer_time_or_working_set_limit"
-                startup["elapsed_seconds"]=time.monotonic()-context["started"]
-                # This small emergency record fits the pre-reserved slot.
-                (OUT/"startup_record.json").write_bytes(encode(startup))
-                emergency_report("Outer startup/time/working-set guard reached; no retry")
-                os._exit(124)
-    threading.Thread(target=outer_watch,daemon=True).start()
-    try:
-        def factory():
-            raw=(ROOT/"scripts/prepare_direction_a_probe.py").read_bytes()
-            exec(compile(raw,namespace["__file__"],"exec"),namespace)
-            context["limits"]=namespace["LIMITS"]
-            return namespace["main"]()[0]
-        def archive_callback(budget):
-            if budget is not None and budget.hit is None:
-                namespace["archive"](budget,[ROOT/"docs/workflow/TO_REVIEWER.md", *[ROOT/p for p in CHECK_PATHS]])
-        terminal=execute_attempt(context,factory,lambda budget:None,archive_callback)
-        print(json.dumps(dict(status=terminal["status"],error=terminal["error"])))
-        return 0 if terminal["status"]=="completed" else 1
-    finally:
-        stop_event.set()
-
-
-if __name__ == "__main__":
-    if Path(sys.executable).resolve() != Path(r"E:\anaconda3\python.exe").resolve():
-        raise RuntimeError("required interpreter mismatch")
-    if sys.argv[1:] == ["--syntax-only"]:
-        sys.exit(syntax_only())
-    if sys.argv[1:]:
-        raise RuntimeError("no runtime protocol overrides supported")
-    sys.exit(run_once())
+if __name__=="__main__":
+    if Path(sys.executable).resolve()!=Path(r"E:\anaconda3\python.exe").resolve(): raise RuntimeError("required interpreter mismatch")
+    if sys.argv[1:]==["--check"]: sys.exit(check())
+    if sys.argv[1:]==["--run"]: sys.exit(launch())
+    raise RuntimeError("use --check then --run; no scientific overrides")

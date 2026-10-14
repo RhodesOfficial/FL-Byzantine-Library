@@ -43,7 +43,7 @@ def context(output,clock=None):
 
 class StartupTests(unittest.TestCase):
     def setUp(self):
-        temporary_root=ROOT/"artifacts/direction_a/phaseP_startup_repair_v1/temporary_tests"
+        temporary_root=ROOT/"artifacts/direction_a/phaseP_preparation_v3/temporary_tests"
         temporary_root.mkdir(parents=True,exist_ok=True)
         self.directory=tempfile.TemporaryDirectory(prefix="P-startup-regression-",dir=temporary_root)
         self.assertIn(temporary_root.resolve(),Path(self.directory.name).resolve().parents)
@@ -185,3 +185,69 @@ class StartupTests(unittest.TestCase):
         self.assertEqual(values["revisions"],4)
         self.assertIsNone(values["scans"])
         self.assertEqual(values["scan_lower_bound"],16)
+
+    def production_case(self,kind):
+        clock=Clock(); self.fake_clock(clock); ctx=context(self.output,clock)
+        before={}; calls=[]
+        def namespace(context):
+            calls.append("namespace")
+            if kind=="before": raise RuntimeError("production-before-budget")
+            def work(budget):
+                calls.append("experiment")
+                budget.scan(); budget.write(self.output/"synthetic.bin",b"nonzero production work",raw=True)
+                budget.resources["cpu_known_arrays_tensor_proxy_peak_bytes"]=1234567
+                budget.resources["gpu_allocated_peak_bytes"]=2345678
+                before.update(bytes=budget.counts["evidence_bytes"],scans=budget.counts["scans"])
+                if kind=="after": raise RuntimeError("production-after-budget")
+                if kind=="time": clock.now+=19.9
+                if kind=="write": context["total_write_bytes"]=budget.history["bytes"]+budget.counts["evidence_bytes"]+10
+                if kind=="scans": budget.counts["scans"]=budget.limits["scans"]
+            def archive(budget):
+                calls.append("archive")
+                if kind=="archive":
+                    budget.scan(); budget.write(self.output/"archive_partial.bin",b"partial archive expense",raw=True)
+                    before.update(bytes=budget.counts["evidence_bytes"],scans=budget.counts["scans"])
+                    raise RuntimeError("production-archive-error")
+            return dict(LIMITS=context["limits"],main=work,archive_callback=archive)
+        terminal=wrapper.run_once(ctx,namespace)
+        self.assertEqual(terminal["status"],"completed" if kind=="normal" else "failed_terminal_limit" if kind in ("time","write","scans") else "failed_no_retry")
+        marker=json.loads((self.output/"startup_record.json").read_bytes())
+        self.assertEqual(marker["status"],terminal["status"])
+        if before:
+            self.assertGreaterEqual(terminal["counts"]["evidence_bytes"],before["bytes"])
+            self.assertGreater(terminal["counts"]["scans"],before["scans"])
+            self.assertEqual(terminal["resources"]["cpu_known_arrays_tensor_proxy_peak_bytes"],1234567)
+            self.assertEqual(terminal["resources"]["gpu_allocated_peak_bytes"],2345678)
+        if kind in ("before","after","archive"):
+            self.assertIn("production-",(self.output/"startup_failure.txt").read_text())
+        index=json.loads((self.output/"artifact_hashes.json").read_bytes())
+        for name,row in index["files"].items():
+            raw=(self.output/name).read_bytes()
+            self.assertEqual(len(raw),row["bytes"])
+            self.assertEqual(hashlib.sha256(raw).hexdigest(),row["sha256"])
+        sealed={p.name:p.read_bytes() for p in self.output.iterdir()}
+        with self.assertRaises(FileExistsError): wrapper.run_once(ctx,namespace)
+        self.assertEqual(sealed,{p.name:p.read_bytes() for p in self.output.iterdir()})
+        self.assertEqual(calls.count("namespace"),1)
+
+    def test_production_before_constructor(self): self.production_case("before")
+    def test_production_after_constructor_nonzero_work(self): self.production_case("after")
+    def test_production_archive_error_nonzero_work(self): self.production_case("archive")
+    def test_production_normal_preserves_peaks(self): self.production_case("normal")
+    def test_production_terminal_time_limit(self): self.production_case("time")
+    def test_production_terminal_write_limit(self): self.production_case("write")
+    def test_production_terminal_scan_limit(self): self.production_case("scans")
+
+    def test_repair_history_is_inherited_once(self):
+        history=json.loads(subprocess_history())
+        values=startup.history_totals(history)
+        self.assertEqual(values["bytes"],1159812)
+        self.assertEqual(values["revisions"],6)
+        self.assertEqual(values["scan_upper_bound"],286)
+        self.assertAlmostEqual(values["seconds"],14.4303879)
+        self.assertAlmostEqual(values["upper_seconds"],15.8391745)
+
+
+def subprocess_history():
+    import subprocess
+    return subprocess.check_output(["git","show","b702a8416187b50aa130b01fb333db98f81116ac:artifacts/direction_a/phaseP_startup_repair_v1/run_record.json"],cwd=ROOT)
