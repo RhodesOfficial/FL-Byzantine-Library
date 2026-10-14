@@ -1,51 +1,51 @@
-# 交付单：P 正式可分性与校准空间验证（资源阻塞）
+# 交付单：P 正式第2轮恢复自检失败
 
-- 对应任务单的基准 commit：0dc4a1331ef307cff65657190eb1b048ebd98410
-- 本次交付 commit：见本提交；首次真实输入前源码/预登记提交：a12905c9ffdfe65270feb83e587bffa4b90f612a。
+- 对应任务单的基准 commit：ea6a10001998a6062b6365f5e5f3f0df862bca7e
+- 本次交付 commit：见本提交
 
 ## 做了什么（≤5 条）
-- 实现正式入口及冻结统计程序；3次语法/CPU套件、3次修订，最后19项自检PASS；第2轮失败记录保留。
-- 1次启动前失败封存（Git索引写权限导致尚未提交），无真实输入；源码提交后只运行1次真实输入。
-- 完成并读回160个头（C10 r40 100、r80 60）；第161头更新461步时触及Windows峰值上限，立即停止，无重启。
-- 仅汇集已保存的头/逐样本预测/指标；验证置乱与bootstrap尚未执行，空缺明确标记，未补造。
+- 新建v6恢复入口、精确240头队列及预登记，v5拟合/统计算术复用原源码。
+- 唯一语法检查PASS；唯一CPU套件22项中21 PASS、1 FAIL，保留原失败记录。
+- 自检失败即停；真实输入/正式续跑/新拟合/编码均0；旧包未改写。
 
 ## 产出文件
-- artifacts/direction_a/phaseP_formal_v1/：源码预登记、syntax_check/selfchecks、input_checks、results/uncertainty、成本与哈希索引。
-- 同目录 heads/、head_results/、predictions/、point_results/：160个完整头、目标0/100/500/1000、已测指标与argmax/真标签CE。
-- 同目录 attempts/、startup_failure.txt：三轮CPU记录、启动前失败和真实运行超限栈；environment.json定位运行commit及命令。
+- scripts/resume_direction_a_probe_formal.py、tests/test_direction_a_probe_formal_resume.py：恢复入口与合成套件。
+- artifacts/direction_a/phaseP_formal_resume_v1/：preregistration、syntax_check、selfchecks、check_cost、run_record、artifact_hashes。
+- 同目录resume_manifest、input_checks、results、uncertainty：明确标记未运行/未校验的部分交付，未生成新头或联合400头索引。
 
 ## 判据自评
 |判据编号|结果 PASS/FAIL|证据位置 / 关键数字|
 |---|---|---|
-|1|PASS|syntax_check/selfchecks：最终19项通过；正式run_once合成注入覆盖异常、成本/峰保留、终末触顶及防覆盖。|
-|2|FAIL|input_checks：仅C10两点/2000样本/16次encoder；C100未执行；已测train/validation隔离、原头/BN不变。|
-|3|FAIL|160/400完整保存头；161次开始拟合，backward/Adam各160461/400000；第161头未保存为完整头。|
-|4|FAIL|C10 r40完成原/真/99置乱描述指标及CP区间；r80仅真+59置乱；C100缺失。|
-|5|FAIL|uncertainty：0/39996次验证置乱统计；p/p_adj未产生，不能作推断。|
-|6|FAIL|uncertainty：0/8000次配对bootstrap；已保存目标诊断，未产生区间。|
-|7|FAIL|run_record：Windows峰6447243264 B>6 GiB(6442450944 B)；failed_terminal_limit；产物索引读回通过。|
-|8|FAIL|工程资格失败且推断未完成，四点均未通过；不能解释为表征无信息。|
+|1|FAIL|syntax_check PASS；selfchecks 21 PASS/1 FAIL，归档大小断言失败|
+|2|FAIL|input_checks：真实输入资格未运行，新encoder/验证编码0|
+|3|FAIL|resume_manifest仅预定队列；旧160头未读回，新完整头0/240|
+|4|FAIL|results：未产生四点全指标/训练置乱对照|
+|5|FAIL|uncertainty：验证置乱0/39996|
+|6|FAIL|uncertainty：bootstrap 0/8000；未新增目标诊断|
+|7|FAIL|run_record：failed_before_real_input；联合索引/工程资格未完成|
+|8|FAIL|四点科学推断未完成，不构成表征无信息结论|
 
-|参考|完整头数|已测尾R %|已测Δ pp|可分性|校准空间|
-|---|---:|---:|---:|---|---|
-|CIFAR10 r40|100|38.25|38.25|FAIL|FAIL|
-|CIFAR10 r80|60|40.00|缺失|FAIL|FAIL|
-|CIFAR100 r40|0|缺失|缺失|FAIL|FAIL|
-|CIFAR100 r80|0|缺失|缺失|FAIL|FAIL|
-- 两个已测真实头末段仍变化；未追加步数，失败原因不能归为无信息；C10 r80原头预测/CE已保存但聚合指标未落盘。
+|参考|本轮尾R/改善|可分性|校准空间|
+|---|---|---|---|
+|C10 r40|未推断|FAIL|FAIL|
+|C10 r80|未推断|FAIL|FAIL|
+|C100 r40|未运行|FAIL|FAIL|
+|C100 r80|未运行|FAIL|FAIL|
 
 ## 实际资源消耗
-- 正式全部程序保守562.063000秒（含源码/CPU/启动前及封存预留）；累计写入8259455 B；扫描166480。
-- CUDA峰137436672 B；Windows峰6447243264 B；CPU数组张量代理峰515779452 B；实际正式目录占用见run_record。
-- 准备一次继承74.9171745秒/11988355 B；P累计保守636.980174秒/20247810 B；旧未知及旧判据6 FAIL保留。
-- 自评FAIL 7条；完整性、资源资格与科学结论分开；真实过程只运行1次，无自动重试。
+- 本次CPU程序保守20.562秒；实现/相关程序180秒、终末20秒预留已计入；恢复保守220.562000秒。
+- 旧正式562.063秒/8259455 B/166480扫描按v6继承；新写入1537791 B/扫描1407；旧未知及旧判据6 FAIL保留。
+- 正式总账782.625000/4380秒、9797246/134217728 B；余量3597.375000秒/124420482 B。
+- 准备74.9171745秒/11988355 B只继承一次；P累计857.542175秒/21785601 B。
+- 本轮CUDA峰0；Windows自检峰见check_cost，历史最大峰6447243264 B继承；CPU代理峰1430056 B。
+- 旧有效160000更新与失败461次保守收费保留；新更新0、重复验证编码0；历史计数本轮未重新核验。
+- 自评FAIL 8条；未因自检断言失败否定科学假设。
 
 ## 阻塞（没有写“无”）
-- Windows进程峰值内存触及硬上限；正式过程失败即停，已用完3次实现修订/语法/CPU额度，不能自行修复或重跑。
+- 唯一CPU套件21 PASS、1 FAIL；合成归档130526 B未大于断言131072 B（test_large_emergency_archive_and_cross_process_peaks），按任务单立即停止，未读取真实输入、未启动CUDA或真实续跑。
 
 ## 异议（没有写“无”）
 无
 
 ## 需要审查者裁决的问题（≤3 条，没有写“无”）
-- 裁决本次资源失败和未完成测量的处置；如需修复/另行运行，须另派任务与额度。
-- P交付后接续原G1.1暂缓文档任务，不自动进入其他实验节点。
+- 是否授权修正归档大小测试断言并追加一次自检；本次恢复修订/语法/CPU套件各1次已耗尽，未擅自重试。

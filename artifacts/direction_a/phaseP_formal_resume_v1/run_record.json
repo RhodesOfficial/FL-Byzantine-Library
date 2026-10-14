@@ -1,0 +1,73 @@
+{
+  "P_cumulative": {
+    "bytes": 21785601,
+    "preparation_inherited_once": true,
+    "seconds": 857.5421745000053
+  },
+  "counts": {
+    "evidence_bytes": 1537791,
+    "scans": 1407
+  },
+  "cumulative_accountable_write_bytes": 21785601,
+  "delivery_verification": {
+    "checked_files": 19,
+    "experiment_runs_new": 0,
+    "index_readback": "PASS",
+    "precharged_seconds": 20,
+    "program_seconds": 3.5780000000086147,
+    "real_input_reads": 0,
+    "source_commit": "c53059453b0b90c24e1cfaf5ee5701c196118dc3"
+  },
+  "error": "唯一CPU套件21 PASS、1 FAIL；合成归档130526 B未大于断言131072 B（test_large_emergency_archive_and_cross_process_peaks），按任务单立即停止，未读取真实输入、未启动CUDA或真实续跑。",
+  "failure_closure": {
+    "CPU_fail_case": "resume_checks.Resume.test_large_emergency_archive_and_cross_process_peaks",
+    "CPU_fail_error": "Traceback (most recent call last):\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\tests\\test_direction_a_probe_formal_resume.py\", line 29, in test_large_emergency_archive_and_cross_process_peaks\n    self.assertGreater((ctx['output']/'artifact_hashes.json').stat().st_size,128*1024)\nAssertionError: 130526 not greater than 131072\n",
+    "covered_by_precharged_verification_seconds": 20,
+    "index_verified_files": 21,
+    "kind": "report and hash closure only; no source change, syntax check, CPU suite or experiment retry",
+    "program_seconds": 0.0629999999946449
+  },
+  "joint_formal_accounting": {
+    "CPU_suites": 4,
+    "bytes": 9797246,
+    "duplicate_validation_encoder": 0,
+    "effective_complete_heads": 160,
+    "effective_complete_heads_verified_new_run": 0,
+    "fact_counts": {
+      "backwards": 160461,
+      "encoder_forwards": 0,
+      "feature_samples": 0,
+      "fits": 161,
+      "forwards": 0,
+      "optimizer_steps": 160461,
+      "scans": 167887
+    },
+    "formal_runs": 1,
+    "implementation_revisions": 4,
+    "new_seconds": 220.56200000000536,
+    "old_6GiB_qualification": "FAIL",
+    "old_bytes": 8259455,
+    "old_counts": {
+      "backwards": 160461,
+      "fits": 161,
+      "optimizer_steps": 160461,
+      "scans": 166480
+    },
+    "old_counts_provenance": "v6 task/adjudication inherited numbers, not reread after failed CPU gate",
+    "old_criterion_6": "FAIL",
+    "old_seconds": 562.063,
+    "old_terminal_status": "failed_terminal_limit",
+    "seconds": 782.6250000000053,
+    "syntax_checks": 4,
+    "unknown_history_retained": true
+  },
+  "new_stage_elapsed_seconds": 220.56200000000536,
+  "real_input_reads": 0,
+  "resources": {
+    "cpu_known_arrays_tensor_proxy_peak_bytes": 1430056,
+    "gpu_allocated_peak_bytes": 0,
+    "windows_working_set_peak_bytes": 6447243264
+  },
+  "source_preregistration_commit": "a53fc360d4e7b3e01e5d85061924849cf716cbe2",
+  "status": "failed_before_real_input"
+}
