@@ -1,0 +1,306 @@
+{
+  "archive_preservation": {
+    "concatenation_input_scans": 64,
+    "no_new_fits_or_encoding_or_inferential_statistics": true,
+    "program_cost": "included in the precharged ten-second archival verification envelope",
+    "recovered_reference_rows": 4,
+    "saved_heads_completed": 160,
+    "source": "existing head_results and point_results JSON; run_direction_a_probe_formal.seal",
+    "started_fits": 161
+  },
+  "counts": {
+    "attempts": 0,
+    "backwards": 160461,
+    "class_gradient_requests": 0,
+    "client_scans": 0,
+    "communications": 0,
+    "encoder_forwards": 16,
+    "evidence_bytes": 8259455,
+    "extra_encoded_positions": 0,
+    "feature_samples": 2000,
+    "fits": 161,
+    "formal_runs": 1,
+    "forwards": 160793,
+    "implementation_revisions": 3,
+    "logical_copy_bytes": 0,
+    "optimizer_steps": 160461,
+    "preparation_runs": 0,
+    "retries": 0,
+    "scans": 166480,
+    "searches": 0
+  },
+  "cumulative_accountable_write_bytes": 20247810,
+  "cumulative_conservative_elapsed_upper_seconds": 636.980174499884,
+  "cumulative_elapsed_seconds": 635.5713878998649,
+  "cumulative_failed_restarts": 1,
+  "cumulative_implementation_revisions": 12,
+  "cumulative_preparation_launches": 3,
+  "cumulative_scan_conservative_upper_bound": 172500,
+  "cumulative_scan_known_lower_bound": 172372,
+  "cumulative_scans": null,
+  "delivered_references": [
+    "A-backbone-CIFAR10-s2026101321-r0040-v1"
+  ],
+  "delivery_verification": {
+    "checked_files": 527,
+    "command": [
+      "E:\\anaconda3\\python.exe",
+      "-B",
+      "E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\scripts\\run_direction_a_probe_formal.py",
+      "--seal"
+    ],
+    "experiment_runs_new": 0,
+    "formal_directory_actual_bytes_before_final_rewrite": 4521822,
+    "index_readback": "PASS",
+    "program_reserve_already_in_new_stage_seconds": 10,
+    "program_seconds": 3.7809999999881256,
+    "real_input_reads": 0,
+    "source_commit": "a12905c9ffdfe65270feb83e587bffa4b90f612a",
+    "source_coverage": [
+      "scripts/run_direction_a_probe_formal.py",
+      "direction_a/probe_formal.py",
+      "tests/test_direction_a_probe_formal.py",
+      "direction_a/probe_startup.py",
+      "direction_a/probe_preparation.py",
+      "scripts/prepare_direction_a_probe.py",
+      "scripts/recover_direction_a_probe.py",
+      "direction_a/class_gradient_full.py",
+      "direction_a/backbone_preparation.py",
+      "direction_a/class_gradient_smoke.py",
+      "direction_a/model.py",
+      "models/ResNet.py",
+      "tests/test_direction_a_probe_startup.py"
+    ]
+  },
+  "elapsed_seconds": 561.8130000000237,
+  "emergency_closure_from_precharged_slot": true,
+  "emergency_status_reserved_bytes": 1048576,
+  "error": "Traceback (most recent call last):\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\scripts\\run_direction_a_probe_formal.py\", line 367, in experiment\n    fitted,objectives,metrics,pred,ce,diagnostic=formal.fit(train,torch.as_tensor(label,device=\"cuda\"),val,true,C,groups,budget)\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\probe_formal.py\", line 125, in fit\n    budget.consume(\"backwards\"); objective.backward()\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\class_gradient_full.py\", line 26, in consume\n    self.check()\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\probe_startup.py\", line 88, in check\n    super().check()\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\class_gradient_full.py\", line 42, in check\n    self.stop(field, actual)\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\backbone_preparation.py\", line 94, in stop\n    raise PreparationLimit(f\"limit reached: {field}={actual}\")\ndirection_a.backbone_preparation.PreparationLimit: limit reached: windows_peak_working_set_bytes=6442573824\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\probe_startup.py\", line 260, in execute_attempt\n    work(budget)\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\scripts\\run_direction_a_probe_formal.py\", line 85, in work\n    def work(budget): namespace[\"main\"](budget)\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\scripts\\run_direction_a_probe_formal.py\", line 77, in <lambda>\n    dict(LIMITS=LIMITS, main=lambda b: experiment(context, b)))\n                                       ^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\scripts\\run_direction_a_probe_formal.py\", line 419, in experiment\n    write_json(OUT/\"results.json\",results,budget)\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\scripts\\run_direction_a_probe_formal.py\", line 208, in write_json\n    budget.write(path, encode(value), raw=True)\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\backbone_preparation.py\", line 130, in write\n    self.consume(\"evidence_bytes\", len(data))\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\class_gradient_full.py\", line 26, in consume\n    self.check()\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\probe_startup.py\", line 88, in check\n    super().check()\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\class_gradient_full.py\", line 42, in check\n    self.stop(field, actual)\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\backbone_preparation.py\", line 94, in stop\n    raise PreparationLimit(f\"limit reached: {field}={actual}\")\ndirection_a.backbone_preparation.PreparationLimit: limit reached: windows_peak_working_set_bytes=6447243264\n; {'field': 'windows_peak_working_set_bytes', 'actual': 6447243264}; windows_peak_working_set_bytes",
+  "finalization_reserve_basis": "max(10ms,8*measured closing write latency)",
+  "finalization_reserve_seconds": 0.25,
+  "handoff_archive_program": {
+    "actions": "concatenate existing measurements, correct reviewer descriptions, verify indexed hashes, charge every rewritten byte",
+    "actual_commandline": "\"E:\\anaconda3\\python.exe\" -B -c \"import importlib.util, json, time, ctypes\nfrom pathlib import Path\nroot=Path.cwd(); began=time.monotonic()\nspec=importlib.util.spec_from_file_location('formal_handoff_archive',root/'scripts/run_direction_a_probe_formal.py')\nm=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)\nout=m.OUT\nledger=json.loads((out/'run_record.json').read_bytes()); index=json.loads((out/'artifact_hashes.json').read_bytes())\nresults=json.loads((out/'results.json').read_bytes()); scans=3\nfor row in results['references']:\n    real=row['heads'][0]['metrics']['groups']['tail']['macro_recall_percent'] if row['heads'] else None\n    delta=row.get('differences_pp',{}).get('original',{}).get('tail')\n    row['science']=dict(separability='FAIL',calibration_space='FAIL',engineering_qualification=False,\n                       measured_R_percent=real,previously_measured_delta_pp=delta,\n                       validation_permutation_p_adj=None,delta_bootstrap_q0125=None,\n                       reason='Engineering blocked; inferential measurements not reached; no statement of information absence')\nresults['engineering_criterion_evidence']={'1':'19 final CPU cases PASS; source/preregistration commit a12905c precedes input',\n '2':'2/4 references encoded, 2000/4000 validation samples, 16/32 encoder forwards',\n '3':'160/400 saved complete heads; 161 started fits; 160461/400000 backward and Adam steps',\n '4':'C10 r40 complete descriptive controls; C10 r80 partial; C100 not reached',\n '5':'0/39996 validation permutation statistics', '6':'0/8000 bootstrap statistics; saved objective diagnostics only',\n '7':'Windows peak 6447243264 B exceeds 6442450944 B; terminal failure, no retry'}\nraw=m.encode(results); (out/'results.json').write_bytes(raw)\nextra=len(raw)\nindex['files'][(out/'results.json').relative_to(root).as_posix()]=dict(bytes=len(raw),sha256=m.sha(raw))\nfor name,row in index['files'].items():\n    raw=(root/name).read_bytes(); scans+=1\n    assert len(raw)==row['bytes'] and m.sha(raw)==row['sha256'],name\nledger['counts']['scans']+=scans+3\nledger['cumulative_scan_known_lower_bound']+=scans+3\nledger['cumulative_scan_conservative_upper_bound']+=scans+3\nctypes.windll.kernel32.GetCommandLineW.restype=ctypes.c_wchar_p\nledger['handoff_archive_program']=dict(actual_commandline=ctypes.windll.kernel32.GetCommandLineW(),\n  source_modifications=0,implementation_revisions_remain=3,real_input_reads=0,experiments_new=0,\n  actions='concatenate existing measurements, correct reviewer descriptions, verify indexed hashes, charge every rewritten byte',\n  program_seconds_reserved_upper=3,charged_within_preflight_and_archival_program_reservations=True)\nbase_bytes=ledger['counts']['evidence_bytes']+extra\nledger_name=(out/'run_record.json').relative_to(root).as_posix()\nreview_name='docs/workflow/TO_REVIEWER.md'\ndef reviewer():\n    return f'''# 交付单：P 正式可分性与校准空间验证（资源阻塞）\n\n- 对应任务单的基准 commit：{m.BASE}\n- 本次交付 commit：见本提交；首次真实输入前源码/预登记提交：a12905c9ffdfe65270feb83e587bffa4b90f612a。\n\n## 做了什么（≤5 条）\n- 实现正式入口及冻结统计程序；3次语法/CPU套件、3次修订，最后19项自检PASS；第2轮失败记录保留。\n- 1次启动前失败封存（Git索引写权限导致尚未提交），无真实输入；源码提交后只运行1次真实输入。\n- 完成并读回160个头（C10 r40 100、r80 60）；第161头更新461步时触及Windows峰值上限，立即停止，无重启。\n- 仅汇集已保存的头/逐样本预测/指标；验证置乱与bootstrap尚未执行，空缺明确标记，未补造。\n\n## 产出文件\n- artifacts/direction_a/phaseP_formal_v1/：源码预登记、syntax_check/selfchecks、input_checks、results/uncertainty、成本与哈希索引。\n- 同目录 heads/、head_results/、predictions/、point_results/：160个完整头、目标0/100/500/1000、已测指标与argmax/真标签CE。\n- 同目录 attempts/、startup_failure.txt：三轮CPU记录、启动前失败和真实运行超限栈；environment.json定位运行commit及命令。\n\n## 判据自评\n|判据编号|结果 PASS/FAIL|证据位置 / 关键数字|\n|---|---|---|\n|1|PASS|syntax_check/selfchecks：最终19项通过；正式run_once合成注入覆盖异常、成本/峰保留、终末触顶及防覆盖。|\n|2|FAIL|input_checks：仅C10两点/2000样本/16次encoder；C100未执行；已测train/validation隔离、原头/BN不变。|\n|3|FAIL|160/400完整保存头；161次开始拟合，backward/Adam各160461/400000；第161头未保存为完整头。|\n|4|FAIL|C10 r40完成原/真/99置乱描述指标及CP区间；r80仅真+59置乱；C100缺失。|\n|5|FAIL|uncertainty：0/39996次验证置乱统计；p/p_adj未产生，不能作推断。|\n|6|FAIL|uncertainty：0/8000次配对bootstrap；已保存目标诊断，未产生区间。|\n|7|FAIL|run_record：Windows峰6447243264 B>6 GiB(6442450944 B)；failed_terminal_limit；产物索引读回通过。|\n|8|FAIL|工程资格失败且推断未完成，四点均未通过；不能解释为表征无信息。|\n\n|参考|完整头数|已测尾R %|已测Δ pp|可分性|校准空间|\n|---|---:|---:|---:|---|---|\n|CIFAR10 r40|100|38.25|38.25|FAIL|FAIL|\n|CIFAR10 r80|60|40.00|缺失|FAIL|FAIL|\n|CIFAR100 r40|0|缺失|缺失|FAIL|FAIL|\n|CIFAR100 r80|0|缺失|缺失|FAIL|FAIL|\n- 两个已测真实头末段仍变化；未追加步数，失败原因不能归为无信息；C10 r80原头预测/CE已保存但聚合指标未落盘。\n\n## 实际资源消耗\n- 正式全部程序保守{ledger['new_stage_elapsed_seconds']:.6f}秒（含源码/CPU/启动前及封存预留）；累计写入{ledger['counts']['evidence_bytes']} B；扫描{ledger['counts']['scans']}。\n- CUDA峰137436672 B；Windows峰6447243264 B；CPU数组张量代理峰515779452 B；实际正式目录占用见run_record。\n- 准备一次继承74.9171745秒/11988355 B；P累计保守{ledger['cumulative_conservative_elapsed_upper_seconds']:.6f}秒/{ledger['cumulative_accountable_write_bytes']} B；旧未知及旧判据6 FAIL保留。\n- 自评FAIL 7条；完整性、资源资格与科学结论分开；真实过程只运行1次，无自动重试。\n\n## 阻塞（没有写“无”）\n- Windows进程峰值内存触及硬上限；正式过程失败即停，已用完3次实现修订/语法/CPU额度，不能自行修复或重跑。\n\n## 异议（没有写“无”）\n无\n\n## 需要审查者裁决的问题（≤3 条，没有写“无”）\n- 裁决本次资源失败和未完成测量的处置；如需修复/另行运行，须另派任务与额度。\n- P交付后接续原G1.1暂缓文档任务，不自动进入其他实验节点。\n'''.encode()\n# Count directory entries separately from the previously charged content verification.\npaths=[p for p in out.rglob('*') if p.is_file()]\nledger['counts']['scans']+=len(paths)\nledger['cumulative_scan_known_lower_bound']+=len(paths)\nledger['cumulative_scan_conservative_upper_bound']+=len(paths)\nledger['delivery_verification']['formal_directory_actual_bytes_before_final_rewrite']=sum(p.stat().st_size for p in paths)\nfor _ in range(16):\n    text=reviewer(); raw=m.encode(ledger)\n    index['files'][review_name]=dict(bytes=len(text),sha256=m.sha(text))\n    index['files'][ledger_name]=dict(bytes=len(raw),sha256='0'*64)\n    ledger['counts']['evidence_bytes']=base_bytes+len(text)+len(raw)+len(m.encode(index))\n    ledger['cumulative_accountable_write_bytes']=11988355+ledger['counts']['evidence_bytes']\ntext=reviewer(); raw=m.encode(ledger)\nindex['files'][review_name]=dict(bytes=len(text),sha256=m.sha(text)); index['files'][ledger_name]=dict(bytes=len(raw),sha256=m.sha(raw))\n(root/review_name).write_bytes(text); (out/'run_record.json').write_bytes(raw); (out/'artifact_hashes.json').write_bytes(m.encode(index))\nassert len(text.splitlines())<=80\nassert ledger['counts']['evidence_bytes']<128*1024**2 and ledger['counts']['scans']<500000\nprint(json.dumps(dict(FAIL=7,blocked=True,review_lines=len(text.splitlines()),archive_seconds=time.monotonic()-began,counts=ledger['counts']),ensure_ascii=False))\"",
+    "charged_within_preflight_and_archival_program_reservations": true,
+    "experiments_new": 0,
+    "implementation_revisions_remain": 3,
+    "program_seconds_reserved_upper": 3,
+    "real_input_reads": 0,
+    "source_modifications": 0
+  },
+  "historical_failure": {
+    "bytes": 11988355,
+    "closed_preparation": true,
+    "commit": "a0f6428c6f3deec5c5fda76c8b0b01763e83f344",
+    "historical_unknowns": {
+      "CPU_proxy_reason": "v2 used fixed 8MiB without arrays/tensors inventory; only small explicit file buffers recoverable, not a verified full proxy",
+      "v1_overwritten_source_bytes": null,
+      "v1_preparation_peaks": {
+        "archive_known_array_proxy_upper_bytes": 8388608,
+        "archive_windows_working_set_peak_bytes": 93892608,
+        "preparation_cpu_tensor_proxy_peak_bytes": null,
+        "preparation_cuda_allocated_peak_bytes": null,
+        "preparation_windows_working_set_peak_bytes": null
+      },
+      "v2_CPU_array_tensor_proxy_verified": null,
+      "v2_cuda_peak": null,
+      "v2_final_windows_peak": null,
+      "v2_reported_CPU_proxy_bytes": 8388608,
+      "v2_reported_windows_peak_to_sample_bytes": 359088128
+    },
+    "launches": 3,
+    "ledger_path": "artifacts/direction_a/phaseP_preparation_v3/run_record.json",
+    "old_preparation_criterion_6": "FAIL",
+    "reported_seconds": 73.50838789984118,
+    "restarts": 1,
+    "revisions": 9,
+    "scan_lower_bound": 5892,
+    "scan_upper_bound": 6020,
+    "unknown_history_retained": true,
+    "upper_seconds": 74.91717449986027
+  },
+  "hit": {
+    "actual": 6447243264,
+    "field": "windows_peak_working_set_bytes"
+  },
+  "limits": {
+    "attempts": 0,
+    "backwards": 400000,
+    "class_gradient_requests": 0,
+    "client_scans": 0,
+    "communications": 0,
+    "cpu_tensor_proxy_bytes": 2147483648,
+    "encoder_forwards": 32,
+    "evidence_bytes": 134217728,
+    "extra_encoded_positions": 0,
+    "feature_samples": 4000,
+    "fits": 400,
+    "formal_runs": 1,
+    "forwards": 401204,
+    "gpu_allocated_bytes": 6442450944,
+    "implementation_revisions": 3,
+    "logical_copy_bytes": 134217728,
+    "optimizer_steps": 400000,
+    "per_run": {},
+    "phase_seconds": {},
+    "preparation_runs": 0,
+    "retries": 0,
+    "scans": 500000,
+    "searches": 0,
+    "wall_seconds": 4380,
+    "windows_peak_working_set_bytes": 6442450944
+  },
+  "missing_references": [
+    "A-backbone-CIFAR10-s2026101321-r0080-v1",
+    "A-backbone-CIFAR100-s2026101322-r0040-v1",
+    "A-backbone-CIFAR100-s2026101322-r0080-v1"
+  ],
+  "new_stage_elapsed_seconds": 562.0630000000237,
+  "no_full_historical_peak_or_write_compliance_claim": true,
+  "phase_seconds": {
+    "A-backbone-CIFAR10-s2026101321-r0040-v1": 280.64100000000326,
+    "A-backbone-CIFAR10-s2026101321-r0080-v1": 145.15599999998813,
+    "input_qualification": 0.9379999999946449,
+    "startup": 135.07800000003772
+  },
+  "planned_references": [
+    "A-backbone-CIFAR10-s2026101321-r0040-v1",
+    "A-backbone-CIFAR10-s2026101321-r0080-v1",
+    "A-backbone-CIFAR100-s2026101322-r0040-v1",
+    "A-backbone-CIFAR100-s2026101322-r0080-v1"
+  ],
+  "progress": {
+    "actual_command": [
+      "scripts/run_direction_a_probe_formal.py",
+      "--run"
+    ],
+    "actual_run_commit": "a12905c9ffdfe65270feb83e587bffa4b90f612a",
+    "completed_heads": 160,
+    "real_input_started": true,
+    "reference": "A-backbone-CIFAR10-s2026101321-r0080-v1"
+  },
+  "resources": {
+    "cpu_known_arrays_tensor_proxy_peak_bytes": 515779452,
+    "cpu_proxy_basis": "eight times tracked synthetic buffers; full input cache/official containers inventory envelope; maximum with measured budget training envelope",
+    "gpu_allocated_peak_bytes": 137436672,
+    "windows_working_set_peak_bytes": 6447243264
+  },
+  "retry_allowed": false,
+  "run_counts": {},
+  "run_id": "FedPCC-P-formal-v1",
+  "source_write_events": [
+    {
+      "bytes": 40618,
+      "path": "scripts/run_direction_a_probe_formal.py",
+      "revision": 1,
+      "sha256": "9e2d3de2873ce65fc507d37d5525ab9fab874ca749ff2555b4a14bc805217786"
+    },
+    {
+      "bytes": 7467,
+      "path": "direction_a/probe_formal.py",
+      "revision": 1,
+      "sha256": "94127a868c9aec0a9a766ee4a726fd5528d8e8b827e7f67f3e8799bc23be89fd"
+    },
+    {
+      "bytes": 7933,
+      "path": "tests/test_direction_a_probe_formal.py",
+      "revision": 1,
+      "sha256": "55d52aca666ff026561ec0d0c6490839993a6232f25584cc679d055b7e39a2d8"
+    },
+    {
+      "bytes": 16375,
+      "path": "direction_a/probe_startup.py",
+      "revision": 1,
+      "sha256": "d462f0fecd0736bb1273f2effab840973de39a0bcc6998b2cfb314f5f94c21de"
+    },
+    {
+      "bytes": 6615,
+      "path": "direction_a/probe_preparation.py",
+      "revision": 1,
+      "sha256": "b91408f9eb6f5e73af571f844fe8c2245eee2ca515c3ecaa5dc5541e88357958"
+    },
+    {
+      "bytes": 43442,
+      "path": "scripts/prepare_direction_a_probe.py",
+      "revision": 1,
+      "sha256": "ec795cd52fb10f89bac893f53dda68d1ad9ba1c84869ceafd71241cb96689cb4"
+    },
+    {
+      "bytes": 12315,
+      "path": "scripts/recover_direction_a_probe.py",
+      "revision": 1,
+      "sha256": "d2623769ad39e15c4e00e9f5d77ff4c81f83c07f2e818b754d538570847a9aca"
+    },
+    {
+      "bytes": 5120,
+      "path": "direction_a/class_gradient_full.py",
+      "revision": 1,
+      "sha256": "69e606765ed108993a72c7b3785fcfc3746c96814e045034d9849c8cb597be70"
+    },
+    {
+      "bytes": 18277,
+      "path": "direction_a/backbone_preparation.py",
+      "revision": 1,
+      "sha256": "e0298782e037ad0dcf16b14444e84cf0f629df9ac7035b7280947b1cba8aea73"
+    },
+    {
+      "bytes": 9810,
+      "path": "direction_a/class_gradient_smoke.py",
+      "revision": 1,
+      "sha256": "e01b2efa47bedb9ace7e691b4826419f812864fd9a16335cd960561c3e4455bb"
+    },
+    {
+      "bytes": 2125,
+      "path": "direction_a/model.py",
+      "revision": 1,
+      "sha256": "6fabfbb5d4510d1ea4f827f8d103472d31dbcec2e10f6f1d61c4c8bff7427990"
+    },
+    {
+      "bytes": 4747,
+      "path": "models/ResNet.py",
+      "revision": 1,
+      "sha256": "73c4b0120c18f258b7bbe8cb87a13fb6b6c6896e0789b53505b141efc40295ce"
+    },
+    {
+      "bytes": 14473,
+      "path": "tests/test_direction_a_probe_startup.py",
+      "revision": 1,
+      "sha256": "4535c62dce01e085c9d353dd18a3c420099ed85bee03c086b32a44f577c2c540"
+    },
+    {
+      "bytes": 41041,
+      "path": "scripts/run_direction_a_probe_formal.py",
+      "revision": 2,
+      "sha256": "680c36d7a744c90840895472c7ac0f981360b8ea39509b7ea0991e5a5502e352"
+    },
+    {
+      "bytes": 10004,
+      "path": "tests/test_direction_a_probe_formal.py",
+      "revision": 2,
+      "sha256": "25412b0b17c9cf4595b0cc73ec1eaddf733d870219d4f1a25b9ae050194f92c1"
+    },
+    {
+      "bytes": 16529,
+      "path": "direction_a/probe_startup.py",
+      "revision": 2,
+      "sha256": "6c783722173329c821e00d5d138bfce397ad2cccb839c7d5c62eb71f33d72425"
+    },
+    {
+      "bytes": 43224,
+      "path": "scripts/run_direction_a_probe_formal.py",
+      "revision": 3,
+      "sha256": "02dc43edd3bf8675efe4ac76e18cf1a5c46cf01584a223b5b7d146ba8a305f93"
+    },
+    {
+      "bytes": 10006,
+      "path": "tests/test_direction_a_probe_formal.py",
+      "revision": 3,
+      "sha256": "8c50b66aeefc9c3053afd8f515d1dc51d489875baee76f360ef2985a7516eeba"
+    }
+  ],
+  "status": "failed_terminal_limit",
+  "terminal_limit_violations": [
+    "{'field': 'windows_peak_working_set_bytes', 'actual': 6447243264}",
+    "windows_peak_working_set_bytes"
+  ]
+}

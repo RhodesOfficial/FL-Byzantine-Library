@@ -1,50 +1,51 @@
-# 交付单：P 可分性探针有界准备
+# 交付单：P 正式可分性与校准空间验证（资源阻塞）
 
-- 对应任务单的基准 commit：2f7b638550c1b986b7fa2ffd3eabcd191e956cc8
-- 本次交付 commit：见本提交
+- 对应任务单的基准 commit：0dc4a1331ef307cff65657190eb1b048ebd98410
+- 本次交付 commit：见本提交；首次真实输入前源码/预登记提交：a12905c9ffdfe65270feb83e587bffa4b90f612a。
 
 ## 做了什么（≤5 条）
-- 锁定已通过G1.2训练缓存/原参考头；按类内部划分、全局置乱和固定200步执行。
-- 完成24/24个头；自检与存储读回均在同一次受限运行。
-- 提交描述性门槛依据及正式方案申请；τ_probe未冻结，未运行正式P验证。
+- 实现正式入口及冻结统计程序；3次语法/CPU套件、3次修订，最后19项自检PASS；第2轮失败记录保留。
+- 1次启动前失败封存（Git索引写权限导致尚未提交），无真实输入；源码提交后只运行1次真实输入。
+- 完成并读回160个头（C10 r40 100、r80 60）；第161头更新461步时触及Windows峰值上限，立即停止，无重启。
+- 仅汇集已保存的头/逐样本预测/指标；验证置乱与bootstrap尚未执行，空缺明确标记，未补造。
 
 ## 产出文件
-- artifacts/direction_a/phaseP_preparation_v3/preregistration.json、split.json：输入及划分/置乱锁定。
-- 同目录results.json、heads/：目标下降、所有对照、逐类CE/recall及分母。
-- 同目录syntax_check.json、selfchecks.json、run_record.json、artifact_hashes.json：实际语法/相关检查、累计成本及自动哈希索引。
-- 同目录threshold_basis.md、formal_plan.json：描述性零范围/离散性与未放行的正式预算。
-- direction_a/probe_preparation.py、scripts/prepare_direction_a_probe.py、tests/test_direction_a_probe_preparation.py：实现及相关测试。
+- artifacts/direction_a/phaseP_formal_v1/：源码预登记、syntax_check/selfchecks、input_checks、results/uncertainty、成本与哈希索引。
+- 同目录 heads/、head_results/、predictions/、point_results/：160个完整头、目标0/100/500/1000、已测指标与argmax/真标签CE。
+- 同目录 attempts/、startup_failure.txt：三轮CPU记录、启动前失败和真实运行超限栈；environment.json定位运行commit及命令。
 
 ## 判据自评
-| 判据编号 | 结果 PASS/FAIL | 证据位置 / 关键数字 |
+|判据编号|结果 PASS/FAIL|证据位置 / 关键数字|
 |---|---|---|
-|1|PASS|startup_regression.json：生产run_once真实构造、构造前/后异常、归档异常、正常资源峰及终末触顶/防覆盖|
-|2|PASS|syntax_check.json、selfchecks.json、results.json.input_checks：语法/自检通过，G1.2缓存哈希、20端索引/标签频数、参考状态；新编码/正式评价0|
-|3|PASS|split.json：每类拟合≥2/校准≥1，互斥并集=原train，同数据集两点完全相同|
-|4|PASS|split.json.label_permutations、results.json：四点各1真+5置乱，频数守恒、校准真标签不变|
-|5|PASS|heads/、results.json：完整C维/bias零初始化，Adam固定200步，0/50/100/200目标及有限性|
-|6|PASS|results.json：逐类/全类/头中尾CE/recall/分母、解析机会、所有差值用pp；零值保留|
-|7|PASS|run_record.json、artifact_hashes.json：全部头定位/读回/哈希；b702a84修复账本按commit继承、未知峰值/旧覆盖写入保留，有限豁免不追溯PASS|
-|8|PASS|threshold_basis.md、formal_plan.json：未冻结门槛；5置乱只描述，优化与表征信息分开|
-- A-backbone-CIFAR10-s2026101321-r0040-v1：内部尾recall=35.639566%，原头=0.000000%；100→200目标相对下降=0.055755（非科学裁决）。
-- A-backbone-CIFAR10-s2026101321-r0080-v1：内部尾recall=29.918699%，原头=0.000000%；100→200目标相对下降=0.048119（非科学裁决）。
-- A-backbone-CIFAR100-s2026101322-r0040-v1：内部尾recall=4.656863%，原头=0.000000%；100→200目标相对下降=0.169982（非科学裁决）。
-- A-backbone-CIFAR100-s2026101322-r0080-v1：内部尾recall=4.656863%，原头=0.000000%；100→200目标相对下降=0.181643（非科学裁决）。
+|1|PASS|syntax_check/selfchecks：最终19项通过；正式run_once合成注入覆盖异常、成本/峰保留、终末触顶及防覆盖。|
+|2|FAIL|input_checks：仅C10两点/2000样本/16次encoder；C100未执行；已测train/validation隔离、原头/BN不变。|
+|3|FAIL|160/400完整保存头；161次开始拟合，backward/Adam各160461/400000；第161头未保存为完整头。|
+|4|FAIL|C10 r40完成原/真/99置乱描述指标及CP区间；r80仅真+59置乱；C100缺失。|
+|5|FAIL|uncertainty：0/39996次验证置乱统计；p/p_adj未产生，不能作推断。|
+|6|FAIL|uncertainty：0/8000次配对bootstrap；已保存目标诊断，未产生区间。|
+|7|FAIL|run_record：Windows峰6447243264 B>6 GiB(6442450944 B)；failed_terminal_limit；产物索引读回通过。|
+|8|FAIL|工程资格失败且推断未完成，四点均未通过；不能解释为表征无信息。|
+
+|参考|完整头数|已测尾R %|已测Δ pp|可分性|校准空间|
+|---|---:|---:|---:|---|---|
+|CIFAR10 r40|100|38.25|38.25|FAIL|FAIL|
+|CIFAR10 r80|60|40.00|缺失|FAIL|FAIL|
+|CIFAR100 r40|0|缺失|缺失|FAIL|FAIL|
+|CIFAR100 r80|0|缺失|缺失|FAIL|FAIL|
+- 两个已测真实头末段仍变化；未追加步数，失败原因不能归为无信息；C10 r80原头预测/CE已保存但聚合指标未落盘。
 
 ## 实际资源消耗
-- 新阶段程序及预检包络上界59.078秒；P累计保守上界74.917秒（含20秒预检工具包络和终末预留）。
-- CUDA峰81744384 B；Windows峰1320845312 B；CPU代理峰807983952 B。
-- 最终核验archive_verification.json；修订3/累计9，语法3、CPU套件2（最终20例全PASS）；首次测试参数缺项已封存。
-- 新增/累计写入、全部覆盖及临时文件成本见run_record.json；封存历史未知项仍保留。
-- 拟合24次；反向/优化器4800/4800；新增encoder/编码/通信/类梯度请求均0。
-- 原G1.2成本与80端训练缓存生成费用见results.json.reused_costs，不计作本轮新编码。
-- b702a84修复账本累计14.4303879秒/1159812 B/修订6；保守时间上界15.8391745秒/扫描286继承，未知保留，旧判据6仍FAIL。
+- 正式全部程序保守562.063000秒（含源码/CPU/启动前及封存预留）；累计写入8259455 B；扫描166480。
+- CUDA峰137436672 B；Windows峰6447243264 B；CPU数组张量代理峰515779452 B；实际正式目录占用见run_record。
+- 准备一次继承74.9171745秒/11988355 B；P累计保守636.980174秒/20247810 B；旧未知及旧判据6 FAIL保留。
+- 自评FAIL 7条；完整性、资源资格与科学结论分开；真实过程只运行1次，无自动重试。
 
-## 阻塞
+## 阻塞（没有写“无”）
+- Windows进程峰值内存触及硬上限；正式过程失败即停，已用完3次实现修订/语法/CPU额度，不能自行修复或重跑。
+
+## 异议（没有写“无”）
 无
 
-## 异议
-无
-
-## 需要审查者裁决的问题（≤3 条，没有写"无"）
-- 正式P的τ_probe、最低改善量、重复/不确定性程序与formal_plan.json预算须冻结后另行放行。
+## 需要审查者裁决的问题（≤3 条，没有写“无”）
+- 裁决本次资源失败和未完成测量的处置；如需修复/另行运行，须另派任务与额度。
+- P交付后接续原G1.1暂缓文档任务，不自动进入其他实验节点。

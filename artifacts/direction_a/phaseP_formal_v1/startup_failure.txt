@@ -1,0 +1,43 @@
+Traceback (most recent call last):
+  File "E:\Federated Machine Learning\FL-Byzantine-Library-astra\scripts\run_direction_a_probe_formal.py", line 367, in experiment
+    fitted,objectives,metrics,pred,ce,diagnostic=formal.fit(train,torch.as_tensor(label,device="cuda"),val,true,C,groups,budget)
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Federated Machine Learning\FL-Byzantine-Library-astra\direction_a\probe_formal.py", line 125, in fit
+    budget.consume("backwards"); objective.backward()
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Federated Machine Learning\FL-Byzantine-Library-astra\direction_a\class_gradient_full.py", line 26, in consume
+    self.check()
+  File "E:\Federated Machine Learning\FL-Byzantine-Library-astra\direction_a\probe_startup.py", line 88, in check
+    super().check()
+  File "E:\Federated Machine Learning\FL-Byzantine-Library-astra\direction_a\class_gradient_full.py", line 42, in check
+    self.stop(field, actual)
+  File "E:\Federated Machine Learning\FL-Byzantine-Library-astra\direction_a\backbone_preparation.py", line 94, in stop
+    raise PreparationLimit(f"limit reached: {field}={actual}")
+direction_a.backbone_preparation.PreparationLimit: limit reached: windows_peak_working_set_bytes=6442573824
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Federated Machine Learning\FL-Byzantine-Library-astra\direction_a\probe_startup.py", line 260, in execute_attempt
+    work(budget)
+  File "E:\Federated Machine Learning\FL-Byzantine-Library-astra\scripts\run_direction_a_probe_formal.py", line 85, in work
+    def work(budget): namespace["main"](budget)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Federated Machine Learning\FL-Byzantine-Library-astra\scripts\run_direction_a_probe_formal.py", line 77, in <lambda>
+    dict(LIMITS=LIMITS, main=lambda b: experiment(context, b)))
+                                       ^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Federated Machine Learning\FL-Byzantine-Library-astra\scripts\run_direction_a_probe_formal.py", line 419, in experiment
+    write_json(OUT/"results.json",results,budget)
+  File "E:\Federated Machine Learning\FL-Byzantine-Library-astra\scripts\run_direction_a_probe_formal.py", line 208, in write_json
+    budget.write(path, encode(value), raw=True)
+  File "E:\Federated Machine Learning\FL-Byzantine-Library-astra\direction_a\backbone_preparation.py", line 130, in write
+    self.consume("evidence_bytes", len(data))
+  File "E:\Federated Machine Learning\FL-Byzantine-Library-astra\direction_a\class_gradient_full.py", line 26, in consume
+    self.check()
+  File "E:\Federated Machine Learning\FL-Byzantine-Library-astra\direction_a\probe_startup.py", line 88, in check
+    super().check()
+  File "E:\Federated Machine Learning\FL-Byzantine-Library-astra\direction_a\class_gradient_full.py", line 42, in check
+    self.stop(field, actual)
+  File "E:\Federated Machine Learning\FL-Byzantine-Library-astra\direction_a\backbone_preparation.py", line 94, in stop
+    raise PreparationLimit(f"limit reached: {field}={actual}")
+direction_a.backbone_preparation.PreparationLimit: limit reached: windows_peak_working_set_bytes=6447243264
