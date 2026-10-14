@@ -1,0 +1,180 @@
+{
+  "additional_retry_permitted": false,
+  "blocked": "Traceback (most recent call last):\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\scripts\\recover_direction_a_probe.py\", line 240, in run_once\n    budget, results, criteria = namespace[\"main\"]()\n                                ^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\scripts\\prepare_direction_a_probe.py\", line 421, in main\n    budget = RecoveryBudget(RECOVERY_CONTEXT)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\scripts\\prepare_direction_a_probe.py\", line 64, in __init__\n    super().__init__(OUTPUT / \"run_record.json\", LIMITS, STARTED)\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\class_gradient_full.py\", line 16, in __init__\n    super().__init__(path, limits)\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\backbone_preparation.py\", line 58, in __init__\n    self.save()\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\backbone_preparation.py\", line 82, in save\n    raw = encode(self.snapshot(now))\n                 ^^^^^^^^^^^^^^^^^^\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\scripts\\prepare_direction_a_probe.py\", line 90, in snapshot\n    cumulative_implementation_revisions=history[\"implementation_revisions\"]+value[\"counts\"][\"implementation_revisions\"],\n                                                                            ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nKeyError: 'implementation_revisions'\n",
+  "completed_heads": 0,
+  "criteria": {
+    "1": "FAIL",
+    "2": "FAIL",
+    "3": "FAIL",
+    "4": "FAIL",
+    "5": "FAIL",
+    "6": "FAIL",
+    "7": "FAIL"
+  },
+  "cumulative_accountable_write_bytes": 500678,
+  "cumulative_elapsed_seconds": 4.901985399979976,
+  "fail_count": 7,
+  "failed_restarts": 1,
+  "heads": [],
+  "historical_failure": {
+    "archive_only_invocations": 1,
+    "archive_program_seconds": 0.385985,
+    "blocked": "Startup SyntaxError at prepare_direction_a_probe.py:527; retry forbidden and two implementation revisions consumed. Correction and a new execution require reviewer authorization.",
+    "commit": "d7706748e70f63885572aded57fab9e674d1a086",
+    "committed_original_line_ending_provenance": {
+      "artifacts/direction_a/phaseP_preparation_v1/results.json": {
+        "committed_LF_sha256": "17757344a221709bd3dea657b47eeabe63986e59afe24fa3412f702e5d0460f1",
+        "indexed_original_sha256": "5b532ad0406ec5d7a8983bcd5278a8a0b1a078265a83303e97c4ed4ae99bc133",
+        "matching_line_endings": "internal_CRLF_final_LF",
+        "original_bytes": 1425
+      },
+      "artifacts/direction_a/phaseP_preparation_v1/run_record.json": {
+        "committed_LF_sha256": "7b386998017491c502073245aa06e867d5c7ec7e287a34bc08b2c6f43d3b0900",
+        "indexed_original_sha256": "10e44a15b6252b9122f1f31366a69908bd80881b24c1dd87ccf1ffa0660702f8",
+        "matching_line_endings": "internal_CRLF_final_LF",
+        "original_bytes": 2083
+      },
+      "artifacts/direction_a/phaseP_preparation_v1/selfchecks.json": {
+        "committed_LF_sha256": "2d07866f38a7d5640e99faae7c4a4d995cd66dd18dc212f89bd480e933f4aaa8",
+        "indexed_original_sha256": "120b4f12193b16b48a42481d8e54daecf549a05dcbd7744bff410011a87e1927",
+        "matching_line_endings": "internal_CRLF_final_LF",
+        "original_bytes": 689
+      },
+      "artifacts/direction_a/phaseP_preparation_v1/startup_failure.txt": {
+        "committed_LF_sha256": "89d029342f376a19cccba492a6e186bf5217dfafb9c83731301d02e5ed920d2f",
+        "indexed_original_sha256": "89d029342f376a19cccba492a6e186bf5217dfafb9c83731301d02e5ed920d2f",
+        "matching_line_endings": "committed_LF",
+        "original_bytes": 695
+      },
+      "direction_a/probe_preparation.py": {
+        "committed_LF_sha256": "b91408f9eb6f5e73af571f844fe8c2245eee2ca515c3ecaa5dc5541e88357958",
+        "indexed_original_sha256": "b91408f9eb6f5e73af571f844fe8c2245eee2ca515c3ecaa5dc5541e88357958",
+        "matching_line_endings": "committed_LF",
+        "original_bytes": 6615
+      },
+      "docs/workflow/TO_REVIEWER.md": {
+        "committed_LF_sha256": "167c53be51f8d41732229fd311c062d21ee4302e7ba3cf7fbaabe0b2ff1c3c4d",
+        "indexed_original_sha256": "167c53be51f8d41732229fd311c062d21ee4302e7ba3cf7fbaabe0b2ff1c3c4d",
+        "matching_line_endings": "committed_LF",
+        "original_bytes": 3191
+      },
+      "scripts/archive_direction_a_probe_startup_failure.ps1": {
+        "committed_LF_sha256": "010be5b853157e8a474966a2231ff7db4be859697cd95b11f3e487208a98f9c1",
+        "indexed_original_sha256": "010be5b853157e8a474966a2231ff7db4be859697cd95b11f3e487208a98f9c1",
+        "matching_line_endings": "committed_LF",
+        "original_bytes": 12741
+      },
+      "scripts/prepare_direction_a_probe.py": {
+        "committed_LF_sha256": "4ccf3667904510f6ec8a09e2936efde68a105b8b0c15fa572eb29ffa2fb6ba76",
+        "indexed_original_sha256": "4ccf3667904510f6ec8a09e2936efde68a105b8b0c15fa572eb29ffa2fb6ba76",
+        "matching_line_endings": "committed_LF",
+        "original_bytes": 40898
+      },
+      "tests/test_direction_a_probe_preparation.py": {
+        "committed_LF_sha256": "1853224b66b1329e12948e36880994603473f8a2a113bb3bd6f1a150ee8f0e32",
+        "indexed_original_sha256": "1853224b66b1329e12948e36880994603473f8a2a113bb3bd6f1a150ee8f0e32",
+        "matching_line_endings": "committed_LF",
+        "original_bytes": 3881
+      }
+    },
+    "counts": {
+      "archive_hash_scans": 16,
+      "backwards": 0,
+      "class_gradient_requests": 0,
+      "communications": 0,
+      "encoder_forwards": 0,
+      "evidence_bytes": 205825,
+      "feature_samples": 0,
+      "fits": 0,
+      "forwards": 0,
+      "optimizer_steps": 0,
+      "preparation_statistical_scans": 0,
+      "searches": 0
+    },
+    "directory": "artifacts/direction_a/phaseP_preparation_v1",
+    "elapsed_seconds": 0.8109854000000001,
+    "emergency_status_reserved_bytes": 131072,
+    "failed_retries": 0,
+    "finalization_time_reserved_seconds": 0.1,
+    "hit": null,
+    "implementation_revisions": 2,
+    "implementation_write_limitation": "Final newly written source sizes charged; superseded patch bytes not measured, so no exact cumulative source-write PASS claim.",
+    "ledger_sha256": "10e44a15b6252b9122f1f31366a69908bd80881b24c1dd87ccf1ffa0660702f8",
+    "limits": {
+      "backwards": 4800,
+      "cpu_tensor_proxy_bytes": 2147483648,
+      "cuda_allocated_bytes": 6442450944,
+      "cumulative_write_bytes": 134217728,
+      "failed_retries": 0,
+      "fits": 24,
+      "head_forwards": 6000,
+      "implementation_revisions": 2,
+      "optimizer_steps": 4800,
+      "preparation_runs": 1,
+      "statistical_scans": 10000,
+      "wall_seconds": 600,
+      "windows_working_set_bytes": 6442450944
+    },
+    "old_criterion_6": "FAIL (never retrospectively upgraded)",
+    "old_source_paths_resolved_at_commit": true,
+    "preparation_command_seconds": 0.4250004,
+    "preparation_launches": 1,
+    "preparation_module_executions": 0,
+    "preparation_time_measurement": "exec_command wall time, includes startup and exit; no in-module timer ran",
+    "resources": {
+      "archive_known_array_proxy_upper_bytes": 8388608,
+      "archive_windows_working_set_peak_bytes": 93892608,
+      "preparation_cpu_tensor_proxy_peak_bytes": null,
+      "preparation_cuda_allocated_peak_bytes": null,
+      "preparation_windows_working_set_peak_bytes": null
+    },
+    "run_id": "FedPCC-P-preparation-v1",
+    "source_writes_charged_bytes": 64135,
+    "status": "blocked_startup_syntax_error",
+    "unknown_old_overwrite_bytes": null,
+    "unknown_old_peak_values_retained": true
+  },
+  "new_known_write_bytes": 294853,
+  "new_stage_elapsed_seconds": 4.090999999979976,
+  "preparation_launches": 2,
+  "resources": {
+    "new_cpu_proxy_upper_bytes": 8388608,
+    "new_cuda_peak_bytes": null,
+    "new_windows_working_set_peak_bytes": 359088128
+  },
+  "run_id": "FedPCC-P-preparation-v2",
+  "source_write_events": [
+    {
+      "bytes": 45184,
+      "path": "scripts/prepare_direction_a_probe.py",
+      "revision": 1,
+      "sha256": "ac8f8a720dd5adfde726c07c0aa1a1440c4d33d8dc7edbaf4219c63fc539b681"
+    },
+    {
+      "bytes": 11147,
+      "path": "scripts/recover_direction_a_probe.py",
+      "revision": 1,
+      "sha256": "9aea145eabfd11f3f211499b8739ab83cacdb783cb8a6ade265bb85da734c50c"
+    },
+    {
+      "bytes": 45742,
+      "path": "scripts/prepare_direction_a_probe.py",
+      "revision": 2,
+      "sha256": "ee5c00efc455100ed0d15b124ddb96b48b999ea36bd839d5198d57a34c896d47"
+    },
+    {
+      "bytes": 15370,
+      "path": "scripts/recover_direction_a_probe.py",
+      "revision": 2,
+      "sha256": "be5a7f4065d0d96c5daf7d943c265d110f68e781290fd3422a35ae690e147bb9"
+    },
+    {
+      "bytes": 17238,
+      "path": "scripts/recover_direction_a_probe.py",
+      "revision": 2,
+      "sha256": "e5c61b341913a5cd36b348e20547b032aa8352b5374c805510eb0d41cf4411c3",
+      "write_kind": "full file after applied implementation revision"
+    }
+  ],
+  "status": "blocked_startup_failure"
+}

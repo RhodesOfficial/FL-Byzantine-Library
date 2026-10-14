@@ -1,13 +1,15 @@
-"""Sole FedPCC-P-preparation-v1 execution, including tests and archive verification.
+"""Sole FedPCC-P-preparation-v2 execution, launched by the recovery wrapper.
 
-Run once with E:\\anaconda3\\python.exe scripts/prepare_direction_a_probe.py.
+Run through scripts/recover_direction_a_probe.py after its pure syntax check.
 An existing output ledger forbids restarting, including after failure.
 """
 
 import os
 import time
 
-STARTED = time.monotonic()
+if "RECOVERY_CONTEXT" not in globals():
+    raise RuntimeError("Use the recovery wrapper: it records syntax/startup costs and forbids restarts")
+STARTED = RECOVERY_CONTEXT["started"]
 os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
 
 import gc
@@ -35,23 +37,63 @@ from direction_a.class_gradient_full import FullBudget
 from direction_a.probe_preparation import (ADAM, STEPS, SPLIT_SEED, PERMUTATION_SEEDS,
     differences, fit_head, permute_labels, split_train, summarize, uniform_control)
 
-BASE = "298a3e8b22986691acf2ede893c0dee04b610881"
+BASE = "d7706748e70f63885572aded57fab9e674d1a086"
 EVIDENCE_COMMIT = "d3a3bd712d6bb28283b59faff16e17e099debcb4"
-RUN_ID = "FedPCC-P-preparation-v1"
+RUN_ID = "FedPCC-P-preparation-v2"
 G12 = ROOT / "artifacts/direction_a/phaseG1_2_full_v1"
 UPSTREAM = ROOT / "artifacts/direction_a/backbone_preparation_v1"
-OUTPUT = ROOT / "artifacts/direction_a/phaseP_preparation_v1"
+OUTPUT = ROOT / "artifacts/direction_a/phaseP_preparation_v2"
 REVIEW = ROOT / "docs/workflow/TO_REVIEWER.md"
 SOURCES = ["direction_a/probe_preparation.py", "scripts/prepare_direction_a_probe.py",
            "tests/test_direction_a_probe_preparation.py", "direction_a/class_gradient_full.py",
-           "direction_a/backbone_preparation.py"]
-LIMITS = dict(attempts=0, optimizer_steps=4800, backwards=4800, forwards=6000, scans=10000,
-              evidence_bytes=128*1024**2, logical_copy_bytes=128*1024**2, retries=0, fits=24,
+           "direction_a/backbone_preparation.py", "scripts/recover_direction_a_probe.py"]
+LIMITS = dict(attempts=0, optimizer_steps=4800, backwards=4800, forwards=6000, scans=9984,
+              evidence_bytes=120*1024**2, logical_copy_bytes=120*1024**2, retries=0, fits=24,
               preparation_runs=1, formal_runs=0, implementation_revisions=2, searches=0,
               feature_samples=0, client_scans=0, class_gradient_requests=0, extra_encoded_positions=0,
               encoder_forwards=0, communications=0, gpu_allocated_bytes=6*1024**3,
               windows_peak_working_set_bytes=6*1024**3, cpu_tensor_proxy_bytes=2*1024**3,
-              wall_seconds=600, phase_seconds={}, per_run={})
+              wall_seconds=599, phase_seconds={}, per_run={})
+
+
+class RecoveryBudget(FullBudget):
+    """All new writes/timers measured; immutable v1 costs and unknowns retained."""
+
+    def __init__(self, context):
+        self.context = context
+        super().__init__(OUTPUT / "run_record.json", LIMITS, STARTED)
+        self.counts.update(fits=0, preparation_runs=0, encoder_forwards=0,
+                           communications=0, implementation_revisions=2)
+        self.counts["evidence_bytes"] += context["preparation_initial_write_bytes"]
+        self.counts["scans"] += context["preparation_initial_scans"]
+        self.cpu_proxy(8*1024**2)
+        self.save()
+
+    def check(self):
+        super().check()
+        if time.monotonic() - self.started + self.context["history"]["elapsed_seconds"] >= 600:
+            self.stop("P_cumulative_wall_seconds", time.monotonic()-self.started+self.context["history"]["elapsed_seconds"])
+
+    def snapshot(self, now=None):
+        value = super().snapshot(now)
+        history = self.context["history"]
+        value.update(run_id=RUN_ID, historical_failure=history,
+                     source_write_events=self.context["source_write_events"],
+                     syntax_check_seconds=self.context["syntax"]["program_seconds"],
+                     syntax_check_process_peak_bytes=self.context["syntax"]["windows_peak_working_set_bytes"],
+                     new_stage_elapsed_seconds=value["elapsed_seconds"],
+                     historical_measured_elapsed_seconds=history["elapsed_seconds"],
+                     cumulative_elapsed_seconds=history["elapsed_seconds"]+value["elapsed_seconds"],
+                     cumulative_accountable_write_bytes=history["counts"]["evidence_bytes"]+value["counts"]["evidence_bytes"],
+                     cumulative_scans=history["counts"]["archive_hash_scans"]+value["counts"]["scans"],
+                     cumulative_preparation_launches=2, cumulative_failed_restarts=1,
+                     cumulative_implementation_revisions=history["implementation_revisions"]+value["counts"]["implementation_revisions"],
+                     historical_resource_waiver="P adjudication v1 only: old preparation peaks/overwritten source writes remain unknown; old criterion 6 remains FAIL",
+                     no_full_historical_peak_or_write_compliance_claim=True)
+        value["resources"]["windows_working_set_peak_bytes"] = max(
+            value["resources"].get("windows_working_set_peak_bytes", 0),
+            self.context["syntax"]["windows_peak_working_set_bytes"])
+        return value
 
 
 def git(*args):
@@ -266,7 +308,10 @@ def threshold_and_plan(results, splits, budget):
         budget_request=dict(wall_seconds=total_request, cumulative_write_bytes=128*1024**2,
                             cuda_allocated_bytes=6*1024**3, windows_working_set_bytes=6*1024**3,
                             cpu_tensor_proxy_bytes=2*1024**3, optimizer_steps=400000, backwards=400000,
-                            head_forwards=401204, statistical_scans=500000, runs=1, retries=0, searches=0),
+                            head_forwards=401204, statistical_scans=500000, runs=1, retries=0, searches=0,
+                            encoder_forwards=32, newly_encoded_validation_samples=4000,
+                            newly_encoded_train_samples=0, communications=0,
+                            encoding_basis="reuse full-train G1.2 caches; validation 1000 samples/reference, batch=128; proposal only"),
         uncertainty_plan=dict(permutation_p="(1+null_exceedances)/(1+99), binomial uncertainty; adjust four-point multiplicity",
                               validation_interval="2000 class-stratified paired resamples of fixed validation predictions",
                               caveats="99 nulls do not guarantee a precise 95% quantile; clients/snapshots not independent",
@@ -284,16 +329,16 @@ def review_text(criteria, results, budget, blocked):
              "- 提交描述性门槛依据及正式方案申请；τ_probe未冻结，未运行正式P验证。", "", "## 产出文件",
              "- artifacts/direction_a/phaseP_preparation_v1/preregistration.json、split.json：输入及划分/置乱锁定。",
              "- 同目录results.json、heads/：目标下降、所有对照、逐类CE/recall及分母。",
-             "- 同目录selfchecks.json、run_record.json、artifact_hashes.json：检查、累计成本及自动哈希索引。",
+             "- 同目录syntax_check.json、selfchecks.json、run_record.json、artifact_hashes.json：实际语法/相关检查、累计成本及自动哈希索引。",
              "- 同目录threshold_basis.md、formal_plan.json：描述性零范围/离散性与未放行的正式预算。",
              "- direction_a/probe_preparation.py、scripts/prepare_direction_a_probe.py、tests/test_direction_a_probe_preparation.py：实现及相关测试。",
              "", "## 判据自评", "| 判据编号 | 结果 PASS/FAIL | 证据位置 / 关键数字 |", "|---|---|---|"]
-    evidence = {"1": "preregistration.json、results.json.input_checks：G1.2缓存哈希、20端索引/标签频数、参考完整状态；新编码/正式评价0",
+    evidence = {"1": "syntax_check.json、selfchecks.json、results.json.input_checks：语法/自检通过，G1.2缓存哈希、20端索引/标签频数、参考状态；新编码/正式评价0",
                 "2": "split.json：每类拟合≥2/校准≥1，互斥并集=原train，同数据集两点完全相同",
                 "3": "split.json.label_permutations、results.json：四点各1真+5置乱，频数守恒、校准真标签不变",
                 "4": "heads/、results.json：完整C维/bias零初始化，Adam固定200步，0/50/100/200目标及有限性",
                 "5": "results.json：逐类/全类/头中尾CE/recall/分母、解析机会、所有差值用pp；零值保留",
-                "6": "run_record.json、artifact_hashes.json：全部头定位/读回/哈希，成本与旧G1.2复用分列",
+                "6": "run_record.json、artifact_hashes.json：全部头定位/读回/哈希；v1历史按基准commit保留、未知峰值/旧覆盖写入保留，有限豁免不追溯PASS",
                 "7": "threshold_basis.md、formal_plan.json：未冻结门槛；5置乱只描述，优化与表征信息分开"}
     for k, v in criteria.items():
         lines.append(f"|{k}|{v}|{evidence[k]}|")
@@ -305,6 +350,7 @@ def review_text(criteria, results, budget, blocked):
     lines += ["", "## 实际资源消耗", "- 精确累计秒数/峰值显存/Windows working-set/CPU代理/写入见run_record.json；包含启动、自检、读盘、保存、归档及128 KiB应急槽。",
               f"- 拟合{budget.counts['fits']}次；反向/优化器{budget.counts['backwards']}/{budget.counts['optimizer_steps']}；新增encoder/编码/通信/类梯度请求均0。",
               "- 原G1.2成本与80端训练缓存生成费用见results.json.reused_costs，不计作本轮新编码。",
+              "- v1历史：0.8109854秒/205825 B/归档扫描16继承；旧准备峰值和覆盖源码写入仍未知；新阶段及可核算累计成本见run_record.json。",
               "", "## 阻塞", blocked or "无", "", "## 异议", "无", "", "## 需要审查者裁决的问题（≤3 条，没有写\"无\"）",
               "- 正式P的τ_probe、最低改善量、重复/不确定性程序与formal_plan.json预算须冻结后另行放行。"]
     if len(lines) > 80:
@@ -329,8 +375,10 @@ def archive(budget, extra_paths):
                  verification="all head readbacks; all archive sizes and SHA-256 re-read in same run")
     # Charge final ledger and index exactly, with fixed-size digest placeholders.
     before = budget.counts["evidence_bytes"]
-    budget.status = "completed_preparation_engineering_PASS" if budget.hit is None else "blocked_partial_preparation"
-    now = time.monotonic()
+    if budget.hit is not None:
+        budget.status = "blocked_partial_preparation"
+    now = time.monotonic()+0.1
+    budget.context["finalization_time_reserved_seconds"] = 0.1
     for _ in range(12):
         ledger = budget.snapshot(now)
         records[ledger_name]["bytes"] = len(encode(ledger))
@@ -366,26 +414,29 @@ def archive(budget, extra_paths):
 def main():
     if Path(sys.executable).resolve() != Path(r"E:\anaconda3\python.exe").resolve():
         raise RuntimeError("required interpreter mismatch")
-    if OUTPUT.exists():
+    if (OUTPUT/"run_record.json").exists():
         raise RuntimeError("preparation already attempted; retries are forbidden")
     if subprocess.run(["git", "merge-base", "--is-ancestor", BASE, "HEAD"], cwd=ROOT).returncode:
         raise RuntimeError("task baseline is not HEAD or ancestor")
-    budget = FullBudget(OUTPUT/"run_record.json", LIMITS, STARTED)
-    budget.counts.update(fits=0, preparation_runs=0, encoder_forwards=0, communications=0,
-                         implementation_revisions=2)
+    budget = RecoveryBudget(RECOVERY_CONTEXT)
+    RECOVERY_CONTEXT["budget"] = budget
     budget.consume("preparation_runs")
-    # Also charge the source/test files and final reviewer handoff written for this task.
-    budget.consume("evidence_bytes", sum((ROOT/p).stat().st_size for p in SOURCES[:3]))
     watchdog_done = threading.Event()
     def watch():
         while not watchdog_done.wait(.2):
             try:
                 budget.check()
             except PreparationLimit:
+                RECOVERY_CONTEXT["emergency_report"]("Resource guard reached; no retry")
                 os._exit(124)
     threading.Thread(target=watch, daemon=True).start()
-    results, splits = dict(run_id=RUN_ID, references=[], input_checks=[]), {}
+    results, splits = dict(run_id=RUN_ID, references=[], input_checks=[],
+        previous_failure_commit=BASE, previous_failure_criteria={str(i):"FAIL" for i in range(1,8)},
+        previous_failure_directory="artifacts/direction_a/phaseP_preparation_v1",
+        historical_unknowns_retained=True), {}
     criteria = {str(i): "FAIL" for i in range(1, 8)}
+    RECOVERY_CONTEXT["results"] = results
+    RECOVERY_CONTEXT["criteria"] = criteria
     try:
         if not torch.cuda.is_available():
             raise RuntimeError("CUDA required by preregistered bounded cost estimate")
@@ -421,6 +472,8 @@ def main():
             references=refs, source_fingerprints={p:digest_file(ROOT/p, budget) for p in SOURCES},
             task_sha256=digest_file(ROOT/"docs/workflow/TO_EXECUTOR.md", budget),
             adjudication_sha256=digest_file(ROOT/"docs/DIRECTION_A_G1_2_ADJUDICATION_v2.md", budget),
+            P_adjudication=dict(path="docs/DIRECTION_A_P_ADJUDICATION_v1.md", input_commit=git("rev-parse", "HEAD"),
+                               sha256=digest_file(ROOT/"docs/DIRECTION_A_P_ADJUDICATION_v1.md", budget)),
             input_archive_sha256=digest_file(G12/"artifact_hashes.json", budget),
             split=dict(seed=SPLIT_SEED, algorithm="dataset-local default_rng; ascending class IDs; sorted global indices before shuffle; first max(1,floor(.2*N_c)) calibration",
                        fit_order="sorted global indices", calibration_order="sorted global indices", minimum_fit_per_class=2,
@@ -439,7 +492,13 @@ def main():
                                 real_scores_used=False, five_nulls="descriptive only; no reliable 95% tail quantile claim"),
             optimization_diagnostic="report relative objective decrease 100->200; not a separability decision",
             input_policy="accepted cached train features/labels only; train fields in sealed split metadata only; checkpoint tensors only; no raw datasets, validation/test samples, model or encoder execution",
-            limits=LIMITS, prefit_estimate=estimate)
+            limits=LIMITS, historical_limits_and_consumption=RECOVERY_CONTEXT["history"],
+            cumulative_limits=dict(wall_seconds=600, accountable_write_bytes=128*1024**2,
+                                   scans=10000, fits=24, backwards=4800, optimizer_steps=4800,
+                                   head_forwards=6000, preparation_launches=2, failed_restarts=1,
+                                   implementation_revisions=4),
+            syntax_check_sha256=digest_file(OUTPUT/"syntax_check.json", budget),
+            prefit_estimate=estimate)
         write(OUTPUT/"preregistration.json", prereg, budget)
         for limit, actual in (("wall_seconds", estimate["wall_seconds"]), ("evidence_bytes", estimate["write_bytes"]),
                               ("gpu_allocated_bytes", estimate["gpu_allocated_bytes"]),
@@ -457,6 +516,15 @@ def main():
             encoder_costs_by_reference={p["reference_id"]:sum(c["cost_seconds"]["encode"] for c in p["clients"]) for p in measurements["references"]},
             old_cost_not_charged_as_new=True, new_encoding_samples=0,
             earlier_missing_timing="C100 r80 old first-segment per-client timing remains null; never reconstructed")
+        budget.planned_references = [r["reference_id"] for r in refs]
+        # No calibration fit or extra optimizer step is used for cost estimation.
+        available = min(599-(time.monotonic()-STARTED),
+                        600-RECOVERY_CONTEXT["history"]["elapsed_seconds"]-(time.monotonic()-STARTED)) - 30
+        prereg["prefit_estimate"].update(available_seconds_after_old_startup_selfchecks_and_30s_archive_reserve=available,
+                                       archive_reserve_seconds=30, source_and_evidence_bytes_already_charged=budget.counts["evidence_bytes"])
+        write(OUTPUT/"preregistration.json", prereg, budget)
+        if estimate["wall_seconds"] >= available or budget.counts["evidence_bytes"]+estimate["write_bytes"] >= LIMITS["evidence_bytes"]:
+            raise RuntimeError("insufficient remaining fixed budget before fitting")
         permutation_records, per_fit_seconds = {}, []
         for reference in refs:
             ref_id, ds = reference["reference_id"], reference["dataset"]
@@ -524,7 +592,7 @@ def main():
                 budget.save()
             result["differences_pp"] = differences(result["heads"][0]["metrics"],
                 {"original":original_metrics, "uniform":uniform,
-                 **{h["name"]:h["metrics"] for h in result["heads"] if h["label_kind"]=="permuted"})
+                 **{h["name"]:h["metrics"] for h in result["heads"] if h["label_kind"]=="permuted"}})
             budget.scan()
             result["state_after"] = tensor_state_sha(packet["state_dict"])
             repeated, repeated_hash = frozen_checkpoint(reference, accepted, budget)
@@ -546,13 +614,12 @@ def main():
                                    operation_counts=dict(budget.counts), detailed_final_ledger="run_record.json")
         results["formal_P_executed"] = False
         criteria = {str(i):"PASS" for i in range(1,8)}
+        RECOVERY_CONTEXT["criteria"] = criteria
         results["criteria"] = criteria
         write(OUTPUT/"results.json", results, budget)
         write(REVIEW, review_text(criteria,results,budget,None), budget, raw=True)
-        archive(budget, [REVIEW, *[ROOT/p for p in SOURCES[:3]]])
-        print(json.dumps(dict(status=budget.status, fail_count=0, blocked=False,
-                              elapsed_seconds=budget.snapshot()["elapsed_seconds"], counts=budget.counts,
-                              resources=budget.resources, formal_request_seconds=plan["budget_request"]["wall_seconds"])))
+        budget.status = "completed_preparation_engineering_PASS"
+        return budget, results, criteria
     except Exception as exc:
         blocked = f"{type(exc).__name__}: {exc}；本轮不重跑，不调整步骤/对照/参考。"
         budget.status = "blocked_partial_preparation"
