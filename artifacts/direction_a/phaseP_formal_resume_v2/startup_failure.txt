@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "E:\Federated Machine Learning\FL-Byzantine-Library-astra\direction_a\probe_startup.py", line 260, in execute_attempt
+    work(budget)
+  File "E:\Federated Machine Learning\FL-Byzantine-Library-astra\scripts\resume_direction_a_probe_formal.py", line 107, in <lambda>
+    return execute_attempt(context,factory,lambda b:namespace['main'](b),archive)
+                                                    ^^^^^^^^^^^^^^^^^^^^
+  File "E:\Federated Machine Learning\FL-Byzantine-Library-astra\scripts\resume_direction_a_probe_formal.py", line 98, in <lambda>
+    dict(LIMITS=LIMITS,main=lambda b:experiment(context,b)))
+                                     ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Federated Machine Learning\FL-Byzantine-Library-astra\scripts\resume_direction_a_probe_formal.py", line 344, in experiment
+    old_index,saved,old_inputs,c10_mapping,joint,tracked=verify_old(b)
+                                                         ^^^^^^^^^^^^^
+  File "E:\Federated Machine Learning\FL-Byzantine-Library-astra\scripts\resume_direction_a_probe_formal.py", line 296, in verify_old
+    for name,row in index['files'].items(): historical_locator(dict(path=name,**row),b,OLD_COMMIT,OLD)
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Federated Machine Learning\FL-Byzantine-Library-astra\scripts\resume_direction_a_probe_formal.py", line 202, in historical_locator
+    raise RuntimeError('historical artifact mismatch: '+locator['path'])
+RuntimeError: historical artifact mismatch: models/ResNet.py

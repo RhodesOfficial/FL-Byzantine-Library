@@ -1,51 +1,49 @@
-# 交付单：P 正式第2轮恢复自检失败
+# 交付单：P 正式第3轮保留160头续跑
 
-- 对应任务单的基准 commit：ea6a10001998a6062b6365f5e5f3f0df862bca7e
+- 对应任务单的基准 commit：10e0b657d616983d41de081863a97bf8332534d5
 - 本次交付 commit：见本提交
 
 ## 做了什么（≤5 条）
-- 新建v6恢复入口、精确240头队列及预登记，v5拟合/统计算术复用原源码。
-- 唯一语法检查PASS；唯一CPU套件22项中21 PASS、1 FAIL，保留原失败记录。
-- 自检失败即停；真实输入/正式续跑/新拟合/编码均0；旧包未改写。
+- 最小v7恢复入口及一次合成CPU套件，v5科学算术完整复用；源码与预登记先提交。
+- 旧包校验在共享源码历史哈希处停止；旧160头未完成本轮资格核验，新头0/240，第161头未启动。
+- 保留失败终态，分列原正式、失败v1、新v2与准备账本；四点联合推断未完成。
 
 ## 产出文件
-- scripts/resume_direction_a_probe_formal.py、tests/test_direction_a_probe_formal_resume.py：恢复入口与合成套件。
-- artifacts/direction_a/phaseP_formal_resume_v1/：preregistration、syntax_check、selfchecks、check_cost、run_record、artifact_hashes。
-- 同目录resume_manifest、input_checks、results、uncertainty：明确标记未运行/未校验的部分交付，未生成新头或联合400头索引。
+- artifacts/direction_a/phaseP_formal_resume_v2/：恢复源码预登记、语法/CPU/输入检查、计划manifest、失败results/uncertainty、run_record/artifact_hashes。
+- startup_failure.txt：历史models/ResNet.py哈希不符的异常；没有新增heads/predictions或联合索引。
 
 ## 判据自评
 |判据编号|结果 PASS/FAIL|证据位置 / 关键数字|
 |---|---|---|
-|1|FAIL|syntax_check PASS；selfchecks 21 PASS/1 FAIL，归档大小断言失败|
-|2|FAIL|input_checks：真实输入资格未运行，新encoder/验证编码0|
-|3|FAIL|resume_manifest仅预定队列；旧160头未读回，新完整头0/240|
-|4|FAIL|results：未产生四点全指标/训练置乱对照|
-|5|FAIL|uncertainty：验证置乱0/39996|
-|6|FAIL|uncertainty：bootstrap 0/8000；未新增目标诊断|
-|7|FAIL|run_record：failed_before_real_input；联合索引/工程资格未完成|
-|8|FAIL|四点科学推断未完成，不构成表征无信息结论|
+|1|PASS|syntax_check.json / selfchecks.json；24/24 PASS，大归档实际182526 B>131072 B|
+|2|FAIL|input_checks.json；新encoder 0/24；新验证编码 0/3000|
+|3|FAIL|resume_manifest仅计划队列；joint_index未产出；新拟合0/240、反向/Adam 0/0|
+|4|FAIL|results.references为空；未完成四点指标/训练置乱汇总|
+|5|FAIL|uncertainty；验证置乱0/39996，未产生调整p|
+|6|FAIL|uncertainty / results；bootstrap 0/8000，联合目标诊断未完成|
+|7|FAIL|run_record / artifact_hashes；old_preservation未产出；终态 failed_no_retry；旧峰失败保留|
+|8|FAIL|四点固定科学判据，逐点见下表|
 
-|参考|本轮尾R/改善|可分性|校准空间|
-|---|---|---|---|
-|C10 r40|未推断|FAIL|FAIL|
-|C10 r80|未推断|FAIL|FAIL|
-|C100 r40|未运行|FAIL|FAIL|
-|C100 r80|未运行|FAIL|FAIL|
+|参考|尾R %|Δ pp|可分性|校准空间|
+|---|---:|---:|---|---|
+|A-backbone-CIFAR10-s2026101321-r0040-v1|未完成|未完成|FAIL|FAIL|
+|A-backbone-CIFAR10-s2026101321-r0080-v1|未完成|未完成|FAIL|FAIL|
+|A-backbone-CIFAR100-s2026101322-r0040-v1|未完成|未完成|FAIL|FAIL|
+|A-backbone-CIFAR100-s2026101322-r0080-v1|未完成|未完成|FAIL|FAIL|
 
 ## 实际资源消耗
-- 本次CPU程序保守20.562秒；实现/相关程序180秒、终末20秒预留已计入；恢复保守220.562000秒。
-- 旧正式562.063秒/8259455 B/166480扫描按v6继承；新写入1537791 B/扫描1407；旧未知及旧判据6 FAIL保留。
-- 正式总账782.625000/4380秒、9797246/134217728 B；余量3597.375000秒/124420482 B。
-- 准备74.9171745秒/11988355 B只继承一次；P累计857.542175秒/21785601 B。
-- 本轮CUDA峰0；Windows自检峰见check_cost，历史最大峰6447243264 B继承；CPU代理峰1430056 B。
-- 旧有效160000更新与失败461次保守收费保留；新更新0、重复验证编码0；历史计数本轮未重新核验。
-- 自评FAIL 8条；未因自检断言失败否定科学假设。
+- 旧正式562.063秒/8259455 B/166480扫描、失败v1 220.562秒/1537791 B/1407扫描；v2保守661.719000秒/1681119 B/2350扫描。
+- 正式总账 1444.344000/4380秒、11478365/134217728 B；余量 2935.656000秒、122739363 B。
+- 本轮CUDA峰0 B、Windows峰414269440 B、CPU代理峰1924328 B；跨阶段最大峰及缺项见run_record.joint_formal_accounting.resource_peaks。
+- 准备74.9171745秒/11988355 B只继承一次；P累计 1519.261175秒/23466720 B；旧未知及旧判据6 FAIL保留。
+- 新有效更新0，完整头160/400；失败461次与CPU前向分列；重复编码及近似区间见证据。
+- 自评FAIL 7条；完整性/工程资格与科学得分分开。
 
 ## 阻塞（没有写“无”）
-- 唯一CPU套件21 PASS、1 FAIL；合成归档130526 B未大于断言131072 B（test_large_emergency_archive_and_cross_process_peaks），按任务单立即停止，未读取真实输入、未启动CUDA或真实续跑。
+- RuntimeError: historical artifact mismatch: models/ResNet.py
 
 ## 异议（没有写“无”）
 无
 
 ## 需要审查者裁决的问题（≤3 条，没有写“无”）
-- 是否授权修正归档大小测试断言并追加一次自检；本次恢复修订/语法/CPU套件各1次已耗尽，未擅自重试。
+- 请裁决共享源码的历史字节/commit定位不符；唯一真实续跑已使用，不自动修复或重试。
