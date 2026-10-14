@@ -23,6 +23,11 @@ def writable_output(output):
 
 def history_totals(history):
     """v2 already contains v1; never add the nested history twice."""
+    if "closed_preparation" in history:
+        return dict(seconds=history["reported_seconds"], upper_seconds=history["upper_seconds"],
+                    bytes=history["bytes"], scans=None, scan_lower_bound=history["scan_lower_bound"],
+                    scan_upper_bound=history["scan_upper_bound"], revisions=history["revisions"],
+                    launches=history["launches"], restarts=history["restarts"])
     if "cumulative_reported_elapsed_seconds" in history:
         return dict(seconds=history["cumulative_reported_elapsed_seconds"],
                     upper_seconds=history["cumulative_conservative_elapsed_upper_seconds"],
@@ -65,6 +70,7 @@ class RecoveryBudget(FullBudget):
         self.initial_bytes = context["preparation_initial_write_bytes"]
         self.initial_scans = context["preparation_initial_scans"]
         self.revisions = context["implementation_revisions"]
+        self.reserve = context.get("emergency_closure_bytes", 128*1024)
         self._initializing = True
         # Publish the actual object before parent constructors can fail or write.
         context["budget"] = self
@@ -87,7 +93,7 @@ class RecoveryBudget(FullBudget):
             self.stop("P_cumulative_write_bytes", self.counts["evidence_bytes"]+self.history["bytes"])
         if self.history.get("upper_seconds", self.history["seconds"])+time.monotonic()-self.started >= self.context["total_wall_seconds"]:
             self.stop("P_cumulative_upper_wall_seconds", time.monotonic()-self.started)
-        if self.counts["scans"]+self.history.get("scan_upper_bound", self.history["scan_lower_bound"]) > 10000:
+        if self.counts["scans"]+self.history.get("scan_upper_bound", self.history["scan_lower_bound"]) > self.context.get("cumulative_scan_limit", 10000):
             self.stop("P_cumulative_scans", self.counts["scans"])
 
     def snapshot(self, now=None):
@@ -133,7 +139,8 @@ def finalize_attempt(context, budget, status, error, archive_callback=None):
     output = writable_output(context["output"])
     clock = context.get("clock", time.monotonic)
     durations = []
-    bytes_written = context["preparation_initial_write_bytes"]+128*1024 if budget is None else budget.counts["evidence_bytes"]
+    emergency_slot = context.get("emergency_closure_bytes", 128*1024)
+    bytes_written = context["preparation_initial_write_bytes"]+emergency_slot if budget is None else budget.counts["evidence_bytes"]
     scans = context["preparation_initial_scans"] if budget is None else budget.counts["scans"]
     def put(path, raw):
         nonlocal bytes_written
@@ -201,7 +208,7 @@ def finalize_attempt(context, budget, status, error, archive_callback=None):
         violations = []
         if end_bound-context["started"] >= context["limits"]["wall_seconds"] or ledger["cumulative_conservative_elapsed_upper_seconds"] >= context["total_wall_seconds"]:
             violations.append("terminal time limit")
-        if scans+1 > context["limits"]["scans"] or ledger["cumulative_scan_conservative_upper_bound"] > 10000:
+        if scans+1 > context["limits"]["scans"] or ledger["cumulative_scan_conservative_upper_bound"] > context.get("cumulative_scan_limit", 10000):
             violations.append("terminal scans limit")
         if budget is not None and budget.hit:
             violations.append(str(budget.hit))
@@ -224,7 +231,7 @@ def finalize_attempt(context, budget, status, error, archive_callback=None):
         if not emergency and (ledger["counts"]["evidence_bytes"] >= context["limits"]["evidence_bytes"] or ledger["cumulative_accountable_write_bytes"] >= context["total_write_bytes"]):
             status="failed_terminal_limit"; error="terminal write limit"; continue
         raw=encode(ledger); records[ledger_name]["sha256"]=hashlib.sha256(raw).hexdigest()
-        if emergency and len(raw)+len(encode(index))+len(marker) > 128*1024:
+        if emergency and len(raw)+len(encode(index))+len(marker) > emergency_slot:
             raise RuntimeError("emergency closure exceeds precharged slot")
         (output/"startup_record.json").write_bytes(marker)
         (output/"run_record.json").write_bytes(raw)

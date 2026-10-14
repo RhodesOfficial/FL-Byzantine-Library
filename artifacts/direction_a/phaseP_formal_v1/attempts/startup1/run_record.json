@@ -1,0 +1,14 @@
+{
+  "actual_command": [
+    "E:\\anaconda3\\python.exe",
+    "scripts/run_direction_a_probe_formal.py",
+    "--run"
+  ],
+  "attempt": 1,
+  "error": "Traceback (most recent call last):\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\scripts\\run_direction_a_probe_formal.py\", line 454, in guarded_launch\n    return launch()\n           ^^^^^^^^\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\scripts\\run_direction_a_probe_formal.py\", line 428, in launch\n    if git(\"hash-object\",name)!=git(\"rev-parse\",f\"HEAD:{name}\"): raise RuntimeError(\"source uncommitted before input\")\n                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\scripts\\run_direction_a_probe_formal.py\", line 51, in git\n    def git(*args): return subprocess.check_output([\"git\", *args], cwd=ROOT).decode().strip()\n                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\anaconda3\\Lib\\subprocess.py\", line 466, in check_output\n    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\anaconda3\\Lib\\subprocess.py\", line 571, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command '['git', 'rev-parse', 'HEAD:direction_a/probe_formal.py']' returned non-zero exit status 128.\n",
+  "no_automatic_retry": true,
+  "program_seconds": 1.1719999999913853,
+  "real_input_reads": 0,
+  "source_write_bytes_preserved": 1480416,
+  "status": "failed_before_real_input"
+}
