@@ -1,0 +1,176 @@
+{
+  "CPU_suite_invocations": 1,
+  "actual_command": [
+    "E:\\anaconda3\\python.exe",
+    "-B",
+    "scripts/check_direction_a_probe_startup.py"
+  ],
+  "baseline_commit": "aa5f6d00535a339ad2753aded515dff20fa70925",
+  "cases": [
+    {
+      "case": "probe_startup_tests.StartupTests.test_cumulative_time_limit_includes_synthetic_history",
+      "error": "Traceback (most recent call last):\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\tests\\test_direction_a_probe_startup.py\", line 108, in test_cumulative_time_limit_includes_synthetic_history\n    budget=startup.RecoveryBudget(ctx); clock.now+=.5\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\probe_startup.py\", line 61, in __init__\n    super().__init__(path, context[\"limits\"], context[\"started\"])\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\class_gradient_full.py\", line 16, in __init__\n    super().__init__(path, limits)\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\backbone_preparation.py\", line 58, in __init__\n    self.save()\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\backbone_preparation.py\", line 73, in save\n    self.path.parent.mkdir(parents=True, exist_ok=True)\n  File \"E:\\anaconda3\\Lib\\pathlib.py\", line 1311, in mkdir\n    os.mkdir(self, mode)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-o0fywomx\\\\attempt'\n",
+      "status": "FAIL"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_cumulative_time_limit_includes_synthetic_history",
+      "error": "Traceback (most recent call last):\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 637, in _rmtree_unsafe\n    os.rmdir(path)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-o0fywomx'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 950, in cleanup\n    self._rmtree(self.name, ignore_errors=self._ignore_cleanup_errors)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 930, in _rmtree\n    _shutil.rmtree(name, onexc=onexc)\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 781, in rmtree\n    return _rmtree_unsafe(path, onexc)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 639, in _rmtree_unsafe\n    onexc(os.rmdir, path, err)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 902, in onexc\n    _resetperms(path)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 286, in _resetperms\n    _dont_follow_symlinks(_os.chmod, path, 0o700)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 277, in _dont_follow_symlinks\n    func(path, *args)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-o0fywomx'\n",
+      "status": "FAIL"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_cumulative_write_limit_includes_synthetic_history",
+      "error": "Traceback (most recent call last):\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\tests\\test_direction_a_probe_startup.py\", line 115, in test_cumulative_write_limit_includes_synthetic_history\n    ctx=context(self.output); budget=startup.RecoveryBudget(ctx)\n                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\probe_startup.py\", line 61, in __init__\n    super().__init__(path, context[\"limits\"], context[\"started\"])\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\class_gradient_full.py\", line 16, in __init__\n    super().__init__(path, limits)\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\backbone_preparation.py\", line 58, in __init__\n    self.save()\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\backbone_preparation.py\", line 73, in save\n    self.path.parent.mkdir(parents=True, exist_ok=True)\n  File \"E:\\anaconda3\\Lib\\pathlib.py\", line 1311, in mkdir\n    os.mkdir(self, mode)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-jhje9hd5\\\\attempt'\n",
+      "status": "FAIL"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_cumulative_write_limit_includes_synthetic_history",
+      "error": "Traceback (most recent call last):\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 637, in _rmtree_unsafe\n    os.rmdir(path)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-jhje9hd5'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 950, in cleanup\n    self._rmtree(self.name, ignore_errors=self._ignore_cleanup_errors)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 930, in _rmtree\n    _shutil.rmtree(name, onexc=onexc)\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 781, in rmtree\n    return _rmtree_unsafe(path, onexc)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 639, in _rmtree_unsafe\n    onexc(os.rmdir, path, err)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 902, in onexc\n    _resetperms(path)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 286, in _resetperms\n    _dont_follow_symlinks(_os.chmod, path, 0o700)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 277, in _dont_follow_symlinks\n    func(path, *args)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-jhje9hd5'\n",
+      "status": "FAIL"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_existing_marker_and_ledger_are_immutable",
+      "error": "Traceback (most recent call last):\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\tests\\test_direction_a_probe_startup.py\", line 124, in test_existing_marker_and_ledger_are_immutable\n    self.output.mkdir()\n  File \"E:\\anaconda3\\Lib\\pathlib.py\", line 1311, in mkdir\n    os.mkdir(self, mode)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-rzwj6uk9\\\\attempt'\n",
+      "status": "FAIL"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_existing_marker_and_ledger_are_immutable",
+      "error": "Traceback (most recent call last):\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 637, in _rmtree_unsafe\n    os.rmdir(path)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-rzwj6uk9'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 950, in cleanup\n    self._rmtree(self.name, ignore_errors=self._ignore_cleanup_errors)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 930, in _rmtree\n    _shutil.rmtree(name, onexc=onexc)\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 781, in rmtree\n    return _rmtree_unsafe(path, onexc)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 639, in _rmtree_unsafe\n    onexc(os.rmdir, path, err)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 902, in onexc\n    _resetperms(path)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 286, in _resetperms\n    _dont_follow_symlinks(_os.chmod, path, 0o700)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 277, in _dont_follow_symlinks\n    func(path, *args)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-rzwj6uk9'\n",
+      "status": "FAIL"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_missing_inherited_cost_is_rejected_before_writing",
+      "error": "Traceback (most recent call last):\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 637, in _rmtree_unsafe\n    os.rmdir(path)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-ef92_y7_'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 950, in cleanup\n    self._rmtree(self.name, ignore_errors=self._ignore_cleanup_errors)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 930, in _rmtree\n    _shutil.rmtree(name, onexc=onexc)\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 781, in rmtree\n    return _rmtree_unsafe(path, onexc)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 639, in _rmtree_unsafe\n    onexc(os.rmdir, path, err)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 902, in onexc\n    _resetperms(path)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 286, in _resetperms\n    _dont_follow_symlinks(_os.chmod, path, 0o700)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 277, in _dont_follow_symlinks\n    func(path, *args)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-ef92_y7_'\n",
+      "status": "FAIL"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_real_parent_initialization_and_exact_write_inheritance",
+      "error": "Traceback (most recent call last):\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\tests\\test_direction_a_probe_startup.py\", line 66, in test_real_parent_initialization_and_exact_write_inheritance\n    budget=startup.RecoveryBudget(ctx)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\probe_startup.py\", line 61, in __init__\n    super().__init__(path, context[\"limits\"], context[\"started\"])\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\class_gradient_full.py\", line 16, in __init__\n    super().__init__(path, limits)\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\backbone_preparation.py\", line 58, in __init__\n    self.save()\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\backbone_preparation.py\", line 73, in save\n    self.path.parent.mkdir(parents=True, exist_ok=True)\n  File \"E:\\anaconda3\\Lib\\pathlib.py\", line 1311, in mkdir\n    os.mkdir(self, mode)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-4ykpi9li\\\\attempt'\n",
+      "status": "FAIL"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_real_parent_initialization_and_exact_write_inheritance",
+      "error": "Traceback (most recent call last):\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 637, in _rmtree_unsafe\n    os.rmdir(path)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-4ykpi9li'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 950, in cleanup\n    self._rmtree(self.name, ignore_errors=self._ignore_cleanup_errors)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 930, in _rmtree\n    _shutil.rmtree(name, onexc=onexc)\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 781, in rmtree\n    return _rmtree_unsafe(path, onexc)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 639, in _rmtree_unsafe\n    onexc(os.rmdir, path, err)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 902, in onexc\n    _resetperms(path)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 286, in _resetperms\n    _dont_follow_symlinks(_os.chmod, path, 0o700)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 277, in _dont_follow_symlinks\n    func(path, *args)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-4ykpi9li'\n",
+      "status": "FAIL"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_sealed_directories_rejected_without_access",
+      "error": "Traceback (most recent call last):\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 637, in _rmtree_unsafe\n    os.rmdir(path)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-p3figk0t'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 950, in cleanup\n    self._rmtree(self.name, ignore_errors=self._ignore_cleanup_errors)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 930, in _rmtree\n    _shutil.rmtree(name, onexc=onexc)\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 781, in rmtree\n    return _rmtree_unsafe(path, onexc)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 639, in _rmtree_unsafe\n    onexc(os.rmdir, path, err)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 902, in onexc\n    _resetperms(path)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 286, in _resetperms\n    _dont_follow_symlinks(_os.chmod, path, 0o700)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 277, in _dont_follow_symlinks\n    func(path, *args)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-p3figk0t'\n",
+      "status": "FAIL"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_time_limit_saves_failure_and_preserves_history",
+      "error": "Traceback (most recent call last):\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\tests\\test_direction_a_probe_startup.py\", line 88, in test_time_limit_saves_failure_and_preserves_history\n    budget=startup.RecoveryBudget(ctx)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\probe_startup.py\", line 61, in __init__\n    super().__init__(path, context[\"limits\"], context[\"started\"])\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\class_gradient_full.py\", line 16, in __init__\n    super().__init__(path, limits)\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\backbone_preparation.py\", line 58, in __init__\n    self.save()\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\backbone_preparation.py\", line 73, in save\n    self.path.parent.mkdir(parents=True, exist_ok=True)\n  File \"E:\\anaconda3\\Lib\\pathlib.py\", line 1311, in mkdir\n    os.mkdir(self, mode)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-n0pgf1ub\\\\attempt'\n",
+      "status": "FAIL"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_time_limit_saves_failure_and_preserves_history",
+      "error": "Traceback (most recent call last):\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 637, in _rmtree_unsafe\n    os.rmdir(path)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-n0pgf1ub'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 950, in cleanup\n    self._rmtree(self.name, ignore_errors=self._ignore_cleanup_errors)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 930, in _rmtree\n    _shutil.rmtree(name, onexc=onexc)\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 781, in rmtree\n    return _rmtree_unsafe(path, onexc)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 639, in _rmtree_unsafe\n    onexc(os.rmdir, path, err)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 902, in onexc\n    _resetperms(path)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 286, in _resetperms\n    _dont_follow_symlinks(_os.chmod, path, 0o700)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 277, in _dont_follow_symlinks\n    func(path, *args)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-n0pgf1ub'\n",
+      "status": "FAIL"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_v2_cumulative_totals_are_not_double_counted",
+      "error": "Traceback (most recent call last):\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 637, in _rmtree_unsafe\n    os.rmdir(path)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-928993p0'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 950, in cleanup\n    self._rmtree(self.name, ignore_errors=self._ignore_cleanup_errors)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 930, in _rmtree\n    _shutil.rmtree(name, onexc=onexc)\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 781, in rmtree\n    return _rmtree_unsafe(path, onexc)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 639, in _rmtree_unsafe\n    onexc(os.rmdir, path, err)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 902, in onexc\n    _resetperms(path)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 286, in _resetperms\n    _dont_follow_symlinks(_os.chmod, path, 0o700)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 277, in _dont_follow_symlinks\n    func(path, *args)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-928993p0'\n",
+      "status": "FAIL"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_wrapper_exception_after_budget",
+      "error": "Traceback (most recent call last):\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\tests\\test_direction_a_probe_startup.py\", line 172, in test_wrapper_exception_after_budget\n    def test_wrapper_exception_after_budget(self): self.check_attempt(\"after\")\n                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\tests\\test_direction_a_probe_startup.py\", line 150, in check_attempt\n    result=wrapper.execute_attempt(ctx,factory,work,archive)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\scripts\\recover_direction_a_probe.py\", line 32, in execute_attempt\n    return runtime_attempt(*args,**kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\probe_startup.py\", line 180, in execute_attempt\n    claim_startup(context)\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\probe_startup.py\", line 105, in claim_startup\n    output.mkdir(parents=True, exist_ok=True)\n  File \"E:\\anaconda3\\Lib\\pathlib.py\", line 1311, in mkdir\n    os.mkdir(self, mode)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-zbm1ehcu\\\\attempt'\n",
+      "status": "FAIL"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_wrapper_exception_after_budget",
+      "error": "Traceback (most recent call last):\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 637, in _rmtree_unsafe\n    os.rmdir(path)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-zbm1ehcu'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 950, in cleanup\n    self._rmtree(self.name, ignore_errors=self._ignore_cleanup_errors)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 930, in _rmtree\n    _shutil.rmtree(name, onexc=onexc)\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 781, in rmtree\n    return _rmtree_unsafe(path, onexc)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 639, in _rmtree_unsafe\n    onexc(os.rmdir, path, err)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 902, in onexc\n    _resetperms(path)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 286, in _resetperms\n    _dont_follow_symlinks(_os.chmod, path, 0o700)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 277, in _dont_follow_symlinks\n    func(path, *args)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-zbm1ehcu'\n",
+      "status": "FAIL"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_wrapper_exception_before_budget",
+      "error": "Traceback (most recent call last):\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\tests\\test_direction_a_probe_startup.py\", line 171, in test_wrapper_exception_before_budget\n    def test_wrapper_exception_before_budget(self): self.check_attempt(\"before\")\n                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\tests\\test_direction_a_probe_startup.py\", line 150, in check_attempt\n    result=wrapper.execute_attempt(ctx,factory,work,archive)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\scripts\\recover_direction_a_probe.py\", line 32, in execute_attempt\n    return runtime_attempt(*args,**kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\probe_startup.py\", line 180, in execute_attempt\n    claim_startup(context)\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\probe_startup.py\", line 105, in claim_startup\n    output.mkdir(parents=True, exist_ok=True)\n  File \"E:\\anaconda3\\Lib\\pathlib.py\", line 1311, in mkdir\n    os.mkdir(self, mode)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-yk3gy4cs\\\\attempt'\n",
+      "status": "FAIL"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_wrapper_exception_before_budget",
+      "error": "Traceback (most recent call last):\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 637, in _rmtree_unsafe\n    os.rmdir(path)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-yk3gy4cs'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 950, in cleanup\n    self._rmtree(self.name, ignore_errors=self._ignore_cleanup_errors)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 930, in _rmtree\n    _shutil.rmtree(name, onexc=onexc)\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 781, in rmtree\n    return _rmtree_unsafe(path, onexc)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 639, in _rmtree_unsafe\n    onexc(os.rmdir, path, err)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 902, in onexc\n    _resetperms(path)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 286, in _resetperms\n    _dont_follow_symlinks(_os.chmod, path, 0o700)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 277, in _dont_follow_symlinks\n    func(path, *args)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-yk3gy4cs'\n",
+      "status": "FAIL"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_wrapper_normal_archive_and_no_retry",
+      "error": "Traceback (most recent call last):\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\tests\\test_direction_a_probe_startup.py\", line 173, in test_wrapper_normal_archive_and_no_retry\n    def test_wrapper_normal_archive_and_no_retry(self): self.check_attempt(\"normal\")\n                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\tests\\test_direction_a_probe_startup.py\", line 150, in check_attempt\n    result=wrapper.execute_attempt(ctx,factory,work,archive)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\scripts\\recover_direction_a_probe.py\", line 32, in execute_attempt\n    return runtime_attempt(*args,**kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\probe_startup.py\", line 180, in execute_attempt\n    claim_startup(context)\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\probe_startup.py\", line 105, in claim_startup\n    output.mkdir(parents=True, exist_ok=True)\n  File \"E:\\anaconda3\\Lib\\pathlib.py\", line 1311, in mkdir\n    os.mkdir(self, mode)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-3dniknoh\\\\attempt'\n",
+      "status": "FAIL"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_wrapper_normal_archive_and_no_retry",
+      "error": "Traceback (most recent call last):\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 637, in _rmtree_unsafe\n    os.rmdir(path)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-3dniknoh'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 950, in cleanup\n    self._rmtree(self.name, ignore_errors=self._ignore_cleanup_errors)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 930, in _rmtree\n    _shutil.rmtree(name, onexc=onexc)\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 781, in rmtree\n    return _rmtree_unsafe(path, onexc)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 639, in _rmtree_unsafe\n    onexc(os.rmdir, path, err)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 902, in onexc\n    _resetperms(path)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 286, in _resetperms\n    _dont_follow_symlinks(_os.chmod, path, 0o700)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 277, in _dont_follow_symlinks\n    func(path, *args)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-3dniknoh'\n",
+      "status": "FAIL"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_write_limit_rejects_payload_and_records_failed_state",
+      "error": "Traceback (most recent call last):\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\tests\\test_direction_a_probe_startup.py\", line 97, in test_write_limit_rejects_payload_and_records_failed_state\n    budget=startup.RecoveryBudget(context(self.output))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\probe_startup.py\", line 61, in __init__\n    super().__init__(path, context[\"limits\"], context[\"started\"])\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\class_gradient_full.py\", line 16, in __init__\n    super().__init__(path, limits)\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\backbone_preparation.py\", line 58, in __init__\n    self.save()\n  File \"E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\direction_a\\backbone_preparation.py\", line 73, in save\n    self.path.parent.mkdir(parents=True, exist_ok=True)\n  File \"E:\\anaconda3\\Lib\\pathlib.py\", line 1311, in mkdir\n    os.mkdir(self, mode)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-3ea_8r6d\\\\attempt'\n",
+      "status": "FAIL"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_write_limit_rejects_payload_and_records_failed_state",
+      "error": "Traceback (most recent call last):\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 637, in _rmtree_unsafe\n    os.rmdir(path)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-3ea_8r6d'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 950, in cleanup\n    self._rmtree(self.name, ignore_errors=self._ignore_cleanup_errors)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 930, in _rmtree\n    _shutil.rmtree(name, onexc=onexc)\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 781, in rmtree\n    return _rmtree_unsafe(path, onexc)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\anaconda3\\Lib\\shutil.py\", line 639, in _rmtree_unsafe\n    onexc(os.rmdir, path, err)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 902, in onexc\n    _resetperms(path)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 286, in _resetperms\n    _dont_follow_symlinks(_os.chmod, path, 0o700)\n  File \"E:\\anaconda3\\Lib\\tempfile.py\", line 277, in _dont_follow_symlinks\n    func(path, *args)\nPermissionError: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\冰美式\\\\AppData\\\\Local\\\\Packages\\\\sandbox.{0364db23-f940-4ab7-ac51-66bec2e5fec6}\\\\AC\\\\Temp\\\\P-startup-regression-3ea_8r6d'\n",
+      "status": "FAIL"
+    }
+  ],
+  "input_commit": "854a186aaabcb6b4d6229f2e608adca925b66e2e",
+  "isolation": {
+    "CUDA_initialized_after": false,
+    "CUDA_initialized_before": false,
+    "blocked_calls": [
+      "torch.load",
+      "CUDA init/lazy init/transfer",
+      "linear",
+      "backward",
+      "Adam.step"
+    ],
+    "forbidden_attempts": [],
+    "preparation_main_calls": 0,
+    "real_feature_checkpoint_dataset_reads": 0
+  },
+  "simulation": {
+    "controlled_clocks_and_requested_limit_values_are_synthetic": true,
+    "simulated_costs_not_added_to_actual_experiment_counters": true
+  },
+  "source_fingerprints": {
+    "direction_a/probe_startup.py": "cda3f3e7704a63005a904cfad4a1b8660301f3ec1cb1627ec12ca5c0dce93a20",
+    "scripts/check_direction_a_probe_startup.py": "88e36a275d709a733e1ea0269b0f5acda8f70c4ca9aac545c90c878c82232714",
+    "scripts/prepare_direction_a_probe.py": "c2a5f3adfc1dbcf0e025a5059306af20d225db2526f169045176836eefa921a0",
+    "scripts/recover_direction_a_probe.py": "d2569b3e8c25e5ccb384d1c1dc7ae8ab20a1d8a20eb4ad9c99548242a8b66c66",
+    "tests/test_direction_a_probe_startup.py": "c99b32898f69749733914a7f967480c180c9e99cfd52e032c04d23b582bf72e6"
+  },
+  "status": "FAIL",
+  "syntax": [
+    {
+      "error": null,
+      "path": "scripts/prepare_direction_a_probe.py",
+      "sha256": "c2a5f3adfc1dbcf0e025a5059306af20d225db2526f169045176836eefa921a0",
+      "status": "PASS"
+    },
+    {
+      "error": null,
+      "path": "scripts/recover_direction_a_probe.py",
+      "sha256": "d2569b3e8c25e5ccb384d1c1dc7ae8ab20a1d8a20eb4ad9c99548242a8b66c66",
+      "status": "PASS"
+    },
+    {
+      "error": null,
+      "path": "direction_a/probe_startup.py",
+      "sha256": "cda3f3e7704a63005a904cfad4a1b8660301f3ec1cb1627ec12ca5c0dce93a20",
+      "status": "PASS"
+    },
+    {
+      "error": null,
+      "path": "tests/test_direction_a_probe_startup.py",
+      "sha256": "c99b32898f69749733914a7f967480c180c9e99cfd52e032c04d23b582bf72e6",
+      "status": "PASS"
+    },
+    {
+      "error": null,
+      "path": "scripts/check_direction_a_probe_startup.py",
+      "sha256": "88e36a275d709a733e1ea0269b0f5acda8f70c4ca9aac545c90c878c82232714",
+      "status": "PASS"
+    }
+  ],
+  "syntax_check_invocations": 1
+}

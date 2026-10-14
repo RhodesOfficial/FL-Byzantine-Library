@@ -1,0 +1,130 @@
+{
+  "counts": {
+    "CPU_regression_suites": 1,
+    "CUDA_initializations": 0,
+    "backwards": 0,
+    "class_gradient_requests": 0,
+    "communications": 0,
+    "evidence_bytes": 417005,
+    "fits": 0,
+    "head_forwards": 0,
+    "implementation_revisions": 1,
+    "optimizer_steps": 0,
+    "preparation_launches_new": 0,
+    "real_input_reads": 0,
+    "scans": 29,
+    "syntax_checks": 1
+  },
+  "criteria": {
+    "1": "FAIL",
+    "2": "FAIL",
+    "3": "FAIL",
+    "4": "FAIL",
+    "5": "FAIL"
+  },
+  "cumulative_accountable_write_bytes": 917683,
+  "cumulative_conservative_elapsed_upper_seconds": 10.67377199998009,
+  "cumulative_implementation_revisions": 5,
+  "cumulative_reported_elapsed_seconds": 9.264985399961006,
+  "finalization_basis": "max(50ms,8*largest actually measured file-write latency); end checked against deadline",
+  "finalization_reserve_seconds": 0.05,
+  "historical_unknowns": {
+    "CPU_proxy_reason": "v2 used fixed 8MiB without arrays/tensors inventory; only small explicit file buffers recoverable, not a verified full proxy",
+    "v1_overwritten_source_bytes": null,
+    "v1_preparation_peaks": {
+      "archive_known_array_proxy_upper_bytes": 8388608,
+      "archive_windows_working_set_peak_bytes": 93892608,
+      "preparation_cpu_tensor_proxy_peak_bytes": null,
+      "preparation_cuda_allocated_peak_bytes": null,
+      "preparation_windows_working_set_peak_bytes": null
+    },
+    "v2_CPU_array_tensor_proxy_verified": null,
+    "v2_cuda_peak": null,
+    "v2_final_windows_peak": null,
+    "v2_reported_CPU_proxy_bytes": 8388608,
+    "v2_reported_windows_peak_to_sample_bytes": 359088128
+  },
+  "inherited_accountable_write_bytes": 500678,
+  "inherited_failed_restarts": 1,
+  "inherited_preparation_launches": 2,
+  "limits": {
+    "CPU_proxy_bytes": 67108864,
+    "Windows_working_set_bytes": 2147483648,
+    "scans": 500,
+    "seconds": 60,
+    "write_bytes": 4194304
+  },
+  "new_stage_elapsed_seconds": 4.362999999983003,
+  "old_preparation_criterion_6": "FAIL",
+  "regression_simulated_costs_charged_as_experiments": false,
+  "resources": {
+    "CPU_known_file_buffer_proxy_upper_bytes": 2253104,
+    "CPU_proxy_basis": "8*peak tracked byte buffer +8*source byte total; no experiment arrays/tensors created",
+    "cuda_allocated_bytes": 0,
+    "cuda_initialized": false,
+    "windows_working_set_peak_bytes": 358543360
+  },
+  "source_write_events": [
+    {
+      "bytes": 10521,
+      "path": "direction_a/probe_startup.py",
+      "sha256": "33bc47bd0aceef6de5c603053281fc8fad3ba26eb61456f34c16b42b3f44629c"
+    },
+    {
+      "bytes": 43219,
+      "path": "scripts/prepare_direction_a_probe.py",
+      "sha256": "384a8f45c8fdbd8c9fff9a0acfd65fe9423230fc839bd5b6f490202c635f47a5"
+    },
+    {
+      "bytes": 16140,
+      "path": "scripts/recover_direction_a_probe.py",
+      "sha256": "b34357bae652ab31d42e9a696a8c0a6a06044d6b80fa88357075b15f0ddb9637"
+    },
+    {
+      "bytes": 8952,
+      "path": "tests/test_direction_a_probe_startup.py",
+      "sha256": "e846376b3f2ef00e0c17b63d4153b91fe79edfd29213ec36ce754bdd69c29be8"
+    },
+    {
+      "bytes": 19289,
+      "path": "scripts/check_direction_a_probe_startup.py",
+      "sha256": "fb6839fe9df68609acfc43f5b580a95577fdd64e8151e2854808392ba18f0f11"
+    },
+    {
+      "bytes": 19490,
+      "path": "scripts/check_direction_a_probe_startup.py",
+      "sha256": "c5e8588980501a7adf968a019974fb1eb215a3ed07877950e1059d2b30718a85"
+    },
+    {
+      "bytes": 20121,
+      "path": "scripts/check_direction_a_probe_startup.py",
+      "sha256": "e8630ebe3aecb7dcb2d8b463a6ef87620e60b9b6c20a863fd2e95e3e6f9fded7"
+    },
+    {
+      "bytes": 43262,
+      "path": "scripts/prepare_direction_a_probe.py",
+      "sha256": "c2a5f3adfc1dbcf0e025a5059306af20d225db2526f169045176836eefa921a0"
+    },
+    {
+      "bytes": 16321,
+      "path": "scripts/recover_direction_a_probe.py",
+      "sha256": "d2569b3e8c25e5ccb384d1c1dc7ae8ab20a1d8a20eb4ad9c99548242a8b66c66"
+    },
+    {
+      "bytes": 10609,
+      "path": "direction_a/probe_startup.py",
+      "sha256": "cda3f3e7704a63005a904cfad4a1b8660301f3ec1cb1627ec12ca5c0dce93a20"
+    },
+    {
+      "bytes": 9979,
+      "path": "tests/test_direction_a_probe_startup.py",
+      "sha256": "c99b32898f69749733914a7f967480c180c9e99cfd52e032c04d23b582bf72e6"
+    },
+    {
+      "bytes": 20473,
+      "path": "scripts/check_direction_a_probe_startup.py",
+      "sha256": "88e36a275d709a733e1ea0269b0f5acda8f70c4ca9aac545c90c878c82232714"
+    }
+  ],
+  "status": "CPU_regression_FAIL"
+}

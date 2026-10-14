@@ -33,7 +33,7 @@ import torch
 import torch.nn.functional as F
 
 from direction_a.backbone_preparation import encode, sha, tensor_state_sha, PreparationLimit
-from direction_a.class_gradient_full import FullBudget
+from direction_a.probe_startup import RecoveryBudget
 from direction_a.probe_preparation import (ADAM, STEPS, SPLIT_SEED, PERMUTATION_SEEDS,
     differences, fit_head, permute_labels, split_train, summarize, uniform_control)
 
@@ -46,7 +46,8 @@ OUTPUT = ROOT / "artifacts/direction_a/phaseP_preparation_v2"
 REVIEW = ROOT / "docs/workflow/TO_REVIEWER.md"
 SOURCES = ["direction_a/probe_preparation.py", "scripts/prepare_direction_a_probe.py",
            "tests/test_direction_a_probe_preparation.py", "direction_a/class_gradient_full.py",
-           "direction_a/backbone_preparation.py", "scripts/recover_direction_a_probe.py"]
+           "direction_a/backbone_preparation.py", "scripts/recover_direction_a_probe.py",
+           "direction_a/probe_startup.py"]
 LIMITS = dict(attempts=0, optimizer_steps=4800, backwards=4800, forwards=6000, scans=9984,
               evidence_bytes=120*1024**2, logical_copy_bytes=120*1024**2, retries=0, fits=24,
               preparation_runs=1, formal_runs=0, implementation_revisions=2, searches=0,
@@ -54,46 +55,6 @@ LIMITS = dict(attempts=0, optimizer_steps=4800, backwards=4800, forwards=6000, s
               encoder_forwards=0, communications=0, gpu_allocated_bytes=6*1024**3,
               windows_peak_working_set_bytes=6*1024**3, cpu_tensor_proxy_bytes=2*1024**3,
               wall_seconds=599, phase_seconds={}, per_run={})
-
-
-class RecoveryBudget(FullBudget):
-    """All new writes/timers measured; immutable v1 costs and unknowns retained."""
-
-    def __init__(self, context):
-        self.context = context
-        super().__init__(OUTPUT / "run_record.json", LIMITS, STARTED)
-        self.counts.update(fits=0, preparation_runs=0, encoder_forwards=0,
-                           communications=0, implementation_revisions=2)
-        self.counts["evidence_bytes"] += context["preparation_initial_write_bytes"]
-        self.counts["scans"] += context["preparation_initial_scans"]
-        self.cpu_proxy(8*1024**2)
-        self.save()
-
-    def check(self):
-        super().check()
-        if time.monotonic() - self.started + self.context["history"]["elapsed_seconds"] >= 600:
-            self.stop("P_cumulative_wall_seconds", time.monotonic()-self.started+self.context["history"]["elapsed_seconds"])
-
-    def snapshot(self, now=None):
-        value = super().snapshot(now)
-        history = self.context["history"]
-        value.update(run_id=RUN_ID, historical_failure=history,
-                     source_write_events=self.context["source_write_events"],
-                     syntax_check_seconds=self.context["syntax"]["program_seconds"],
-                     syntax_check_process_peak_bytes=self.context["syntax"]["windows_peak_working_set_bytes"],
-                     new_stage_elapsed_seconds=value["elapsed_seconds"],
-                     historical_measured_elapsed_seconds=history["elapsed_seconds"],
-                     cumulative_elapsed_seconds=history["elapsed_seconds"]+value["elapsed_seconds"],
-                     cumulative_accountable_write_bytes=history["counts"]["evidence_bytes"]+value["counts"]["evidence_bytes"],
-                     cumulative_scans=history["counts"]["archive_hash_scans"]+value["counts"]["scans"],
-                     cumulative_preparation_launches=2, cumulative_failed_restarts=1,
-                     cumulative_implementation_revisions=history["implementation_revisions"]+value["counts"]["implementation_revisions"],
-                     historical_resource_waiver="P adjudication v1 only: old preparation peaks/overwritten source writes remain unknown; old criterion 6 remains FAIL",
-                     no_full_historical_peak_or_write_compliance_claim=True)
-        value["resources"]["windows_working_set_peak_bytes"] = max(
-            value["resources"].get("windows_working_set_peak_bytes", 0),
-            self.context["syntax"]["windows_peak_working_set_bytes"])
-        return value
 
 
 def git(*args):

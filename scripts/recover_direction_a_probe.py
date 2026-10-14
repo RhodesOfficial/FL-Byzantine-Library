@@ -23,11 +23,19 @@ from pathlib import Path
 
 sys.dont_write_bytecode = True
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT))
+
+
+def execute_attempt(*args,**kwargs):
+    # Syntax-only invocation must not import the runtime budget or PyTorch.
+    from direction_a.probe_startup import execute_attempt as runtime_attempt
+    return runtime_attempt(*args,**kwargs)
 OUT = ROOT / "artifacts/direction_a/phaseP_preparation_v2"
 BASE = "d7706748e70f63885572aded57fab9e674d1a086"
 OLD = ROOT / "artifacts/direction_a/phaseP_preparation_v1"
 CHECK_PATHS = ["scripts/recover_direction_a_probe.py", "scripts/prepare_direction_a_probe.py",
-               "direction_a/probe_preparation.py", "tests/test_direction_a_probe_preparation.py"]
+               "direction_a/probe_preparation.py", "tests/test_direction_a_probe_preparation.py",
+               "direction_a/probe_startup.py"]
 NEW_SOURCE_WRITES = ["scripts/recover_direction_a_probe.py"]
 # Full resulting file writes from implementation revision 1, measured before
 # applying revision 2. Both overwrites are charged, including this wrapper.
@@ -201,14 +209,16 @@ def run_once():
         preparation_initial_write_bytes=initial_bytes,
         preparation_initial_scans=90,
         initial_scan_accounting="90-scan conservative envelope: both pure syntax checks, source hashes, v1 committed/working validation including line-ending hashes")
+    context.update(output=OUT,run_id="FedPCC-P-preparation-v2",implementation_revisions=2,
+                   new_preparation_launches=1,new_failed_restarts=1,total_wall_seconds=600,
+                   total_write_bytes=128*1024**2,cpu_proxy_upper_bytes=8*max((ROOT/p).stat().st_size for p in CHECK_PATHS),
+                   cpu_proxy_basis="eight times largest startup source byte buffer; training cache envelope is measured separately")
     startup = dict(run_id="FedPCC-P-preparation-v2", status="launching", launches_new=1,
         launches_cumulative=2, failed_restarts_cumulative=1, retry_allowed=False,
         source_sha256=syntax["files"]["scripts/prepare_direction_a_probe.py"]["sha256"],
         input_commit=git_raw("rev-parse","HEAD").decode().strip(),
         historical_failure_commit=BASE, startup_elapsed_seconds=time.monotonic()-context["started"])
     startup_raw = encode(startup)
-    (OUT/"startup_record.json").write_bytes(startup_raw)
-    context["preparation_initial_write_bytes"] += len(startup_raw)
     stop_event = threading.Event()
     namespace = {"__file__":str(ROOT/"scripts/prepare_direction_a_probe.py"),
                  "__name__":"bounded_probe_runtime", "RECOVERY_CONTEXT":context}
@@ -235,43 +245,17 @@ def run_once():
                 os._exit(124)
     threading.Thread(target=outer_watch,daemon=True).start()
     try:
-        raw = (ROOT/"scripts/prepare_direction_a_probe.py").read_bytes()
-        exec(compile(raw, namespace["__file__"], "exec"), namespace)
-        budget, results, criteria = namespace["main"]()
-        startup.update(status="completed_preparation", completed_heads=budget.counts["fits"],
-                       elapsed_seconds_before_archive=time.monotonic()-context["started"])
-        namespace["write"](OUT/"startup_record.json",startup,budget)
-        namespace["archive"](budget,[ROOT/"docs/workflow/TO_REVIEWER.md", *[ROOT/p for p in CHECK_PATHS]])
-        print(json.dumps(dict(status=budget.status,fail_count=0,blocked=False,
-            new_stage_seconds=budget.snapshot()["elapsed_seconds"],
-            cumulative_seconds=budget.snapshot()["cumulative_elapsed_seconds"],
-            counts=budget.counts,resources=budget.resources)))
-        return 0
-    except BaseException:
-        error = traceback.format_exc()
-        budget = context.get("budget")
-        if budget is None:
-            failure_without_budget(context,error)
-        else:
-            budget.status="blocked_partial_preparation"
-            if budget.hit is not None:
-                emergency_report(error)
-                budget.save(reserved=True)
-            else:
-                namespace["write"](OUT/"startup_failure.txt",error.encode("utf-8"),budget,raw=True)
-                startup.update(status="failed_no_retry",elapsed_seconds=time.monotonic()-context["started"])
-                namespace["write"](OUT/"startup_record.json",startup,budget)
-                criteria = dict(context.get("criteria",{str(i):"FAIL" for i in range(1,8)}))
-                criteria["6"] = "FAIL"
-                results = context.get("results",dict(references=[]))
-                results.update(criteria=criteria,blocked=error)
-                namespace["write"](OUT/"results.json",results,budget)
-                namespace["write"](ROOT/"docs/workflow/TO_REVIEWER.md",
-                    namespace["review_text"](criteria,results,budget,error),budget,raw=True)
-                budget.save()
+        def factory():
+            raw=(ROOT/"scripts/prepare_direction_a_probe.py").read_bytes()
+            exec(compile(raw,namespace["__file__"],"exec"),namespace)
+            context["limits"]=namespace["LIMITS"]
+            return namespace["main"]()[0]
+        def archive_callback(budget):
+            if budget is not None and budget.hit is None:
                 namespace["archive"](budget,[ROOT/"docs/workflow/TO_REVIEWER.md", *[ROOT/p for p in CHECK_PATHS]])
-        print(error, file=sys.stderr)
-        return 1
+        terminal=execute_attempt(context,factory,lambda budget:None,archive_callback)
+        print(json.dumps(dict(status=terminal["status"],error=terminal["error"])))
+        return 0 if terminal["status"]=="completed" else 1
     finally:
         stop_event.set()
 

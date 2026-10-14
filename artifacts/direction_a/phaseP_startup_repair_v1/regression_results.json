@@ -1,0 +1,130 @@
+{
+  "CPU_suite_invocations": 2,
+  "actual_command": [
+    "E:\\anaconda3\\python.exe",
+    "-B",
+    "scripts/check_direction_a_probe_startup.py"
+  ],
+  "baseline_commit": "aa5f6d00535a339ad2753aded515dff20fa70925",
+  "cases": [
+    {
+      "case": "probe_startup_tests.StartupTests.test_cumulative_time_limit_includes_synthetic_history",
+      "status": "PASS"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_cumulative_write_limit_includes_synthetic_history",
+      "status": "PASS"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_existing_marker_and_ledger_are_immutable",
+      "status": "PASS"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_missing_inherited_cost_is_rejected_before_writing",
+      "status": "PASS"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_real_parent_initialization_and_exact_write_inheritance",
+      "status": "PASS"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_sealed_directories_rejected_without_access",
+      "status": "PASS"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_time_limit_saves_failure_and_preserves_history",
+      "status": "PASS"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_v2_cumulative_totals_are_not_double_counted",
+      "status": "PASS"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_wrapper_exception_after_budget",
+      "status": "PASS"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_wrapper_exception_before_budget",
+      "status": "PASS"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_wrapper_normal_archive_and_no_retry",
+      "status": "PASS"
+    },
+    {
+      "case": "probe_startup_tests.StartupTests.test_write_limit_rejects_payload_and_records_failed_state",
+      "status": "PASS"
+    }
+  ],
+  "input_commit": "854a186aaabcb6b4d6229f2e608adca925b66e2e",
+  "isolation": {
+    "CUDA_initialized_after": false,
+    "CUDA_initialized_before": false,
+    "blocked_calls": [
+      "torch.load",
+      "CUDA init/lazy init/transfer",
+      "linear",
+      "backward",
+      "Adam.step"
+    ],
+    "forbidden_attempts": [],
+    "preparation_main_calls": 0,
+    "real_feature_checkpoint_dataset_reads": 0
+  },
+  "previous_suites": [
+    {
+      "failure_cause": "system temporary directory denied child creation and cleanup",
+      "ledger": "attempt1_run_record.json",
+      "reported_event_count": 21,
+      "results": "attempt1_regression_results.json",
+      "sources": "attempt1_sources/",
+      "status": "CPU_regression_FAIL"
+    }
+  ],
+  "simulation": {
+    "controlled_clocks_and_requested_limit_values_are_synthetic": true,
+    "simulated_costs_not_added_to_actual_experiment_counters": true
+  },
+  "source_fingerprints": {
+    "direction_a/probe_startup.py": "cda3f3e7704a63005a904cfad4a1b8660301f3ec1cb1627ec12ca5c0dce93a20",
+    "scripts/check_direction_a_probe_startup.py": "0e30dafa9c60d337d893aed23621ef76b5258fac29d96761b92f248acdbc33dd",
+    "scripts/prepare_direction_a_probe.py": "c2a5f3adfc1dbcf0e025a5059306af20d225db2526f169045176836eefa921a0",
+    "scripts/recover_direction_a_probe.py": "d2569b3e8c25e5ccb384d1c1dc7ae8ab20a1d8a20eb4ad9c99548242a8b66c66",
+    "tests/test_direction_a_probe_startup.py": "fea3b01d1176cb98c4ed3d4b2473c67bf21cc81785b1035b8ee58e70469cd1d0"
+  },
+  "status": "PASS",
+  "syntax": [
+    {
+      "error": null,
+      "path": "scripts/prepare_direction_a_probe.py",
+      "sha256": "c2a5f3adfc1dbcf0e025a5059306af20d225db2526f169045176836eefa921a0",
+      "status": "PASS"
+    },
+    {
+      "error": null,
+      "path": "scripts/recover_direction_a_probe.py",
+      "sha256": "d2569b3e8c25e5ccb384d1c1dc7ae8ab20a1d8a20eb4ad9c99548242a8b66c66",
+      "status": "PASS"
+    },
+    {
+      "error": null,
+      "path": "direction_a/probe_startup.py",
+      "sha256": "cda3f3e7704a63005a904cfad4a1b8660301f3ec1cb1627ec12ca5c0dce93a20",
+      "status": "PASS"
+    },
+    {
+      "error": null,
+      "path": "tests/test_direction_a_probe_startup.py",
+      "sha256": "fea3b01d1176cb98c4ed3d4b2473c67bf21cc81785b1035b8ee58e70469cd1d0",
+      "status": "PASS"
+    },
+    {
+      "error": null,
+      "path": "scripts/check_direction_a_probe_startup.py",
+      "sha256": "0e30dafa9c60d337d893aed23621ef76b5258fac29d96761b92f248acdbc33dd",
+      "status": "PASS"
+    }
+  ],
+  "syntax_check_invocations": 2,
+  "tests_run": 12
+}

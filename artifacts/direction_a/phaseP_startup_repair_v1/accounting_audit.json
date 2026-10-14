@@ -1,0 +1,96 @@
+{
+  "historical_unknowns": {
+    "CPU_proxy_reason": "v2 used fixed 8MiB without arrays/tensors inventory; only small explicit file buffers recoverable, not a verified full proxy",
+    "v1_overwritten_source_bytes": null,
+    "v1_preparation_peaks": {
+      "archive_known_array_proxy_upper_bytes": 8388608,
+      "archive_windows_working_set_peak_bytes": 93892608,
+      "preparation_cpu_tensor_proxy_peak_bytes": null,
+      "preparation_cuda_allocated_peak_bytes": null,
+      "preparation_windows_working_set_peak_bytes": null
+    },
+    "v2_CPU_array_tensor_proxy_verified": null,
+    "v2_cuda_peak": null,
+    "v2_final_windows_peak": null,
+    "v2_reported_CPU_proxy_bytes": 8388608,
+    "v2_reported_windows_peak_to_sample_bytes": 359088128
+  },
+  "historical_waiver_not_expanded": true,
+  "input_commit": "aa5f6d00535a339ad2753aded515dff20fa70925",
+  "never_add_nested_v1_to_v2_cumulative": true,
+  "old_preparation_criterion_6": "FAIL",
+  "old_wrapper_sha256": "e5c61b341913a5cd36b348e20547b032aa8352b5374c805510eb0d41cf4411c3",
+  "recoverable_v2_write_accounting": {
+    "published_byte_sizes": {
+      "artifacts/direction_a/phaseP_preparation_v2/artifact_hashes.json": 2495,
+      "artifacts/direction_a/phaseP_preparation_v2/results.json": 9140,
+      "artifacts/direction_a/phaseP_preparation_v2/run_record.json": 9239,
+      "artifacts/direction_a/phaseP_preparation_v2/startup_failure.txt": 1564,
+      "artifacts/direction_a/phaseP_preparation_v2/startup_record.json": 450,
+      "artifacts/direction_a/phaseP_preparation_v2/syntax_check.json": 2596,
+      "direction_a/probe_preparation.py": 6615,
+      "docs/workflow/TO_REVIEWER.md": 2405,
+      "scripts/prepare_direction_a_probe.py": 45742,
+      "scripts/recover_direction_a_probe.py": 17238,
+      "tests/test_direction_a_probe_preparation.py": 3881
+    },
+    "reconstructed_new_accountable_bytes": 294853,
+    "reported_new_accountable_bytes": 294853,
+    "rule": "source events + both syntax writes + published failure outputs/reviewer + 128KiB reserve; current source sizes are not charged twice",
+    "source_write_event_bytes": 134681,
+    "status": "exact match of recoverable published writes and reserve",
+    "syntax_write_bytes_including_overwrite": 3807
+  },
+  "reported_cumulative": {
+    "accountable_write_bytes": 500678,
+    "failed_restarts": 1,
+    "implementation_revisions": 4,
+    "preparation_launches": 2,
+    "seconds": 4.901985399979976
+  },
+  "scan_audit": {
+    "basis": "committed wrapper: syntax 8, current source checks 4, old hash/reconstruction <=54, old working hashes <=9, fallback hashes <=10, metadata/control <=25, margin 18; total<=128",
+    "simulation_not_actual_consumption": true,
+    "v1_recorded_scans": 16,
+    "v2_exact_scans": null,
+    "v2_recoverable_conservative_upper": 128
+  },
+  "startup_status": {
+    "reason": "marker written before constructor; pre-budget exception fallback wrote terminal ledger but never rewrote marker; terminal ledger and error govern",
+    "v2_marker": "launching",
+    "v2_terminal": "blocked_startup_failure"
+  },
+  "time_audit": {
+    "P_prior_upper_seconds": 6.310772,
+    "envelope_provenance": "this conversation's exec_command results, chunks a4e880/3ca673/6bc1d4; includes process launch/exit",
+    "final_closure_checked": false,
+    "observed_command_envelopes": [
+      {
+        "command": "first syntax plus diff check",
+        "seconds": 0.5971457
+      },
+      {
+        "command": "second syntax",
+        "seconds": 0.4478557
+      },
+      {
+        "command": "v2 startup wrapper",
+        "seconds": 4.4547852
+      }
+    ],
+    "reported_reserve_seconds": 0.1,
+    "v2_final_closure_exact_seconds": null,
+    "v2_new_program_upper_seconds": 5.4997866
+  },
+  "v1_commit": "d7706748e70f63885572aded57fab9e674d1a086",
+  "v1_reported": {
+    "scans": 16,
+    "seconds": 0.8109854000000001,
+    "write_bytes": 205825
+  },
+  "v2_commit": "aa5f6d00535a339ad2753aded515dff20fa70925",
+  "v2_reported_increment": {
+    "seconds": 4.090999999979976,
+    "write_bytes": 294853
+  }
+}
