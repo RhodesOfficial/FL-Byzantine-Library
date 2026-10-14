@@ -1,0 +1,44 @@
+{
+  "excludes": [
+    "encoder/feature gradients",
+    "training mode",
+    "other platforms/precisions",
+    "estimator",
+    "recovery",
+    "formal acceptance"
+  ],
+  "machine_epsilon_float32": 1.1920928955078125e-07,
+  "measurement_count": 504,
+  "norm": "Linf on concatenated complete weight+bias; scale=max(1,Linf(reference))",
+  "observed_max_normalized_Linf": 2.678808096483167e-07,
+  "other_reported_norm": "L2/Frobenius difference, not a separate tolerance",
+  "recovery_scope": "fourth primary class gradients reused; missing features/references and auxiliary checks reconstructed; earlier comparisons reused",
+  "rule": "ceil to one decimal significant digit of max(8*float32_machine_epsilon, 4*max_observed)",
+  "scope": "this CUDA float32 head CE on these four eval float32 feature references; NumPy float64 head oracle on same features",
+  "status": "candidate_only_NOT_frozen",
+  "unrounded_rule_value": 1.0715232385932668e-06,
+  "value": 2e-06,
+  "worst_comparison": {
+    "absolute_Linf": 4.76837158203125e-07,
+    "blocks": [
+      {
+        "absolute_Linf": 4.76837158203125e-07,
+        "shape": [
+          100,
+          128
+        ]
+      },
+      {
+        "absolute_Linf": 1.1920928955078125e-07,
+        "shape": [
+          100
+        ]
+      }
+    ],
+    "comparison": "A-backbone-CIFAR100-s2026101322-r0040-v1/client_000/class_0/CUDA-vs-CPU",
+    "difference_L2_Frobenius": 1.6870604292120139e-06,
+    "normalized_Linf": 2.678808096483167e-07,
+    "reference_Linf": 1.7800347805023193,
+    "scale": 1.7800347805023193
+  }
+}

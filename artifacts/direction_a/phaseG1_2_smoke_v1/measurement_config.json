@@ -1,0 +1,69 @@
+{
+  "base_commit": "abcfdedc8e502a69604a072069f23aa2b534fead",
+  "cost_ownership": "new G1.2 smoke/W02 measurement subaccount; earlier preparation and G1.1 ledger retained separately",
+  "debug_bound_only_not_frozen_epsilon": 0.0001,
+  "epsilon_rule": "max(8*float32 epsilon,4*maximum normalized difference), decimal significant ceil",
+  "gradients": "complete C outputs, bias present; no regularization",
+  "head_batch": 128,
+  "interpreter": "E:\\anaconda3\\python.exe",
+  "limits": {
+    "attempts": 1,
+    "backwards": 2000,
+    "class_gradient_requests": 1000,
+    "cpu_tensor_proxy_bytes": 2147483648,
+    "evidence_bytes": 67108864,
+    "feature_samples": 12000,
+    "forwards": 3000,
+    "gpu_allocated_bytes": 6442450944,
+    "logical_copy_bytes": 67108864,
+    "optimizer_steps": 1,
+    "per_run": {},
+    "phase_seconds": {
+      "input": 90,
+      "oracles": 60,
+      "reference_0": 90,
+      "reference_1": 90,
+      "reference_2": 90,
+      "reference_3": 90,
+      "storage": 90
+    },
+    "retries": 1,
+    "scans": 1000,
+    "wall_seconds": 600,
+    "windows_peak_working_set_bytes": 6442450944
+  },
+  "network": "no network; local message bytes measured and reference downlink theoretical",
+  "not_authorized": [
+    "formal G1.2 qualification",
+    "epsilon freeze",
+    "full-population formal gradient/target package",
+    "P",
+    "G1.3",
+    "A1/A2/A3",
+    "A7/A8",
+    "FedAvg training"
+  ],
+  "optimizer_steps": 0,
+  "parent_checkpoint": "G1.2",
+  "precision": "CUDA float32 autograd; NumPy float64 head reference on same cached float32 features",
+  "preregistration_sha256": "cac811914a16fd2883b4829bf1b835b1ece25506287b9e1ce6c81f8285f0afaf",
+  "run_id": "FedPCC-G1.2-gradient-smoke-v1",
+  "sampling": "complete train per selected client; auxiliary smoke <=8 samples/class, extreme positive class IDs",
+  "segment": 1,
+  "selected_clients": [
+    0,
+    9,
+    19
+  ],
+  "source_fingerprints": {
+    "direction_a/backbone_preparation.py": "e0298782e037ad0dcf16b14444e84cf0f629df9ac7035b7280947b1cba8aea73",
+    "direction_a/class_gradient_smoke.py": "e01b2efa47bedb9ace7e691b4826419f812864fd9a16335cd960561c3e4455bb",
+    "direction_a/model.py": "6fabfbb5d4510d1ea4f827f8d103472d31dbcec2e10f6f1d61c4c8bff7427990",
+    "models/ResNet.py": "73c4b0120c18f258b7bbe8cb87a13fb6b6c6896e0789b53505b141efc40295ce",
+    "scripts/measure_direction_a_class_gradient_smoke.py": "0c45a003fef521edd77db3e6e3b4c50119f779af983a3193b50462a29340c713",
+    "tests/test_direction_a_class_gradient_smoke.py": "a6485e8645d84770149bd0a906cd818060f6fc78f751275d46bfbd7f279c5d4e"
+  },
+  "target_scope": "selected sources partial contribution, NOT full G_c",
+  "tensor_readback": "bitwise exact",
+  "training_updates": 0
+}
