@@ -58,6 +58,7 @@
 2. `TO_REVIEWER.md` 的"判据自评"表格里，每条判据都有 PASS/FAIL。
 3. 看"阻塞"和"异议"是不是"无"。不是"无"也没关系，直接交给审查 agent 处理。
 4. `git status` 干净，没有遗留的未提交文件。
+5. 推送前执行 `git show --stat HEAD`，二进制文件一栏没有超过 20000000 bytes 的条目。有的话，回复执行 agent："按 ROLE_EXECUTOR.md 的大文件规则处理后重新提交。"
 
 都满足后，把审查 agent 的固定提示词发给审查 agent。
 
