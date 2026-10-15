@@ -1,4 +1,4 @@
-"""One v8 continuation. v5 fitting/statistical arithmetic is imported unchanged.
+"""One v9 continuation. v5 fitting/statistical arithmetic is imported unchanged.
 
 --check (synthetic only), commit sources/registration, --run once, --seal.
 The old formal package is read-only; inherited complete heads never enter fit.
@@ -24,19 +24,24 @@ import scripts.run_direction_a_probe_formal as original
 from direction_a.probe_startup import RecoveryBudget, execute_attempt
 from direction_a.backbone_preparation import windows_memory, tensor_state_sha
 
-OUT = ROOT/'artifacts/direction_a/phaseP_formal_resume_v3'
+OUT = ROOT/'artifacts/direction_a/phaseP_formal_resume_v4'
 OLD = ROOT/'artifacts/direction_a/phaseP_formal_v1'
-BASE = '25b5aa84a09a448b634251cc6a6c86d2445e4786'
+BASE = '56b3ac4a6466b9086fd28152002804c4bde84c7b'
 OLD_COMMIT = 'ea6a10001998a6062b6365f5e5f3f0df862bca7e'
 FAILED = ROOT/'artifacts/direction_a/phaseP_formal_resume_v1'
 FAILED2 = ROOT/'artifacts/direction_a/phaseP_formal_resume_v2'
+FAILED3 = ROOT/'artifacts/direction_a/phaseP_formal_resume_v3'
+FORMAL_SECONDS = 7200
+INHERITED_SECONDS = 2138.421
+INHERITED_BYTES = 13834446
+INHERITED_SCANS = 174822
 IMPLEMENTATION_UPPER_SECONDS = 600
-RUN_ID = 'FedPCC-P-formal-resume-v3'
+RUN_ID = 'FedPCC-P-formal-resume-v4'
 encode, sha, git = original.encode, original.sha, original.git
 SOURCES = ['scripts/resume_direction_a_probe_formal.py', 'tests/test_direction_a_probe_formal_resume.py', *original.SOURCES]
-LIMITS = {**original.LIMITS, 'wall_seconds':2935.656, 'evidence_bytes':122739363,
-          'scans':329763, 'fits':240, 'backwards':240000, 'optimizer_steps':240000,
-          'forwards':240867, 'encoder_forwards':24, 'feature_samples':3000,
+LIMITS = {**original.LIMITS, 'wall_seconds':FORMAL_SECONDS-INHERITED_SECONDS, 'evidence_bytes':134217728-INHERITED_BYTES,
+          'scans':500000-INHERITED_SCANS, 'fits':240, 'backwards':240000, 'optimizer_steps':240000,
+          'forwards':240864, 'encoder_forwards':24, 'feature_samples':3000,
           'windows_peak_working_set_bytes':16*1024**3, 'implementation_revisions':1}
 
 
@@ -66,7 +71,7 @@ def assert_new_head(rid,seed):
 
 def assert_new_path(path):
     p=Path(path).resolve()
-    if any(p==old.resolve() or old.resolve() in p.parents for old in (OLD,FAILED,FAILED2)):
+    if any(p==old.resolve() or old.resolve() in p.parents for old in (OLD,FAILED,FAILED2,FAILED3)):
         raise PermissionError('old formal package is immutable')
     local=ROOT/'artifacts_local'/OUT.relative_to(ROOT)
     if not (OUT.resolve() in p.parents or local.resolve() in p.parents):
@@ -113,6 +118,9 @@ def registration(fingerprints):
     p.update(run_id=RUN_ID,baseline_commit=BASE,limits=LIMITS,
              protocol_v7_path='docs/DIRECTION_A_P_ADJUDICATION_v7.md',
              protocol_v7_sha256=sha((ROOT/'docs/DIRECTION_A_P_ADJUDICATION_v7.md').read_bytes()),
+             protocol_v9_path='docs/DIRECTION_A_P_ADJUDICATION_v9.md',
+             protocol_v9_sha256=sha((ROOT/'docs/DIRECTION_A_P_ADJUDICATION_v9.md').read_bytes()),
+             formal_total_seconds=FORMAL_SECONDS,
              protocol_v8_path='docs/DIRECTION_A_P_ADJUDICATION_v8.md',
              protocol_v8_sha256=sha((ROOT/'docs/DIRECTION_A_P_ADJUDICATION_v8.md').read_bytes()),
              protocol_v6_path='docs/DIRECTION_A_P_ADJUDICATION_v6.md',
@@ -123,7 +131,7 @@ def registration(fingerprints):
                          immutable_old_heads=160,new_heads=240,queue=[dict(reference_id=r,seed=s) for r,s in queue()],
                          head_161='seed 2026101560 starts at zero; no step-462/Adam checkpoint exists',
                          repeated_validation=dict(CIFAR10_r80=dict(samples=1000,encoder=8)),
-                         inherited_floor=dict(seconds=1444.344,bytes=11478365,scans=170237),
+                         inherited_floor=dict(seconds=INHERITED_SECONDS,bytes=INHERITED_BYTES,scans=INHERITED_SCANS),
                          implementation_program_upper_seconds=IMPLEMENTATION_UPPER_SECONDS,verification_program_reserve_seconds=20,
                          implementation_accounting_basis='600 second conservative implementation bound; historical reserves retained independently; 20 seconds delivery verification precharged',
                          remaining_fit_estimate='max(0, original 2090.6519772480947 seconds minus sum of 160 stored fit_save_seconds), times frozen 1.8 safety factor',
@@ -140,7 +148,7 @@ def check():
     def tracked_read(path):
         nonlocal peak
         p=path.resolve().as_posix()
-        if any(x in p for x in ['/RAW_DATA/','/checkpoints/','/phaseG1_2_', '/phase0_2_v1/tasks/', '/phaseP_formal_v1/', '/phaseP_formal_resume_v1/', '/phaseP_formal_resume_v2/']):
+        if any(x in p for x in ['/RAW_DATA/','/checkpoints/','/phaseG1_2_', '/phase0_2_v1/tasks/', '/phaseP_formal_v1/', '/phaseP_formal_resume_v1/', '/phaseP_formal_resume_v2/', '/phaseP_formal_resume_v3/']):
             forbidden.append(p); raise AssertionError('synthetic real input forbidden')
         raw=read(path); counts['scans']+=1; peak=max(peak,len(raw)); return raw
     def tracked_write(path,raw):
@@ -246,13 +254,17 @@ def inherited_records():
             dict(commit='6e977f897e95a0b715fbff0c5075fde7ffdc3194',path=(FAILED2/'run_record.json').relative_to(ROOT).as_posix(),
                  seconds=661.719,bytes=1681119,status='failed_no_retry',
                  counts=dict(fits=0,backwards=0,optimizer_steps=0,forwards=3,encoder_forwards=0,feature_samples=0,scans=2350),
+                 resources={},unknown_resource_fields=['windows_working_set_peak_bytes','gpu_allocated_peak_bytes','cpu_known_arrays_tensor_proxy_peak_bytes']),
+            dict(commit=BASE,path=(FAILED3/'run_record.json').relative_to(ROOT).as_posix(),
+                 seconds=694.077,bytes=2356081,status='failed_no_retry',
+                 counts=dict(fits=0,backwards=0,optimizer_steps=0,forwards=3,encoder_forwards=0,feature_samples=0,scans=4585),
                  resources={},unknown_resource_fields=['windows_working_set_peak_bytes','gpu_allocated_peak_bytes','cpu_known_arrays_tensor_proxy_peak_bytes'])]
 
 
 def combine_history(records):
     expected={(r['commit'],r['path']) for r in inherited_records()}
-    if len(records)!=3 or {(r['commit'],r['path']) for r in records}!=expected:
-        raise RuntimeError('three distinct formal ledgers must be inherited exactly once')
+    if len(records)!=4 or {(r['commit'],r['path']) for r in records}!=expected:
+        raise RuntimeError('four distinct formal ledgers must be inherited exactly once')
     facts={}; unknown=[]
     for field in FACT_FIELDS:
         total=0
@@ -274,7 +286,7 @@ def combine_history(records):
         peaks[field]=dict(known_max=max(known) if known else None,unknown_sources=[r['path'] for r,v in zip(records,values) if v is None])
     return dict(records=records,seconds=sum(r['seconds'] for r in records),bytes=sum(r['bytes'] for r in records),
                 fact_counts=facts,missing_fields_retained=unknown,resource_peaks=peaks,inherited_once=True,
-                missing_failed_gate_real_operations_basis='v1 CPU gate prevented real operations; only known unexecuted operations infer zero; missing raw fields retained; v1/v2 synthetic forwards each inherited once')
+                missing_failed_gate_real_operations_basis='v1 CPU gate prevented real operations; only known unexecuted operations infer zero; missing raw fields retained; v1/v2/v3 synthetic forwards each inherited once')
 
 
 def read_history(b):
@@ -406,13 +418,13 @@ def experiment(context,b):
         torch.set_num_threads(2); torch.use_deterministic_algorithms(True)
         torch.backends.cuda.matmul.allow_tf32=False; torch.backends.cudnn.allow_tf32=False; torch.cuda.reset_peak_memory_stats()
         p=read_json(OUT/'preregistration.json',b)
-        original.write_json(OUT/'environment.json',dict(actual_run_commit=git('rev-parse','HEAD'),actual_command=p['actual_command'],python=sys.version,numpy=np.__version__,torch=torch.__version__,CUDA=torch.version.cuda,device=torch.cuda.get_device_name(),protocol_v5_sha256=p['protocol_sha256'],protocol_v6_sha256=p['protocol_v6_sha256'],protocol_v8_sha256=p['protocol_v8_sha256']),b)
+        original.write_json(OUT/'environment.json',dict(actual_run_commit=git('rev-parse','HEAD'),actual_command=p['actual_command'],python=sys.version,numpy=np.__version__,torch=torch.__version__,CUDA=torch.version.cuda,device=torch.cuda.get_device_name(),protocol_v5_sha256=p['protocol_sha256'],protocol_v6_sha256=p['protocol_v6_sha256'],protocol_v8_sha256=p['protocol_v8_sha256'],protocol_v9_sha256=p['protocol_v9_sha256']),b)
         old_fit=sum(h['fit_save_seconds'] for row in saved['references'] for h in row['heads'])
         remaining=max(0.,p['estimates']['fitting_seconds']-old_fit)*1.8+160+120
         prefit=dict(old_complete_fit_save_seconds=old_fit,remaining_operations_estimate_seconds=remaining,already_spent_resume_seconds=time.monotonic()-b.started,
-                    inherited_seconds=1444.344,already_written_resume_bytes=b.counts['evidence_bytes'],remaining_write_estimate_bytes=68*1024**2,terminal_reserve_seconds=120,terminal_reserve_bytes=8*1024**2)
+                    inherited_seconds=INHERITED_SECONDS,already_written_resume_bytes=b.counts['evidence_bytes'],remaining_write_estimate_bytes=68*1024**2,terminal_reserve_seconds=120,terminal_reserve_bytes=8*1024**2)
         original.write_json(OUT/'prefit_budget.json',prefit,b)
-        if remaining+time.monotonic()-b.started>=2935.656 or 68*1024**2+b.counts['evidence_bytes']>=122739363: raise RuntimeError('insufficient joint budget before fitting')
+        if remaining+time.monotonic()-b.started>=LIMITS['wall_seconds'] or 68*1024**2+b.counts['evidence_bytes']>=LIMITS['evidence_bytes']: raise RuntimeError('insufficient joint budget before fitting')
         datasets={'CIFAR10':c10_mapping}; predictions={}; new_completed=0
         b.planned_references=reference_ids()
         for a in accepted:
@@ -519,7 +531,7 @@ def launch():
     history=original.preparation_history()
     context=dict(output=OUT,run_id=RUN_ID,history=history,limits=LIMITS,started=ENTRY_STARTED-cost['program_seconds']-IMPLEMENTATION_UPPER_SECONDS-20,
                  preparation_initial_write_bytes=cost['counts']['write_bytes'],preparation_initial_scans=cost['counts']['scans'],source_write_events=cost['source_write_events'],implementation_revisions=1,
-                 total_wall_seconds=2935.656+history['upper_seconds'],total_write_bytes=122739363+history['bytes'],cumulative_scan_limit=329763+history['scan_upper_bound'],new_preparation_launches=0,new_failed_restarts=0,
+                 total_wall_seconds=LIMITS['wall_seconds']+history['upper_seconds'],total_write_bytes=LIMITS['evidence_bytes']+history['bytes'],cumulative_scan_limit=LIMITS['scans']+history['scan_upper_bound'],new_preparation_launches=0,new_failed_restarts=0,
                  cpu_proxy_upper_bytes=cost['resources']['cpu_proxy_bytes'],cpu_proxy_basis='eight times tracked synthetic buffers; accepted cache inventory envelope',emergency_closure_bytes=1024**2,synthetic_head_forwards=cost['synthetic_head_forwards'],
                  precheck_resource_peaks=dict(windows_working_set_peak_bytes=cost['resources']['windows_peak_bytes'],cpu_known_arrays_tensor_proxy_peak_bytes=cost['resources']['cpu_proxy_bytes']),archive_repo_paths=True,archive_extra_paths=[ROOT/n for n in SOURCES])
     ledger=run_once(context)
@@ -534,12 +546,12 @@ def review(ledger,results):
     science=results.get('scientific_status','FAIL') if completed else 'FAIL'
     fail=sum(x=='FAIL' for x in criteria.values())+int(science!='PASS')
     c=ledger['counts']; r=ledger.get('resources',{})
-    seconds=1444.344+ledger.get('new_stage_elapsed_seconds',0); written=11478365+c.get('evidence_bytes',0)
-    lines=['# 交付单：P 正式第4轮保留160头续跑','',f'- 对应任务单的基准 commit：{BASE}','- 本次交付 commit：见本提交','', '## 做了什么（≤5 条）',
-           '- 最小v8恢复入口及一次合成CPU套件，v5科学算术完整复用；源码与预登记先提交。',
+    seconds=INHERITED_SECONDS+ledger.get('new_stage_elapsed_seconds',0); written=INHERITED_BYTES+c.get('evidence_bytes',0)
+    lines=['# 交付单：P 正式第5轮保留160头续跑','',f'- 对应任务单的基准 commit：{BASE}','- 本次交付 commit：见本提交','', '## 做了什么（≤5 条）',
+           '- 最小v9恢复入口及一次合成CPU套件，v5科学算术完整复用；源码与预登记先提交。',
            f"- 旧160头只读复用；新完整头 {ledger.get('progress',{}).get('new_completed_heads',0)}/240，第161头从零重做。",
            '- 累计账本与实际检查结果已封存；四点联合推断是否完成见下表，旧6 GiB失败和未知保留。','', '## 产出文件',
-           '- artifacts/direction_a/phaseP_formal_resume_v3/：预登记、语法/CPU/输入检查、manifest、results/uncertainty、run_record/artifact_hashes。',
+           '- artifacts/direction_a/phaseP_formal_resume_v4/：预登记、语法/CPU/输入检查、manifest、results/uncertainty、run_record/artifact_hashes。',
            '- 完成运行时另产出 joint_index、heads/、head_results/、predictions/；本轮完成量见判据3。','', '## 判据自评',
            '|判据编号|结果 PASS/FAIL|证据位置 / 关键数字|','|---|---|---|']
     evidence={'1':'syntax_check.json / selfchecks.json；一次合成生产生命周期及保护检查',
@@ -557,8 +569,8 @@ def review(ledger,results):
         if s and completed: lines.append(f"|{rid}|{s['R_percent']:.6f}|{s['delta_pp']:.6f}|{s['separability']}|{s['calibration_space']}|")
         else: lines.append(f'|{rid}|未完成|未完成|FAIL|FAIL|')
     lines += ['', '## 实际资源消耗',
-              f"- 旧正式562.063秒/8259455 B/166480扫描、失败v1 220.562秒/1537791 B/1407扫描、失败v2 661.719秒/1681119 B/2350扫描；v3保守{ledger.get('new_stage_elapsed_seconds',0):.6f}秒/{c.get('evidence_bytes',0)} B/{c.get('scans',0)}扫描。",
-              f'- 正式总账 {seconds:.6f}/4380秒、{written}/134217728 B；余量 {4380-seconds:.6f}秒、{134217728-written} B。',
+              f"- 旧正式562.063秒/8259455 B/166480扫描、失败v1 220.562秒/1537791 B/1407扫描、失败v2 661.719秒/1681119 B/2350扫描、失败v3 694.077秒/2356081 B/4585扫描；v4保守{ledger.get('new_stage_elapsed_seconds',0):.6f}秒/{c.get('evidence_bytes',0)} B/{c.get('scans',0)}扫描。",
+              f'- 正式总账 {seconds:.6f}/{FORMAL_SECONDS}秒、{written}/134217728 B；余量 {FORMAL_SECONDS-seconds:.6f}秒、{134217728-written} B。',
               f"- 本轮CUDA峰{r.get('gpu_allocated_peak_bytes','unknown')} B、Windows峰{r.get('windows_working_set_peak_bytes','unknown')} B、CPU代理峰{r.get('cpu_known_arrays_tensor_proxy_peak_bytes','unknown')} B；跨阶段最大峰及缺项见run_record.joint_formal_accounting.resource_peaks。",
               f'- 准备74.9171745秒/11988355 B只继承一次；P累计 {74.9171745+seconds:.6f}秒/{11988355+written} B；旧未知及旧判据6 FAIL保留。',
               f"- 新有效更新{c.get('backwards',0)}，完整头{160+ledger.get('progress',{}).get('new_completed_heads',0)}/400；失败461次与CPU前向分列；重复编码及近似区间见证据。",
@@ -568,6 +580,14 @@ def review(ledger,results):
               '- 按v6联合工程资格及v5四点科学门槛裁决；P交付后由审查者接续原G1.1文档任务。']
     if len(lines)>80: raise RuntimeError('review exceeds 80 lines')
     return ('\n'.join(lines)+'\n').encode(),fail,not completed
+
+
+def seal_limit_exceeded(ledger):
+    c=ledger['counts']
+    return (c['evidence_bytes']>=LIMITS['evidence_bytes'] or
+            ledger['joint_formal_accounting']['seconds']>=FORMAL_SECONDS or
+            c['scans']>LIMITS['scans'] or
+            ledger['resources']['windows_working_set_peak_bytes']>=LIMITS['windows_peak_working_set_bytes'])
 
 
 def seal():
@@ -606,22 +626,22 @@ def seal():
     peaks={k:dict(new_measured=r.get(k),historical=history['resource_peaks'][k],
                   known_max=max([v for v in [r.get(k),history['resource_peaks'][k]['known_max']] if isinstance(v,(int,float))],default=None)) for k in history['resource_peaks']}
     ledger['joint_formal_accounting']=dict(inherited=history,new_seconds=ledger['new_stage_elapsed_seconds'],
-        fact_counts=facts,resource_peaks=peaks,old_terminal_status='failed_terminal_limit',failed_resume_status='failed_before_real_input',failed_resume_v2_status='failed_no_retry',
+        fact_counts=facts,resource_peaks=peaks,old_terminal_status='failed_terminal_limit',failed_resume_status='failed_before_real_input',failed_resume_v2_status='failed_no_retry',failed_resume_v3_status='failed_no_retry',
         old_6GiB_qualification='FAIL',old_criterion_6='FAIL',effective_complete_heads=160+ledger.get('progress',{}).get('new_completed_heads',0),
-        unknown_history_retained=True,implementation_revisions=6,syntax_checks=6,CPU_suites=6,
-        formal_runs=2+c.get('formal_runs',0),duplicate_validation_encoder=min(8,c.get('encoder_forwards',0)))
+        unknown_history_retained=True,implementation_revisions=7,syntax_checks=7,CPU_suites=7,
+        formal_runs=3+c.get('formal_runs',0),duplicate_validation_encoder=min(8,c.get('encoder_forwards',0)))
     ledger['delivery_verification']=dict(program_seconds=elapsed,precharged_seconds=20,index_readback='PASS' if error is None else 'FAIL',checked_files=scans,source_commit=git('rev-parse','HEAD'),real_input_reads=0,experiment_runs_new=0)
     # These are mutually distinct: preparation, old formal, new recovery, P total.
-    ledger['joint_formal_accounting']['seconds']=1444.344+ledger['new_stage_elapsed_seconds']
+    ledger['joint_formal_accounting']['seconds']=INHERITED_SECONDS+ledger['new_stage_elapsed_seconds']
     before=c['evidence_bytes']; records=index['files']; ledger_name=(OUT/'run_record.json').relative_to(ROOT).as_posix()
     for _ in range(16):
         reviewer,fail,blocked=review(ledger,results)
         records['docs/workflow/TO_REVIEWER.md']=dict(bytes=len(reviewer),sha256=sha(reviewer))
         records[ledger_name]=dict(bytes=len(encode(ledger)),sha256='0'*64)
         c['evidence_bytes']=before+len(reviewer)+len(encode(ledger))+len(encode(index))
-        ledger['joint_formal_accounting']['bytes']=11478365+c['evidence_bytes']
-        ledger['P_cumulative']=dict(seconds=74.9171745+1444.344+ledger['new_stage_elapsed_seconds'],bytes=11988355+11478365+c['evidence_bytes'],preparation_inherited_once=True)
-    if (c['evidence_bytes']>=122739363 or ledger['joint_formal_accounting']['seconds']>=4380 or c['scans']>329763 or ledger['resources']['windows_working_set_peak_bytes']>=16*1024**3): ledger.update(status='failed_terminal_limit',error='seal cumulative resource limit')
+        ledger['joint_formal_accounting']['bytes']=INHERITED_BYTES+c['evidence_bytes']
+        ledger['P_cumulative']=dict(seconds=74.9171745+INHERITED_SECONDS+ledger['new_stage_elapsed_seconds'],bytes=11988355+INHERITED_BYTES+c['evidence_bytes'],preparation_inherited_once=True)
+    if seal_limit_exceeded(ledger): ledger.update(status='failed_terminal_limit',error='seal cumulative resource limit')
     reviewer,fail,blocked=review(ledger,results); records['docs/workflow/TO_REVIEWER.md']=dict(bytes=len(reviewer),sha256=sha(reviewer))
     raw=encode(ledger); records[ledger_name]=dict(bytes=len(raw),sha256=sha(raw))
     (ROOT/'docs/workflow/TO_REVIEWER.md').write_bytes(reviewer); (OUT/'run_record.json').write_bytes(raw); (OUT/'artifact_hashes.json').write_bytes(encode(index))
