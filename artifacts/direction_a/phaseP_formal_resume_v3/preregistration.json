@@ -1,0 +1,1270 @@
+{
+  "G1_2_commit": "d3a3bd712d6bb28283b59faff16e17e099debcb4",
+  "actual_command": [
+    "E:\\anaconda3\\python.exe",
+    "-B",
+    "scripts/resume_direction_a_probe_formal.py",
+    "--run"
+  ],
+  "baseline_commit": "25b5aa84a09a448b634251cc6a6c86d2445e4786",
+  "bootstrap": {
+    "R_delta_95": [
+      0.025,
+      0.975
+    ],
+    "delta_decision": [
+      0.0125,
+      0.9875
+    ],
+    "fixed_denominators": true,
+    "order": "replicate outer/class ascending; sorted class positions",
+    "quantile_method": "linear",
+    "repeats": 2000,
+    "sampling": "classwise replacement, paired snapshots/original/real",
+    "seed": 20261016
+  },
+  "disclosure": "backbone validation previously reported; r40/r80 preregistered, all four delivered; bootstrap approximate validation-sampling coverage, not training repeats",
+  "estimates": {
+    "basis": "accepted 24-head fixed-step measurement, linear full-train size extrapolation; no additional fits",
+    "fitting_safety_factor": 1.8,
+    "fitting_seconds": 2090.6519772480947,
+    "remaining_nonfit_seconds": 160,
+    "remaining_write_bytes": 62914560,
+    "terminal_reserve_bytes": 8388608,
+    "terminal_reserve_seconds": 120
+  },
+  "inference_assumptions": "fixed predictions exchangeable with labels conditional on counts; independent validation sampling; no validation-based fitting or selection",
+  "limits": {
+    "attempts": 0,
+    "backwards": 240000,
+    "class_gradient_requests": 0,
+    "client_scans": 0,
+    "communications": 0,
+    "cpu_tensor_proxy_bytes": 2147483648,
+    "encoder_forwards": 24,
+    "evidence_bytes": 122739363,
+    "extra_encoded_positions": 0,
+    "feature_samples": 3000,
+    "fits": 240,
+    "formal_runs": 1,
+    "forwards": 240867,
+    "gpu_allocated_bytes": 6442450944,
+    "implementation_revisions": 1,
+    "logical_copy_bytes": 134217728,
+    "optimizer_steps": 240000,
+    "per_run": {},
+    "phase_seconds": {},
+    "preparation_runs": 0,
+    "retries": 0,
+    "scans": 329763,
+    "searches": 0,
+    "wall_seconds": 2935.656,
+    "windows_peak_working_set_bytes": 17179869184
+  },
+  "old_source_commit": "a12905c9ffdfe65270feb83e587bffa4b90f612a",
+  "preparation": {
+    "bytes": 11988355,
+    "closed_preparation": true,
+    "commit": "a0f6428c6f3deec5c5fda76c8b0b01763e83f344",
+    "launches": 3,
+    "ledger_path": "artifacts/direction_a/phaseP_preparation_v3/run_record.json",
+    "old_preparation_criterion_6": "FAIL",
+    "reported_seconds": 73.50838789984118,
+    "restarts": 1,
+    "revisions": 9,
+    "scan_lower_bound": 5892,
+    "scan_upper_bound": 6020,
+    "unknown_history_retained": true,
+    "upper_seconds": 74.91717449986027
+  },
+  "preparation_commit": "a0f6428c6f3deec5c5fda76c8b0b01763e83f344",
+  "probe": {
+    "heads": 400,
+    "heads_per_point": 100,
+    "initialization": "complete C by 128 float32 weight and C bias zero",
+    "loss": "per-class mean CE averaged equally over complete C",
+    "objective_steps": [
+      0,
+      100,
+      500,
+      1000
+    ],
+    "optimizer": {
+      "betas": [
+        0.9,
+        0.999
+      ],
+      "eps": 1e-08,
+      "lr": 0.01,
+      "name": "Adam",
+      "weight_decay": 0
+    },
+    "steps": 1000
+  },
+  "protocol_commit": "b80821250aa66036316ccdfa44c39379dbc84528",
+  "protocol_path": "docs/DIRECTION_A_P_ADJUDICATION_v5.md",
+  "protocol_sha256": "d5508b55c8b1924f89c79c29e5831e2c3442d903d1546a2dd5c7ba1340d1ee67",
+  "protocol_v6_path": "docs/DIRECTION_A_P_ADJUDICATION_v6.md",
+  "protocol_v6_sha256": "340897ba0b63a37b05f7a729039934ef4b7355d21b672fe8e641a3e53717f0eb",
+  "protocol_v7_path": "docs/DIRECTION_A_P_ADJUDICATION_v7.md",
+  "protocol_v7_sha256": "229aa1534efcde963597542163d9bf44e82c5b745feb75cf41e11ab2b083688c",
+  "protocol_v8_path": "docs/DIRECTION_A_P_ADJUDICATION_v8.md",
+  "protocol_v8_sha256": "4236df82aed090397da81ecc27c058f04fbaa0a4caa8333cef5f0095657469f2",
+  "references": [
+    "A-backbone-CIFAR10-s2026101321-r0040-v1",
+    "A-backbone-CIFAR10-s2026101321-r0080-v1",
+    "A-backbone-CIFAR100-s2026101322-r0040-v1",
+    "A-backbone-CIFAR100-s2026101322-r0080-v1"
+  ],
+  "resume": {
+    "head_161": "seed 2026101560 starts at zero; no step-462/Adam checkpoint exists",
+    "immutable_old_heads": 160,
+    "implementation_accounting_basis": "600 second conservative implementation bound; historical reserves retained independently; 20 seconds delivery verification precharged",
+    "implementation_program_upper_seconds": 600,
+    "inherited_floor": {
+      "bytes": 11478365,
+      "scans": 170237,
+      "seconds": 1444.344
+    },
+    "new_heads": 240,
+    "no_automatic_retry": true,
+    "old_directory": "artifacts/direction_a/phaseP_formal_v1",
+    "old_input_commit": "ea6a10001998a6062b6365f5e5f3f0df862bca7e",
+    "queue": [
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101560
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101561
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101562
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101563
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101564
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101565
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101566
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101567
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101568
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101569
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101570
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101571
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101572
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101573
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101574
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101575
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101576
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101577
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101578
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101579
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101580
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101581
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101582
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101583
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101584
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101585
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101586
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101587
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101588
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101589
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101590
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101591
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101592
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101593
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101594
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101595
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101596
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101597
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101598
+      },
+      {
+        "reference_id": "A-backbone-CIFAR10-s2026101321-r0080-v1",
+        "seed": 2026101599
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": null
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101501
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101502
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101503
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101504
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101505
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101506
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101507
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101508
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101509
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101510
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101511
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101512
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101513
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101514
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101515
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101516
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101517
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101518
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101519
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101520
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101521
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101522
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101523
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101524
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101525
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101526
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101527
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101528
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101529
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101530
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101531
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101532
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101533
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101534
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101535
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101536
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101537
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101538
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101539
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101540
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101541
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101542
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101543
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101544
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101545
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101546
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101547
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101548
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101549
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101550
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101551
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101552
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101553
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101554
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101555
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101556
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101557
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101558
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101559
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101560
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101561
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101562
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101563
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101564
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101565
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101566
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101567
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101568
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101569
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101570
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101571
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101572
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101573
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101574
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101575
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101576
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101577
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101578
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101579
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101580
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101581
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101582
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101583
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101584
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101585
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101586
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101587
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101588
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101589
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101590
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101591
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101592
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101593
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101594
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101595
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101596
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101597
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101598
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0040-v1",
+        "seed": 2026101599
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": null
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101501
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101502
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101503
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101504
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101505
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101506
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101507
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101508
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101509
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101510
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101511
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101512
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101513
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101514
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101515
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101516
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101517
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101518
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101519
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101520
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101521
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101522
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101523
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101524
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101525
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101526
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101527
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101528
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101529
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101530
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101531
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101532
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101533
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101534
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101535
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101536
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101537
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101538
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101539
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101540
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101541
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101542
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101543
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101544
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101545
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101546
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101547
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101548
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101549
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101550
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101551
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101552
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101553
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101554
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101555
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101556
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101557
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101558
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101559
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101560
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101561
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101562
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101563
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101564
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101565
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101566
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101567
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101568
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101569
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101570
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101571
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101572
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101573
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101574
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101575
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101576
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101577
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101578
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101579
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101580
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101581
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101582
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101583
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101584
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101585
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101586
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101587
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101588
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101589
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101590
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101591
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101592
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101593
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101594
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101595
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101596
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101597
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101598
+      },
+      {
+        "reference_id": "A-backbone-CIFAR100-s2026101322-r0080-v1",
+        "seed": 2026101599
+      }
+    ],
+    "remaining_fit_estimate": "max(0, original 2090.6519772480947 seconds minus sum of 160 stored fit_save_seconds), times frozen 1.8 safety factor",
+    "repeated_validation": {
+      "CIFAR10_r80": {
+        "encoder": 8,
+        "samples": 1000
+      }
+    },
+    "verification_program_reserve_seconds": 20
+  },
+  "run_id": "FedPCC-P-formal-resume-v3",
+  "scientific_thresholds": {
+    "CIFAR10": {
+      "delta_pp": 5.6,
+      "tau_percent": 30.1
+    },
+    "CIFAR100": {
+      "delta_pp": 5.9,
+      "tau_percent": 7.9
+    }
+  },
+  "source_fingerprints": {
+    "direction_a/backbone_preparation.py": "e0298782e037ad0dcf16b14444e84cf0f629df9ac7035b7280947b1cba8aea73",
+    "direction_a/class_gradient_full.py": "69e606765ed108993a72c7b3785fcfc3746c96814e045034d9849c8cb597be70",
+    "direction_a/class_gradient_smoke.py": "e01b2efa47bedb9ace7e691b4826419f812864fd9a16335cd960561c3e4455bb",
+    "direction_a/model.py": "6fabfbb5d4510d1ea4f827f8d103472d31dbcec2e10f6f1d61c4c8bff7427990",
+    "direction_a/probe_formal.py": "94127a868c9aec0a9a766ee4a726fd5528d8e8b827e7f67f3e8799bc23be89fd",
+    "direction_a/probe_preparation.py": "b91408f9eb6f5e73af571f844fe8c2245eee2ca515c3ecaa5dc5541e88357958",
+    "direction_a/probe_startup.py": "6c783722173329c821e00d5d138bfce397ad2cccb839c7d5c62eb71f33d72425",
+    "models/ResNet.py": "73c4b0120c18f258b7bbe8cb87a13fb6b6c6896e0789b53505b141efc40295ce",
+    "scripts/prepare_direction_a_probe.py": "ec795cd52fb10f89bac893f53dda68d1ad9ba1c84869ceafd71241cb96689cb4",
+    "scripts/recover_direction_a_probe.py": "d2623769ad39e15c4e00e9f5d77ff4c81f83c07f2e818b754d538570847a9aca",
+    "scripts/resume_direction_a_probe_formal.py": "f6c0c95a13a73c58ff8c0319c31e821199fec3e2c7115853eec0f4c6c69b2b2c",
+    "scripts/run_direction_a_probe_formal.py": "02dc43edd3bf8675efe4ac76e18cf1a5c46cf01584a223b5b7d146ba8a305f93",
+    "tests/test_direction_a_probe_formal.py": "8c50b66aeefc9c3053afd8f515d1dc51d489875baee76f360ef2985a7516eeba",
+    "tests/test_direction_a_probe_formal_resume.py": "1a9598a879df262be11ce4550e3c98b9113e4de1a019037010c73d56ebc19b56",
+    "tests/test_direction_a_probe_startup.py": "4535c62dce01e085c9d353dd18a3c420099ed85bee03c086b32a44f577c2c540"
+  },
+  "train": {
+    "d": 128,
+    "dtype": "float32",
+    "order": "sorted global indices",
+    "reencoded": 0,
+    "samples": {
+      "CIFAR10": 11165,
+      "CIFAR100": 9754
+    }
+  },
+  "train_permutations": {
+    "global_frequency_preserving": true,
+    "paired_snapshots": true,
+    "seeds": [
+      2026101501,
+      2026101502,
+      2026101503,
+      2026101504,
+      2026101505,
+      2026101506,
+      2026101507,
+      2026101508,
+      2026101509,
+      2026101510,
+      2026101511,
+      2026101512,
+      2026101513,
+      2026101514,
+      2026101515,
+      2026101516,
+      2026101517,
+      2026101518,
+      2026101519,
+      2026101520,
+      2026101521,
+      2026101522,
+      2026101523,
+      2026101524,
+      2026101525,
+      2026101526,
+      2026101527,
+      2026101528,
+      2026101529,
+      2026101530,
+      2026101531,
+      2026101532,
+      2026101533,
+      2026101534,
+      2026101535,
+      2026101536,
+      2026101537,
+      2026101538,
+      2026101539,
+      2026101540,
+      2026101541,
+      2026101542,
+      2026101543,
+      2026101544,
+      2026101545,
+      2026101546,
+      2026101547,
+      2026101548,
+      2026101549,
+      2026101550,
+      2026101551,
+      2026101552,
+      2026101553,
+      2026101554,
+      2026101555,
+      2026101556,
+      2026101557,
+      2026101558,
+      2026101559,
+      2026101560,
+      2026101561,
+      2026101562,
+      2026101563,
+      2026101564,
+      2026101565,
+      2026101566,
+      2026101567,
+      2026101568,
+      2026101569,
+      2026101570,
+      2026101571,
+      2026101572,
+      2026101573,
+      2026101574,
+      2026101575,
+      2026101576,
+      2026101577,
+      2026101578,
+      2026101579,
+      2026101580,
+      2026101581,
+      2026101582,
+      2026101583,
+      2026101584,
+      2026101585,
+      2026101586,
+      2026101587,
+      2026101588,
+      2026101589,
+      2026101590,
+      2026101591,
+      2026101592,
+      2026101593,
+      2026101594,
+      2026101595,
+      2026101596,
+      2026101597,
+      2026101598,
+      2026101599
+    ]
+  },
+  "validation": {
+    "batch": 128,
+    "class_counts": {
+      "CIFAR10": 100,
+      "CIFAR100": 10
+    },
+    "mode": "eval/no_grad",
+    "order": "sorted sealed 0.2 indices",
+    "samples_per_point": 1000,
+    "test_reads": 0
+  },
+  "validation_permutations": {
+    "algorithm": "dataset-local default_rng, globally permute all labels, fixed predictions, shared snapshots",
+    "p": "(1+b)/10000",
+    "p_adj": "min(1,4*p)",
+    "repeats": 9999,
+    "seeds": {
+      "CIFAR10": 2026101701,
+      "CIFAR100": 2026101702
+    },
+    "statistic": "integer tail correct count",
+    "ties": "greater than or equal"
+  }
+}
