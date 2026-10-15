@@ -1,14 +1,49 @@
 """CPU-only synthetic independent boundary and integrity oracles."""
 import itertools
+import copy
+import json
 import unittest
 from unittest.mock import patch
 from fractions import Fraction as F
 
-from direction_a.formal_f import N, IDS, DELTA, probability, outcome, charge, classify
+from direction_a.formal_f import N, IDS, SCENARIOS, DELTA, probability, outcome, charge, classify, parse_speed_assignments
 from direction_a.formal_f_policy import Consumer, invite
 
 
 class FormalFChecks(unittest.TestCase):
+    def test_production_speed_parser(self):
+        original = {ds: {'assignments': {s: {cid: ('1' if c < 10 else '4')
+                    for c, cid in enumerate(IDS)} for s in SCENARIOS}}
+                    for ds in ('CIFAR10', 'CIFAR100')}
+        raw = json.dumps(original)
+        view = parse_speed_assignments(raw)
+        self.assertEqual(json.loads(raw), original)
+        for ds in original:
+            for s in SCENARIOS:
+                for c, cid in enumerate(IDS):
+                    speed = view[ds]['assignments'][s][cid]
+                    self.assertIs(type(speed), int)
+                    expected = 1 if c < 10 else 4
+                    self.assertEqual(probability('1', speed), probability('1', expected))
+                    self.assertEqual(outcome('1', speed, (0, N-1, N-1)),
+                                     outcome('1', expected, (0, N-1, N-1)))
+        for bad in (True, False, 1, 4, 1.0, None, '01', '1.0', ' 1', '4 ', '2'):
+            changed = copy.deepcopy(original)
+            changed['CIFAR10']['assignments']['random'][IDS[0]] = bad
+            with self.subTest(bad=bad), self.assertRaises(ValueError):
+                parse_speed_assignments(json.dumps(changed))
+        for field in ('endpoint', 'scenario', 'task', 'multiset'):
+            changed = copy.deepcopy(original)
+            if field == 'endpoint': del changed['CIFAR10']['assignments']['random'][IDS[0]]
+            elif field == 'scenario': del changed['CIFAR10']['assignments']['tail_fast']
+            elif field == 'task': del changed['CIFAR100']
+            else: changed['CIFAR10']['assignments']['random'][IDS[0]] = '4'
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                parse_speed_assignments(json.dumps(changed))
+        duplicate = raw.replace('"client_000": "1"', '"client_000": "1", "client_000": "4"', 1)
+        with self.assertRaisesRegex(ValueError, 'duplicate'):
+            parse_speed_assignments(duplicate)
+
     def test_probabilities_and_grid_boundaries(self):
         self.assertEqual(sum(0 in c for c in itertools.combinations(range(5), 2)), 4)
         p = probability('1', 4)

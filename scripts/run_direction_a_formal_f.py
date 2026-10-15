@@ -22,26 +22,28 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 sys.dont_write_bytecode = True
 from direction_a.cost_m import normalized, sha, windows_peak, exact_b
-from direction_a.formal_f import N, DELTA, IDS, SCENARIOS, ceil, probability, outcome, charge, classify
+from direction_a.formal_f import N, DELTA, IDS, SCENARIOS, ceil, probability, outcome, charge, classify, parse_speed_assignments
 from direction_a.formal_f_policy import canonical, digest, invite, Consumer
 
-OUT = ROOT/'artifacts/direction_a/phaseG1_1_formal_F_v1'
+OUT = ROOT/'artifacts/direction_a/phaseG1_1_formal_F_resume_v1'
+FROZEN_F = 'artifacts/direction_a/phaseG1_1_formal_F_v1/'
+TASK_BASE = 'cb8dd23bda83b3450808361e6367e3ecb2562808'
 A = 'artifacts/direction_a/'
 M = A+'phaseG1_1_cost_M_v1/'
 OLD = A+'phaseG1_2_full_v1/'
 BACK = A+'backbone_preparation_v1/'
 SMOKE = A+'phaseG1_1_v1/'
 BASE = '22c7418d40f62c81f2639e86d1b7a166a6898920'
-AUTH = 'bbe939a2d8cf6ea14c7dfd18f96e24821a52ed3d'
+AUTH = 'befac4eb349beddb673babb73550c2bb03cfe85f'
 UPSTREAM = 'd3a3bd712d6bb28283b59faff16e17e099debcb4'
 ZERO = 'e3c3528722cd4c4f55f96b37182255a4ade961b8'
 SMOKE_COMMIT = '54eb6e02f4630df82cfdeb1c352fd5e4520ea5be'
 SOURCE = ['direction_a/formal_f.py','direction_a/formal_f_policy.py',
           'scripts/run_direction_a_formal_f.py','tests/test_direction_a_formal_f.py']
-LIMITS = dict(seconds=300, writes=32*1024**2, metadata=8*1024**2,
+LIMITS = dict(seconds=300, writes=32*1024**2, metadata=16*1024**2,
               simulated_bytes=32*1024**3, scans=2048, attempts=800,
               windows=2*1024**3, cpu_proxy=512*1024**2,
-              revisions=2, syntax_checks=2, CPU_suites=2, real_entries=1)
+              revisions=3, syntax_checks=3, CPU_suites=3, real_entries=2)
 EXPECTED = ['input_checks.json','binding.json','mechanism.json','support.json',
             'plans.json','events.jsonl','replay_checks.json','coverage.json',
             'diagnostic_channel_audit.json','run_record.json','artifact_hashes.json',
@@ -69,12 +71,16 @@ class Ledger:
     def guard(self, action, seconds=0, writes=0, metadata=0, scans=0, attempts=0, simulated_bytes=0, seal=False):
         proposed = dict(seconds=self.elapsed()+seconds+(0 if seal else 20),
                         writes=self.d['writes']+writes+(0 if seal else 2*1024**2),
-                        metadata=self.d['metadata']+metadata,scans=self.d['scans']+scans,
+                        metadata=self.d['metadata']+metadata+(0 if seal else 1024**2),scans=self.d['scans']+scans,
                         attempts=self.d['attempts']+attempts,
                         simulated_bytes=self.d['simulated_bytes']+simulated_bytes)
         for k,v in proposed.items():
             if v > LIMITS[k]:
                 raise RuntimeError('resource gate '+k+': '+str(v))
+        for count, limit in (('implementation_revisions','revisions'), ('syntax_checks','syntax_checks'),
+                             ('CPU_suites','CPU_suites'), ('real_entries','real_entries')):
+            if self.d.get(count,0)>LIMITS[limit]:
+                raise RuntimeError('operation count gate '+count)
         self.d['windows'] = max(self.d['windows'],windows_peak())
         self.d['cpu_proxy'] = max(self.d['cpu_proxy'],tracemalloc.get_traced_memory()[1])
         for k in ('windows','cpu_proxy'):
@@ -105,55 +111,73 @@ class Ledger:
 
 def prepare():
     tracemalloc.start()
-    prior=None
     if OUT.exists():
-        if (OUT/'entry.json').exists() or (OUT/'preparation_history_v1.json').exists():
-            raise RuntimeError('preparation/entry limit; no overwriting')
-        prior=json.loads((OUT/'preparation_ledger.json').read_bytes())
-        prior['writes']+=(OUT/'preparation_ledger.json').stat().st_size+sum((ROOT/p).stat().st_size for p in SOURCE)
-        prior['seconds']+=2  # previous preparation exit and subsequent bounded source edit commands
-        prior['implementation_revisions']+=1;prior['syntax_checks']+=1;prior['CPU_suites']+=1
+        raise RuntimeError('single preparation only; no overwrite or retry')
+    old_raw=(ROOT/FROZEN_F/'delivery_audit.json').read_bytes()
+    old=json.loads(old_raw)
+    prior=json.loads(json.dumps(old['resources']))
+    prior['seconds']+=15
+    prior['writes']+=sum((ROOT/p).stat().st_size for p in SOURCE)+131072
+    prior['metadata']+=786432
+    prior['scans']+=60
+    for k in ('implementation_revisions','syntax_checks','CPU_suites'):prior[k]+=1
+    prior['real_entries']=1
+    prior['discovery_accounting']='this segment: 15s/768KiB/60 scans; bounded shell reads, source edits and preparation/Git discovery; inherited final audit exactly once'
     l=Ledger(prior)
-    if prior:
-        history={}
-        for name in ('preregistration.json','selfchecks.json','preparation_ledger.json'):
-            raw=l.readback(OUT/name);history[name]=json.loads(raw)
-        l.save('preparation_history_v1.json',history)
+    OUT.mkdir(parents=True)
+    # Full remaining process, including archive/readback/failure and delivery.
+    estimates=dict(program_seconds=100,seal_seconds=20,writes=12*1024**2,
+        additional_metadata=8*1024**2,simulated_bytes_envelope=28544398373,
+        scans=1100,windows=512*1024**2,cpu_proxy=128*1024**2,
+        metadata_stages=dict(preparation=262144,input_repeated_reads=1835008,
+            archive_readback=4194304,finalize_readback=1048576,delivery_tail=1048576),
+        seconds_stages=dict(preparation=5,input=15,events=65,archive=15,seal_delivery=20))
+    l.guard('full process before checks',seconds=estimates['program_seconds']+estimates['seal_seconds'],
+            writes=estimates['writes'],metadata=estimates['additional_metadata'],
+            scans=estimates['scans'],attempts=778,simulated_bytes=estimates['simulated_bytes_envelope'],seal=True)
     for p in SOURCE:
         ast.parse((ROOT/p).read_text(encoding='utf-8'),filename=p)
     stream=io.StringIO()
     result=unittest.TextTestRunner(stream=stream,verbosity=2).run(
         unittest.defaultTestLoader.discover(str(ROOT/'tests'),pattern='test_direction_a_formal_f.py'))
-    OUT.mkdir(parents=True,exist_ok=True)
     l.save('selfchecks.json',dict(passed=result.wasSuccessful(),tests=result.testsRun,log=stream.getvalue(),
-         syntax_checks=l.d['syntax_checks'],CPU_suites=l.d['CPU_suites'],implementation_revisions=l.d['implementation_revisions'],torch_imported='torch' in sys.modules,
-         real_samples=0,CUDA_initializations=0))
+         syntax_checks=3,CPU_suites=3,implementation_revisions=3,segment_each=1,
+         torch_imported='torch' in sys.modules,real_samples=0,CUDA_initializations=0))
     if not result.wasSuccessful() or 'torch' in sys.modules:
         l.save('preparation_ledger.json',l.snapshot())
-        raise RuntimeError(stream.getvalue())
+        raise RuntimeError('single permitted preparation failed; seal for review: '+stream.getvalue())
     if git('rev-parse','HEAD').decode().strip()!=AUTH:
         raise RuntimeError('authorization mismatch')
-    git('merge-base','--is-ancestor',BASE,AUTH)
-    l.save('preregistration.json',dict(identity='G1.1-formal-F-v1',baseline=BASE,authorization_commit=AUTH,
-        created_unix_ns=time.time_ns(),source_commit='HEAD at exclusive entry; verified tracked hashes below',
+    git('merge-base','--is-ancestor',TASK_BASE,AUTH)
+    git('diff','--exit-code',TASK_BASE,'--',FROZEN_F)
+    old_run=json.loads((ROOT/FROZEN_F/'run_record.json').read_bytes())
+    l.d['metadata']+=262144  # preparation/source/hash/old inventory reads upper envelope
+    l.d['scans']+=20
+    inventory=classify(old_run['inventory'],('terminal','sha256'))
+    if {k:len(v) for k,v in inventory.items()}!={'complete':0,'partial':0,'not_started':778}:
+        raise RuntimeError('old inventory conflict')
+    l.save('repair_notes.json',dict(authorization=AUTH,task_baseline=TASK_BASE,
+        old_package=FROZEN_F,old_package_commit=TASK_BASE,old_delivery_sha256=sha(old_raw),
+        old_inventory_locator=FROZEN_F+'run_record.json#inventory',old_inventory=inventory,
+        old_resources=old['resources'],new_results_during_preparation=0,
+        semantic_correspondence={'exact string 1':1,'exact string 4':4},
+        validation='same production parse_speed_assignments(raw) in synthetic test and real input; duplicate keys rejected before dict collapse',
+        consumers=['probability','outcome','coverage slow-client selection'],
+        unchanged=['original speed file/client/scenario association','mechanism','B/b/L','streams','all778 scheduled items'],
+        historical_costs=dict(M='delivery_audit only',P='f4dd9f3 joint_formal_accounting',F='old delivery_audit.resources once; peak max; no old tail additions'),
+        estimates=estimates,prior_metadata_envelope=28536009765,new_metadata_envelope_increment=8388608))
+    original=json.loads((ROOT/FROZEN_F/'preregistration.json').read_bytes())
+    original.update(identity='G1.1-formal-F-v1',baseline=TASK_BASE,upstream_M_commit=BASE,
+        authorization_commit=AUTH,created_unix_ns=time.time_ns(),
+        source_commit='HEAD at exclusive entry; verified tracked hashes below',
         sources={p:sha(normalized((ROOT/p).read_bytes())) for p in SOURCE},
-        limits=LIMITS,entry_limit=1,retries=0,S1=2026102300,S2_registered_only=2026102400,
-        S3_registered_only=2026102500,streams='PCG64(S1+1/+2/+3/+4): invitation/online/dropout/jitter',
-        draw_order='32 attempts, sorted client_000..019, all20 draws each stream; shared across all12 trajectories',
-        mechanism=dict(q='2/5',delta='16/5',grid=N,online='10*k<9*N',dropout='20*k<N',
-                       D='s*(b/B)*(1/4+3*k/(2*N))',deadline='D<=delta',B='3938361000089474953/2500000000000000000'),
-        order=['input_git_bindings','bootstrap40','exact_support4068','plans32',
-               'four references manifest order / random,tail_slow,tail_fast / generate32 then replay32',
-               'coverage_generate4','coverage_replay4','boundary2','isolation','seal','finalize_readonly_audit'],
-        planned_attempts=778,main=384,replay=384,coverage=8,boundaries=2,
-        estimates=dict(program_seconds=100,seal_seconds=20,writes=12*1024**2,
-                       additional_metadata=4*1024**2,simulated_bytes_envelope=28536009765,
-                       scans=900,windows=512*1024**2,cpu_proxy=128*1024**2),
-        zero_operations=['training','model_forward','model_backward','encoding','class_gradient',
-                         'validation_samples','test_samples','CUDA_initialization','model_updates'],
-        original_packages={ZERO:A+'phase0_2_v1',SMOKE_COMMIT:SMOKE,UPSTREAM:[BACK,OLD],BASE:M},
-        history='M delivery_audit only; P f4dd9f3 joint ledger; old G1.1/G1.2/P retained once, no borrowing',
-        budgets_include='discovery, source/test/doc writes, checks, failures, replay, archive, readback and sealing tail'))
+        limits=LIMITS,entry_limit=1,cumulative_entry_limit=2,retries=0,estimates=estimates,
+        prior_F=dict(commit=TASK_BASE,path=FROZEN_F,delivery_sha256=sha(old_raw),
+            complete=0,partial=0,not_started=778),
+        order=['source_and_preregistration_commit','exclusive_resume_entry']+original['order'],
+        metadata_balance_before_preparation=10182723,
+        budgets_include='old final audit once plus all preparation/repeated inputs/archive/readback/seal/Git tail; no reset')
+    l.save('preregistration.json',original)
     l.save('preparation_ledger.json',l.snapshot())
     print(json.dumps(dict(status='prepared',tests=result.testsRun,seconds=l.elapsed())))
 
@@ -162,9 +186,11 @@ def run():
     tracemalloc.start()
     # Exclusive marker exists even if the run stops during initial validation.
     with (OUT/'entry.json').open('xb') as f:
-        f.write(canonical(dict(entry=1,unix_ns=time.time_ns(),commit=git('rev-parse','HEAD').decode().strip()))+b'\n')
+        f.write(canonical(dict(entry=2,segment_entry=1,authorization=AUTH,input_commit=TASK_BASE,unix_ns=time.time_ns(),commit=git('rev-parse','HEAD').decode().strip()))+b'\n')
     prior=json.loads((OUT/'preparation_ledger.json').read_bytes())
     l=Ledger(prior)
+    l.d['real_entries']=2
+    l.d['seconds']+=2  # preparation exit, preregistration commit and process startup envelope
     l.d['writes']+=(OUT/'preparation_ledger.json').stat().st_size+(OUT/'entry.json').stat().st_size
     inventory={f'{r}/{s}/{mode}/{a}':{} for r in range(4) for s in SCENARIOS
                for mode in ('generate','replay') for a in range(32)}
@@ -205,14 +231,16 @@ def run():
     try:
         # Retain every pre-entry check and preregistration, including revision 1.
         for name in ('preregistration.json','selfchecks.json','preparation_ledger.json',
-                     'preparation_history_v1.json','entry.json'):
+                     'repair_notes.json','entry.json'):
             p=OUT/name
             if p.exists():
                 raw=l.readback(p);hashes[name]=dict(bytes=len(raw),sha256=sha(raw))
         entry=json.loads((OUT/'entry.json').read_bytes());head=entry['commit']
-        for ancestor in (BASE,AUTH):
+        for ancestor in (BASE,TASK_BASE,AUTH):
             git('merge-base','--is-ancestor',ancestor,head)
         pre=verified((OUT/'preregistration.json').relative_to(ROOT).as_posix(),head)
+        l.guard('full run/archive/readback/delivery envelope',seconds=100,writes=12*1024**2,
+                metadata=7*1024**2,scans=1000,attempts=778,simulated_bytes=28544398373)
         if pre['created_unix_ns']>=entry['unix_ns']:
             raise RuntimeError('preregistration must precede entry')
         for p,h in pre['sources'].items():
@@ -220,11 +248,11 @@ def run():
             if sha(normalized(raw))!=h or normalized(raw)!=normalized(git('show',head+':'+p)):
                 raise RuntimeError('uncommitted source '+p)
         for commit,paths in [(ZERO,[A+'phase0_2_v1']), (SMOKE_COMMIT,[SMOKE]),
-                             (UPSTREAM,[BACK,OLD]),(BASE,[M])]:
+                             (UPSTREAM,[BACK,OLD]),(BASE,[M]),(TASK_BASE,[FROZEN_F])]:
             l.guard('package_git_objects',seconds=2,scans=1)
             git('diff','--exit-code',commit,'--',*paths);l.d['scans']+=1
             checks.append(dict(package_paths=paths,git_content_comparison=commit,status='unchanged'))
-        for p in ('docs/workflow/TO_EXECUTOR.md','docs/DIRECTION_A_G1_1_ADJUDICATION_v3.md',
+        for p in ('docs/workflow/TO_EXECUTOR.md','docs/DIRECTION_A_G1_1_ADJUDICATION_v4.md',
                   'docs/DIRECTION_A_PROTOCOL_FREEZE_v1.md'):
             # Git object comparison includes CRLF conversion, and doesn't load unrelated document data.
             git('diff','--exit-code',AUTH,'--',p);l.d['scans']+=1
@@ -235,7 +263,12 @@ def run():
         m=verified(M+'measurements.json',BASE)
         m_delivery=verified(M+'delivery_audit.json',BASE)
         reference_acceptance=verified(OLD+'reference_acceptance.json',UPSTREAM)
-        speeds=verified(SMOKE+'speed_assignments.json',SMOKE_COMMIT)
+        speed_original=verified(SMOKE+'speed_assignments.json',SMOKE_COMMIT)
+        # Retain exact original and feed its authenticated raw Git bytes through
+        # the same strict production parser exercised by the synthetic suite.
+        speed_raw=git('show',SMOKE_COMMIT+':'+SMOKE+'speed_assignments.json')
+        l.d['metadata']+=len(speed_raw);l.d['scans']+=1
+        speeds=parse_speed_assignments(speed_raw)
         refs=manifest['references'];rows={};registrations={};tasks={};sources=[]
         if len(refs)!=4 or len(m['rows'])!=80 or len(old['references'])!=4:
             raise RuntimeError('reference/message cardinality')
@@ -298,13 +331,16 @@ def run():
             from_old={(v['client_id'],int(k),v['n_ic']) for k,cl in oldref['provenance'].items() for v in cl['sources']}
             if positive!=from_old or len(positive)!=(85 if ds=='CIFAR10' else 593):
                 raise RuntimeError('positive source mismatch')
-        save('input_checks.json',dict(baseline=BASE,authorization=AUTH,source_commit=head,
+        save('input_checks.json',dict(baseline=TASK_BASE,upstream_M_commit=BASE,authorization=AUTH,source_commit=head,
             preregistration_precedes_entry=True,checks=checks,reference_acceptance_locator=OLD+'reference_acceptance.json',
             sample_accesses=0,CUDA_initializations=0,large_packages_loaded=0))
         save('binding.json',dict(bootstrap_order=0,attempts_start_order=1,registrations=registrations,
             references=refs,BN=config['BN'],transforms=config['transforms'],model=config['model'],
             reference_acceptance=reference_acceptance['references'],rows=[rows[k] for k in sorted(rows)],
-            B=str(B),speed_assignments=speeds,split_proof='sealed upload hash + ACK + source_files + unchanged original Git package',
+            B=str(B),speed_assignments=speeds,original_speed_assignments=speed_original,
+            mapping_conversion=dict(raw_sha256=sha(speed_raw),view_sha256=digest(speeds),
+                all120_exact=all(str(speeds[ds]['assignments'][s][cid])==speed_original[ds]['assignments'][s][cid]
+                    for ds in speeds for s in SCENARIOS for cid in IDS)),split_proof='sealed upload hash + ACK + source_files + unchanged original Git package',
             history=dict(M_final=m_delivery,P_commit='f4dd9f3',P_key='joint_formal_accounting',
                          old_ledgers_retained=True,prior_costs_recharged=False)))
         phase('support')
@@ -496,6 +532,7 @@ def run():
     except Exception:
         error=traceback.format_exc()
     finally:
+        failure_stage=progress
         phase('seal')
         # Save all previously complete attempt records even on the first failure.
         if event_rows and 'events.jsonl' not in hashes:
@@ -503,12 +540,16 @@ def run():
             (OUT/'events.jsonl').write_bytes(raw);l.d['writes']+=len(raw)
             hashes['events.jsonl']=dict(bytes=len(raw),sha256=sha(raw))
         if error:
-            save('failure.json',dict(error=error,stage=progress,input_checks=checks,
+            retained={name:locals_value for name,locals_value in locals().copy().items()
+                      if name in ('replay','coverage','boundary','rejections','fixture_plans')}
+            save('partial_diagnostics.json',retained)
+            save('failure.json',dict(error=error,stage=failure_stage,input_checks=checks,
                  retained_records=len(event_rows),retry_permitted=False))
         counts=classify(inventory,('terminal','sha256'))
         if status=='completed' and (len(counts['complete'])!=778 or counts['partial'] or counts['not_started']):
             status='stopped';error='incomplete inventory'
-        l.guard('seal readback and final snapshot',seconds=10,writes=200000,scans=40,seal=True)
+        l.guard('seal readback and final snapshot',seconds=10,writes=1048576,
+                metadata=sum((OUT/n).stat().st_size for n in hashes)+1048576,scans=40,seal=True)
         # Content readback is charged as logical metadata, including event archives.
         readback=[]
         for name,value in hashes.items():
@@ -552,8 +593,8 @@ def finalize():
         raise RuntimeError('final run record altered')
     l.d['metadata']+=(OUT/'run_record.json').stat().st_size;l.d['scans']+=1
     l.guard('delivery handoff + final readback + Git commit tail',seconds=10,writes=100000,metadata=100000,scans=10,seal=True)
-    fail=0 if run_record['status']=='completed' and receipt['readback_passed'] else 8
-    handoff='''# 交付单：G1.1 正式事件F v1
+    fail=0 if run_record['status']=='completed' and receipt['readback_passed'] else 7
+    handoff='''# 交付单：G1.1 正式事件F类型修复续接
 
 - 对应任务单的基准 commit：`BASE_VALUE`
 - 本次授权提交：`AUTH_VALUE`；源码预登记提交：`SOURCE_VALUE`；交付：见本提交。
@@ -564,7 +605,7 @@ def finalize():
 - 仅元数据；本交付只申请G1.1裁决。
 
 ## 产出文件
-- `artifacts/direction_a/phaseG1_1_formal_F_v1/`：input_checks、binding、mechanism、support、plans、events、replay_checks、coverage、diagnostic_channel_audit。
+- `artifacts/direction_a/phaseG1_1_formal_F_resume_v1/`：input_checks、binding、mechanism、support、plans、events、replay_checks、coverage、diagnostic_channel_audit。
 - 同目录selfchecks、run_record、artifact_hashes、seal_receipt、delivery_audit：检查、完整性、分账及最终尾耗。
 - `scripts/run_direction_a_formal_f.py`、`direction_a/formal_f*.py`及相关CPU合成套件。
 
@@ -589,22 +630,46 @@ BLOCKER
               'mechanism / plans / coverage：整数格点及单列有理数等号','events / replay_checks：384+384，逐条一致',
               'coverage：4+4+2，合计778 attempts','run_record.simulated_costs / diagnostic_channel_audit',
               'delivery_audit.resources：累计及封存尾耗','run_record：完整778、部分0、未开始0，completed']
-    criteria='\n'.join(f'|{i}|'+('PASS' if fail==0 else 'FAIL')+f'|{e}|' for i,e in enumerate(evidence,1))
-    tail=dict(seconds=10,writes=16384,metadata=100000,scans=10,
+    criteria='\n'.join(f'|{i}|'+('PASS' if fail==0 or i==7 else 'FAIL')+f'|{e}|' for i,e in enumerate(evidence,1))
+    tail=dict(seconds=20,writes=262144,metadata=1048576,scans=64,
               note='conservative upper envelope for final snapshot/write/readback/git handoff tail; not added twice')
     totals=l.snapshot()
     for k in ('seconds','writes','metadata','scans'):totals[k]+=tail[k]
     for k in ('seconds','writes','metadata','scans','attempts','simulated_bytes','windows','cpu_proxy'):
         if totals[k]>LIMITS[k]:raise RuntimeError('final terminal bound '+k)
     resources=f"累计程序≤{totals['seconds']:.6f}秒 / 写入≤{totals['writes']} B / 元数据复制≤{totals['metadata']} B / 扫描≤{totals['scans']} / Windows峰{totals['windows']} B / CPU代理峰{totals['cpu_proxy']} B；模拟逻辑载荷{totals['simulated_bytes']} B。"
-    handoff=handoff.replace('BASE_VALUE',BASE).replace('AUTH_VALUE',AUTH).replace('SOURCE_VALUE',run_record['source_commit']).replace('CRITERIA',criteria).replace('FINAL_RESOURCES',resources).replace('BLOCKER','无。' if fail==0 else str(run_record['error']))
+    handoff=handoff.replace('BASE_VALUE',TASK_BASE).replace('AUTH_VALUE',AUTH).replace('SOURCE_VALUE',run_record['source_commit']).replace('CRITERIA',criteria).replace('FINAL_RESOURCES',resources).replace('BLOCKER','无。' if fail==0 else str(run_record['error']))
+    if fail:
+        actual_counts={k:len(v) for k,v in run_record['counts'].items()}
+        evidence=[f"stage={run_record.get('stop_reason')}; see failure.json/input_checks; no successful completion assumed"]*6+[evidence[6],f"status={run_record['status']}; inventory={actual_counts}"]
+        criteria='\n'.join(f'|{i}|'+('PASS' if i==7 else 'FAIL')+f'|{e}|' for i,e in enumerate(evidence,1))
+        start=handoff.index('|1|');end=handoff.index('\n\n## 实际资源消耗',start)
+        handoff=handoff[:start]+criteria+handoff[end:]
+        start=handoff.index('## 做了什么');end=handoff.index('## 判据自评',start)
+        handoff=handoff[:start]+'## 做了什么（≤5条）\n- 严格字符串映射修复及一次准备检查；续接已停止，完整/部分/未开始见run_record。\n- 已产生的内存事件均保全；不得重试；缺项见failure和expected_evidence。\n\n## 产出文件\n- `artifacts/direction_a/phaseG1_1_formal_F_resume_v1/`：准备、自检、实际运行与封存产物；不以计划冒充完成。\n\n'+handoff[end:]
     raw=handoff.encode('utf-8');path=ROOT/'docs/workflow/TO_REVIEWER.md';path.write_bytes(raw);l.d['writes']+=len(raw)
+    prior=json.loads((OUT/'repair_notes.json').read_bytes())['old_resources']
+    delta={k:totals[k]-prior.get(k,0) for k in ('seconds','writes','metadata','scans','attempts','simulated_bytes','implementation_revisions','syntax_checks','CPU_suites','real_entries')}
+    delta['real_entries']=totals['real_entries']-1
+    delta['peak_definition']='joint peaks are max(old,new), never summed'
+    delta['windows_segment_peak']=windows_peak();delta['cpu_proxy_segment_peak']=tracemalloc.get_traced_memory()[1]
+    if len(raw)>65536 or len(handoff.splitlines())>80:raise RuntimeError('handoff limit')
     l.save('delivery_audit.json',dict(status=run_record['status'],FAIL=fail,blocked=bool(fail),
-        resources=totals,tail_upper_envelope=tail,run_record_sha256=run_hash,
+        resources=totals,segment_delta=delta,prior_resources_locator=FROZEN_F+'delivery_audit.json#resources',
+        cumulative_real_entries=2,segment_real_entries=1,
+        criterion_selfassessment={str(i):('PASS' if fail==0 or i==7 else 'FAIL') for i in range(1,9)},
+        attempt_inventory={k:len(v) for k,v in run_record['counts'].items()},
+        tail_upper_envelope=tail,run_record_sha256=run_hash,
         seal_receipt_sha256=sha((OUT/'seal_receipt.json').read_bytes()),
         handoff_sha256=sha(raw),handoff_lines=len(handoff.splitlines()),
         terminal_limits_passed=True,prior_costs_recounted=False,new_entries=0,
         seal_readback_passed=receipt['readback_passed'],final_snapshot_includes_tail=True))
+    # Deterministic final receipt readback, no event computation or second entry.
+    audit_raw=(OUT/'delivery_audit.json').read_bytes()
+    audit=json.loads(audit_raw)
+    if audit['handoff_sha256']!=sha(path.read_bytes()):raise RuntimeError('handoff readback')
+    if audit['seal_receipt_sha256']!=sha((OUT/'seal_receipt.json').read_bytes()):raise RuntimeError('receipt readback')
+    if audit['run_record_sha256']!=sha((OUT/'run_record.json').read_bytes()):raise RuntimeError('run readback')
     print(json.dumps(dict(status=run_record['status'],FAIL=fail,resources=resources),ensure_ascii=False))
 
 
