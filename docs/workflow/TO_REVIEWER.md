@@ -1,46 +1,40 @@
-# 交付单：G1.1 正式工作量与事件绑定方案（文档准备）
+# 交付单：G1.1 成本补测M（单次有界采集）
 
-- 对应任务单基准commit：`f4dd9f3f6bf6c7c89d7c47f39338c0d3feaff709`。
-- 本次读取任务/合同HEAD：`15c0b3e182c107504359a72339de256a7480859f`；基准是其祖先（merge-base退出0）。
-- 本次交付commit：见本提交。
+- 对应任务单的基准 commit：e63a2ccde436335612a363567c56cce651bea8a8
+- 本次交付 commit：见本提交
+- 授权提交：ca391789a43cf1b3fc33cba6e14dae866fcf6e85
+- 源码/预登记提交：096b468f58f42bfa3da28cef957b691fc628c530
 
-## 做了什么（≤5条）
-
-- 锁定0.2、G1.1 smoke、G1.2完整包输入提交，区分结构复用与正式成本缺口。
-- 提出单一W01–W03/W07、E01–E04候选，给出工作量归一映射与全来源正支持条件。
-- 列全部G1.1验收项、三配对种子与共享外生量；形成一次成本补测M及其后独立事件F候选申请。
-- 仅交付文档；未启动测试、生成器、探针、训练或事件回放。
+## 做了什么（≤5 条）
+- 实现独立参考复制的W01计时、旧消息纯准备计时及精确有理数汇总。
+- 相关CPU合成检查通过；真实入口仅一次；完整/部分/未开始清单封存并读回。
+- M结论仅交审，正式G1.1仍未通过，事件F未运行。
 
 ## 产出文件
-
-- `docs/DIRECTION_A_G1_1_FORMAL_PLAN_v1.md`：输入、工作量、机制/概率、复用验收及最小资源申请。
-- `docs/workflow/TO_REVIEWER.md`：本交付自评；未改合同、STATE或封存证据。
+- `direction_a/cost_m.py`、`scripts/measure_direction_a_cost_m.py`：实现及有界入口。
+- `tests/test_direction_a_cost_m.py`：计时、累计门禁、异常留存及完整性夹具。
+- `artifacts/direction_a/phaseG1_1_cost_M_v1/`：预登记、输入身份、80项清单、自检、运行账及哈希/封存回执。
+- 同目录 `delivery_audit.json`：确定性复核、最终累计账及全部JSON哈希；`final_delivery.json`为前一快照。
 
 ## 判据自评
-
-|判据编号|结果PASS/FAIL|证据位置 / 关键数字|
+| 判据编号 | 结果 PASS/FAIL | 证据位置 / 关键数字 |
 |---|---|---|
-|1|PASS|方案§1；e3c3528两任务counts.n_ic/class_groups；54eb6e0注册/速度/覆盖；d3a3bd7四参考×20端、80消息/1356主梯度/220个G_c；仅只读元数据，无重计数/重选点|
-|2|PASS|§2；generation_config.training固定5步/batch64/SGD；measurements.references[].clients[].cost_seconds及W02_measurement：80扫描/41838位置；缺端级W01和纯准备计时明确列M；注册70757 B独立；attempt/round/reference/校准分开|
-|3|PASS|§3；20抽8，同一10×1+10×4；D=s(b/B)J、δ=16/5；在线.9/掉线.05/53位抖动；固定32 attempts/轨迹，全部计划778、上限800；墙钟独立；候选不依下游收益|
-|4|PASS|§3；q=2/5、r条件含未在线/掉线/超时，p=qr；连续r下界627/2000，格点精确基数与3/M误差界；逐返回token/身份匹配、空返回及重复round验收、概率通道隔离齐|
-|5|PASS|§4九行覆盖检查点全部判据和预登记边界；三种子2026102300/2400/2500及独立流；跨方法/场景/数据集/参考共享同seed外生量；机制证明与研究重复分开|
-|6|PASS|§5；一次M：120秒/16 MiB/80调用/400步/25600训练样本使用、CUDA1 GiB/进程6 GiB/CPU代理2 GiB；新类梯度/冻结编码/attempt0；F独立候选300秒/32 MiB/778 attempts；次数、累计成本、停止规则齐，未启动|
+| 1 | PASS | selfchecks.json、preregistration.json、input_checks.json；入口1，修订2，语法/CPU各1 |
+| 2 | PASS | run_record.json；{'backwards': 400, 'calls': 80, 'forwards': 400, 'samples': 25600, 'scans': 167, 'steps': 400, 'writes': 201747} |
+| 3 | PASS | measurements.json、input_checks.json；逐项W01/保全/分辨率 |
+| 4 | PASS | measurements.json；旧W02精确十进制及b/B/L，无message_save_read重复 |
+| 5 | PASS | delivery_audit.json；含首次源码重写、外部程序及封存尾耗的保守累计上界 |
+| 6 | PASS | seal_receipt.json；终态completed，清单{'complete': 80, 'not_started': 0, 'partial': 0} |
 
 ## 实际资源消耗
-
-- 本次实验/测试/训练/编码/通信次数均0，GPU使用0；程序只用于文档/JSON及Git对象读取、文档写入和提交，无新增实验墙钟消耗。
-- 文档一次交付，首稿后内部修订1次；两份共127行（方案81、交付46），累计文档写入<32 KiB（含本次覆盖，≤1 MiB）；文档工具墙钟及进程峰未单独计量，不填0。
-- 既有成本仅引用：G1.1 run.json 1.688秒/394 attempts；G1.2 run_record.json 30.499秒/253510045 B；不重复计入本次，不借用P剩余额度。
+- 程序时间/写入/内存详见delivery_audit.json；W01 7.780565499993827秒；CUDA峰 164613120 B。
+- 源码/文档/证据累计写入包含重复及本交付；物理网络不适用。
 
 ## 阻塞（没有写“无”）
-
-- 本次文档交付无阻塞；正式冻结/执行仍受门禁：W01逐端及纯消息准备计时缺失，须审查方案§5的单次M请求后另派任务；当前b/B为待测值，不能宣布正式G1.1通过。
+- 无
 
 ## 异议（没有写“无”）
+- 无
 
-无。
-
-## 需要审查者裁决的问题（≤3条，没有写“无”）
-
-- 是否采纳§2–3唯一候选，并先单独派发M一次有界成本测量；M后再审查b/B及正式F绑定预算，本提交不构成任何新运行授权。
+## 需要审查者裁决的问题（≤3 条，没有写“无”）
+- M完整交付，请裁决补测验收；F仍待另派单。
