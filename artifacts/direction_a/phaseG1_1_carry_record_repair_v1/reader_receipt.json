@@ -1,0 +1,110 @@
+{
+  "status": "PASS",
+  "payload": {
+    "assertions": {
+      "field_order": true,
+      "carry_snapshot_literal": true,
+      "snapshot_fields_and_result": true,
+      "subsequent_ledger_literal": true,
+      "subsequent_fields_and_result": true,
+      "duplicate_refused": true,
+      "snapshot_before_serialization": true,
+      "old_negative_rejected": true,
+      "injected_alias_rejected": true,
+      "expected_snapshot_independent": true,
+      "old_new_relation": true
+    },
+    "per_field": {
+      "ticks": {
+        "observed": 17,
+        "expected": 17,
+        "equal": true
+      },
+      "writes": {
+        "observed": 39,
+        "expected": 39,
+        "equal": true
+      },
+      "metadata": {
+        "observed": 52,
+        "expected": 52,
+        "equal": true
+      },
+      "scans": {
+        "observed": 9,
+        "expected": 9,
+        "equal": true
+      },
+      "payload": {
+        "observed": 272,
+        "expected": 272,
+        "equal": true
+      }
+    },
+    "old_row": {
+      "name": "carry_once",
+      "observed": {
+        "ticks": 20,
+        "writes": 42,
+        "metadata": 55,
+        "scans": 12,
+        "payload": 275
+      },
+      "expected": {
+        "ticks": 17,
+        "writes": 39,
+        "metadata": 52,
+        "scans": 9,
+        "payload": 272
+      },
+      "result": "PASS"
+    },
+    "old_blob": "5f3044d25a456b739e711919524535aad9c3e7d4",
+    "old_negative_is_planned_not_actual_repair_failure": true
+  },
+  "failure": null,
+  "measurement": {
+    "windows_peak_bytes": 24887296,
+    "cpu_proxy_bytes": 80653,
+    "error": null
+  },
+  "pid": 33692,
+  "used_prefix": {
+    "seconds": 0.001174899996840395,
+    "writes": 0,
+    "metadata": 56640,
+    "scans": 2
+  },
+  "final_receipt_upper": {
+    "writes": 8192,
+    "metadata": 16384,
+    "scans": 1
+  },
+  "actions": [
+    {
+      "action": "read:observations.json",
+      "cost": {
+        "metadata": 10696,
+        "scans": 1
+      }
+    },
+    {
+      "action": "read:results.json",
+      "cost": {
+        "metadata": 45944,
+        "scans": 1
+      }
+    }
+  ],
+  "hashes": {
+    "E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\artifacts\\direction_a\\phaseG1_1_carry_record_repair_v1\\observations.json": {
+      "bytes": 2674,
+      "sha256": "718f4dbc246d5473c78bb45e66ce30508c1191886a37220482c0f7f4bd839c95"
+    },
+    "E:\\Federated Machine Learning\\FL-Byzantine-Library-astra\\artifacts\\direction_a\\phaseG1_1_protection_validation_resume_v1\\results.json": {
+      "bytes": 11486,
+      "sha256": "60e5fc51370bf32c7c877aa53aca530ecff58fb3e26083f1c8ea8b21f8c00de8"
+    }
+  },
+  "implicit_OS_IO": null
+}

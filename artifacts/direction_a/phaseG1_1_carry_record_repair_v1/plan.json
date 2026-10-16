@@ -1,0 +1,33 @@
+{
+  "task_base": "5174b06bb1a6d90e58ed6e07b5ab6e88e283f269",
+  "scope": "carry snapshot only; existing Guard/cost/oracle semantics unchanged; no 53-case rerun",
+  "allocation": {"seconds": 50, "writes": 524288, "metadata": 3145728, "scans": 48, "payload": 0},
+  "partitions": {
+    "workflow_implementation_identity_handoff_commit": {"seconds": 20, "writes": 131072, "metadata": 393216, "scans": 8},
+    "first_round_including_syntax_reader_failure_seal": {"seconds": 14, "writes": 131072, "metadata": 1048576, "scans": 18},
+    "reserved_second_round_including_syntax_reader_failure_seal": {"seconds": 14, "writes": 131072, "metadata": 1048576, "scans": 18},
+    "shared_workflow_hash_readback_failure_margin": {"seconds": 2, "writes": 131072, "metadata": 655360, "scans": 4}
+  },
+  "first_success_stops": true,
+  "second_revision_reserved_for_post_validation_fault": true,
+  "counters_before": {"engineering": 4, "revision": 4, "syntax": 2, "CPU": 1},
+  "this_order_maximum": {"engineering": 2, "revision": 2, "syntax": 2, "CPU": 2},
+  "historical_engineering_known_before": 8,
+  "historical_auxiliary_revision_exact": null,
+  "old_criterion5": "FAIL permanently; new authorization is prospective",
+  "meter_scope": "explicit application reads/copies/checks/serialization; subprocess full envelopes charged before launch, never refunded; cached bytes hashed without extra disk read",
+  "implicit_interpreter_OS_IO": null,
+  "runtime_round_tail": {"seconds": 3, "writes": 16384, "metadata": 65536, "scans": 2},
+  "child_envelope_each": {"seconds": 3, "writes": 16384, "metadata": 262144, "scans": 4},
+  "outer_timeout_ms": 14000,
+  "memory_limits": {"windows": 2147483648, "cpu_proxy": 536870912, "CUDA_initializations": 0},
+  "workflow_tail": "bounded startup and Git operations only; file bytes and command seconds recorded; unknown physical IO, Git internals and workflow peak stay null",
+  "old_base_once": {"seconds": 275.73515180000686, "writes": 3855811, "metadata": 23014556, "scans": 907, "payload": 29642603849},
+  "v1_risk_not_actual": {"seconds": 20, "writes": 1048576, "metadata": 1048576, "scans": 64, "payload": 0},
+  "prior_5174b06_risk_or_upper": {"seconds": 50, "writes": 485061, "metadata": 4119622, "scans": 140, "payload": 0},
+  "combined_allocated_not_actual": {"seconds": 395.73515180000686, "writes": 5913736, "metadata": 31328482, "scans": 1159, "payload": 29642603849},
+  "historical_segment_actual": null,
+  "historical_joint_upper": null,
+  "historical_peak": null,
+  "retained": {"complete": 778, "partial": 0, "not_started": 0, "F_7": "FAIL", "closure_5": "FAIL", "recovery_4": "FAIL", "old_D3_1_to_5": "FAIL", "P_full_scope": "FAIL", "clients79_no_timeout": true, "U": 34871421077, "gap": 511682709, "U_meaning": "old replacement upper gap only; neither actual cost nor necessary lower bound", "G1_1": "not closed", "G1_3": "not released"}
+}

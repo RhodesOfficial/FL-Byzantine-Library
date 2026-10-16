@@ -1,0 +1,9 @@
+{
+  "old_git_blob": "1dc6a1020504ed73e17e0a5b6470c6d92d8e1787",
+  "normalization": "CRLF/CR/LF only",
+  "old": "def synthetic():\n    results = []\n    def check(name, observed, expected=True):\n        results.append(dict(name=name, observed=observed, expected=expected,\n                            result='PASS' if observed == expected else 'FAIL'))",
+  "replacement": "def snapshot_check(results, name, observed, expected=True):\n    from copy import deepcopy\n    observed, expected = deepcopy(observed), deepcopy(expected)\n    results.append(dict(name=name, observed=observed, expected=expected,\n                        result='PASS' if observed == expected else 'FAIL'))\n\n\ndef synthetic():\n    results = []\n    def check(name, observed, expected=True):\n        snapshot_check(results, name, observed, expected)",
+  "replacements": 1,
+  "other_semantic_changes": 0,
+  "invocation": "regress.py executes snapshot_check, the same recorder called by synthetic.check; synthetic full suite never called"
+}

@@ -1,0 +1,17 @@
+{
+  "implementation_revision": 2,
+  "engineering_attempt": 2,
+  "after_actual_validation": true,
+  "failure": {"type": "RuntimeError", "location": "child:syntax", "root": "ResourceGate:compile:validate_snapshot.py", "signature_occurrences": 1},
+  "cause": "First syntax child protected metadata was 262144 B, while its bounded read/compile required 274096 B plus receipt; guard refused before compilation, without an overrun",
+  "repair": "Syntax child only now reserves 327680 B from the unchanged second-round 1048576 B; reader remains 262144 B. Accounting serialization cap expanded within the same round. Capture final bounded stdout for the outer receipt.",
+  "plan_partition_totals_unchanged": true,
+  "original_plan_child_envelope_superseded_for_syntax_only": true,
+  "recorder_source_unchanged_since_revision1": true,
+  "science_results": 0,
+  "first_attempt_preserved": "attempt1.json",
+  "patch_tool_issue": {"type": "PatchAnchorMismatch", "occurrences": 1, "mutated_files": 0, "disposition": "corrected patch anchor before actual second revision; no extra source mutation or validation"},
+  "counters_before": {"engineering": 5, "revision": 5, "syntax": 3, "CPU": 1},
+  "counters_after_if_success": {"engineering": 6, "revision": 6, "syntax": 4, "CPU": 2},
+  "more_implementation_revisions_allowed": 0
+}

@@ -1,0 +1,140 @@
+{
+  "fields": [
+    "ticks",
+    "writes",
+    "metadata",
+    "scans",
+    "payload"
+  ],
+  "checks": [
+    {
+      "name": "carry_once",
+      "observed": {
+        "ticks": 17,
+        "writes": 39,
+        "metadata": 52,
+        "scans": 9,
+        "payload": 272
+      },
+      "expected": {
+        "ticks": 17,
+        "writes": 39,
+        "metadata": 52,
+        "scans": 9,
+        "payload": 272
+      },
+      "result": "PASS"
+    },
+    {
+      "name": "failure_repeat_directory_process_no_reset",
+      "observed": {
+        "ticks": 20,
+        "writes": 42,
+        "metadata": 55,
+        "scans": 12,
+        "payload": 275
+      },
+      "expected": {
+        "ticks": 20,
+        "writes": 42,
+        "metadata": 55,
+        "scans": 12,
+        "payload": 275
+      },
+      "result": "PASS"
+    }
+  ],
+  "duplicate_refused": true,
+  "snapshots_still_independent": true,
+  "expected_mutation_probe_passed": true,
+  "injected_old_alias": {
+    "name": "injected_old_alias",
+    "observed": {
+      "ticks": 20,
+      "writes": 42,
+      "metadata": 55,
+      "scans": 12,
+      "payload": 275
+    },
+    "expected": {
+      "ticks": 17,
+      "writes": 39,
+      "metadata": 52,
+      "scans": 9,
+      "payload": 272
+    },
+    "result": "PASS"
+  },
+  "guard_actions": [
+    {
+      "action": "carry:old-only",
+      "cost": {
+        "ticks": 17,
+        "writes": 39,
+        "metadata": 52,
+        "scans": 9,
+        "payload": 272
+      },
+      "used": {
+        "ticks": 17,
+        "writes": 39,
+        "metadata": 52,
+        "scans": 9,
+        "payload": 272
+      }
+    },
+    {
+      "action": "failed_repeat:a:1",
+      "cost": {
+        "ticks": 1,
+        "writes": 1,
+        "metadata": 1,
+        "scans": 1,
+        "payload": 1
+      },
+      "used": {
+        "ticks": 18,
+        "writes": 40,
+        "metadata": 53,
+        "scans": 10,
+        "payload": 273
+      }
+    },
+    {
+      "action": "failed_repeat:b:2",
+      "cost": {
+        "ticks": 1,
+        "writes": 1,
+        "metadata": 1,
+        "scans": 1,
+        "payload": 1
+      },
+      "used": {
+        "ticks": 19,
+        "writes": 41,
+        "metadata": 54,
+        "scans": 11,
+        "payload": 274
+      }
+    },
+    {
+      "action": "failed_repeat:b:3",
+      "cost": {
+        "ticks": 1,
+        "writes": 1,
+        "metadata": 1,
+        "scans": 1,
+        "payload": 1
+      },
+      "used": {
+        "ticks": 20,
+        "writes": 42,
+        "metadata": 55,
+        "scans": 12,
+        "payload": 275
+      }
+    }
+  ],
+  "recorder": "validate_snapshot.snapshot_check, delegated by synthetic.check",
+  "full_synthetic_called": false
+}

@@ -1,0 +1,259 @@
+{
+  "status": "PASS",
+  "current_self_assessment": {
+    "1": "PASS",
+    "2": "PASS",
+    "3": "PASS",
+    "4": "PASS",
+    "5": "PASS",
+    "6": "PASS",
+    "FAIL_count": 0
+  },
+  "fixed_order": [
+    "ticks",
+    "writes",
+    "metadata",
+    "scans",
+    "payload"
+  ],
+  "current_readback_assertions": {
+    "field_order": true,
+    "carry_snapshot_literal": true,
+    "snapshot_fields_and_result": true,
+    "subsequent_ledger_literal": true,
+    "subsequent_fields_and_result": true,
+    "duplicate_refused": true,
+    "snapshot_before_serialization": true,
+    "old_negative_rejected": true,
+    "injected_alias_rejected": true,
+    "expected_snapshot_independent": true,
+    "old_new_relation": true
+  },
+  "old_criterion3": "supplemented by corrected independent persisted evidence; old package unchanged",
+  "old_criterion5": "FAIL permanently; prospective new segment passes",
+  "actual_mutations": [
+    "initial complete package and snapshot patch",
+    "post-validation child envelope and accounting/outer receipt adaptation"
+  ],
+  "D3_before": [
+    4,
+    4,
+    2,
+    1
+  ],
+  "D3_after": [
+    6,
+    6,
+    4,
+    2
+  ],
+  "new_segment_counts": [
+    2,
+    2,
+    2,
+    1
+  ],
+  "historical_engineering_known_after": 10,
+  "historical_auxiliary_revision_exact": null,
+  "implementation_remaining": 0,
+  "first_attempt": {
+    "source_and_failure": "attempt1.json",
+    "guarded_upper": {
+      "writes": 32768,
+      "metadata": 417296,
+      "scans": 10
+    },
+    "actual_total": null,
+    "outer_seconds": 0.3980749,
+    "CPU_starts": 0
+  },
+  "successful_attempt": {
+    "final_explicit_ledger": {
+      "seconds": 0.3268990000069607,
+      "writes": 44844,
+      "metadata": 877904,
+      "scans": 16
+    },
+    "outer_seconds": 0.6727536,
+    "saved_peak": {
+      "windows_peak_bytes": 29061120,
+      "cpu_proxy_bytes": 2025910,
+      "error": null
+    }
+  },
+  "workflow": {
+    "explicit_read_copy_upper_including_all_final_reads": 252164,
+    "input_scans": 15,
+    "observed_command_seconds": [
+      0.6180108,
+      0.5526559,
+      0.7715005,
+      0.4430088,
+      0.6518369,
+      0.8037355,
+      0.7352176,
+      2.6913415,
+      0.645187,
+      0.6395349,
+      1.1536933
+    ],
+    "prepare_seconds": 1.7954556,
+    "prepare_included_in_command_seconds": true,
+    "initial_implementation_and_second_rewrite_upper_bytes": 98304,
+    "archive_write_bytes": 20367,
+    "handoff_and_final_JSON_upper_bytes": 32768,
+    "all_workflow_write_upper_bytes": 151339,
+    "physical_IO": null,
+    "Git_internal_IO": null,
+    "workflow_peak": null,
+    "reasoning_wall": null,
+    "unknown_bootstrap_issue_occurrences": 1,
+    "patch_anchor_error_mutated_files": 0,
+    "sealing_scan_attribution": "18 workflow reads; 6 charged to unused first-round scan allocation in the same frozen shared 48 pool. Two rounds plus workflow total44; no new allocation or reset.",
+    "remaining_final_seal_read_copy_upper": 262144,
+    "observed_explicit_read_copy_before_last_workflow_rewrite": 310134,
+    "workflow_JSON_and_handoff_all_writes_including_rewrites_upper": 32768,
+    "finalizer_observed_seconds": 0.8907824
+  },
+  "new_combined_byte_scan_upper": {
+    "writes": 228951,
+    "metadata": 2343776,
+    "scans": 44,
+    "metadata_workflow_seal_reservation": 1048576,
+    "writes_workflow_upper": 151339,
+    "time_allocation_not_actual": 50
+  },
+  "old_base_once": {
+    "seconds": 275.73515180000686,
+    "writes": 3855811,
+    "metadata": 23014556,
+    "scans": 907,
+    "payload": 29642603849
+  },
+  "v1_risk": {
+    "seconds": 20,
+    "writes": 1048576,
+    "metadata": 1048576,
+    "scans": 64
+  },
+  "prior_5174b06_retained": {
+    "seconds": 50,
+    "writes": 485061,
+    "metadata": 4119622,
+    "scans": 140
+  },
+  "historical_segment_actual": null,
+  "historical_joint_upper": null,
+  "historical_peak": null,
+  "all_python_preexit_peaks_saved": true,
+  "windows_peak_max": 29061120.0,
+  "cpu_proxy_peak_max": 2031322.0,
+  "outer_process_peak": null,
+  "implicit_interpreter_OS_IO": null,
+  "science": {
+    "events": 0,
+    "replays": 0,
+    "formal_entries": 0,
+    "fitting": 0,
+    "evaluation": 0,
+    "heads": 0,
+    "encoding": 0,
+    "gradients": 0,
+    "real_fee_summaries": 0,
+    "CUDA_initializations": 0
+  },
+  "retained_counts": [
+    778,
+    0,
+    0
+  ],
+  "retained_FAIL": [
+    "F7",
+    "closure5",
+    "recovery4",
+    "oldD3_1_to_5",
+    "P_full_scope",
+    "old_resume_criterion5"
+  ],
+  "old_pass_reference": "v8 1/2/4/6 cited only",
+  "U": 34871421077,
+  "U_gap": 511682709,
+  "U_recalculated": false,
+  "clients79_no_timeout": true,
+  "G1_1": "not closed",
+  "G1_3": "not released",
+  "blockers": [],
+  "final_git_tail": "bounded diff/status/add explicit files/commit; timings in tool receipts, Git internal IO null; no push",
+  "self_exclusion": "workflow_audit and its manifest exact tail writes have a shared 32768 B reserve; their raw hashes in final manifest, manifest itself excluded",
+  "disk_inventory_before_final_two_workflow_rewrites": [
+    {
+      "path": "plan.json",
+      "bytes": 2874
+    },
+    {
+      "path": "prepare.ps1",
+      "bytes": 5332
+    },
+    {
+      "path": "launch.ps1",
+      "bytes": 1653
+    },
+    {
+      "path": "regress.py",
+      "bytes": 13425
+    },
+    {
+      "path": "validate_snapshot.py",
+      "bytes": 21257
+    },
+    {
+      "path": "source_patch.json",
+      "bytes": 1023
+    },
+    {
+      "path": "identity.json",
+      "bytes": 5008
+    },
+    {
+      "path": "attempt1.json",
+      "bytes": 20367
+    },
+    {
+      "path": "repair_note.json",
+      "bytes": 1315
+    },
+    {
+      "path": "syntax_receipt.json",
+      "bytes": 1422
+    },
+    {
+      "path": "reader_receipt.json",
+      "bytes": 2653
+    },
+    {
+      "path": "observations.json",
+      "bytes": 2674
+    },
+    {
+      "path": "accounting.json",
+      "bytes": 7438
+    },
+    {
+      "path": "artifact_hashes.json",
+      "bytes": 1964
+    },
+    {
+      "path": "outer_receipt.json",
+      "bytes": 535
+    },
+    {
+      "path": "workflow_audit.json",
+      "bytes": 4716
+    },
+    {
+      "path": "artifact_hashes_workflow.json",
+      "bytes": 2747
+    }
+  ],
+  "disk_snapshot_bytes": null
+}
