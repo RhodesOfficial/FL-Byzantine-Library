@@ -1,0 +1,231 @@
+{
+  "unexpected": null,
+  "controlled_subcases": [
+    {
+      "mode": "syntax",
+      "returncode": 0,
+      "outer_seconds": 0.15871740000147838,
+      "measurement": {
+        "mode": "syntax",
+        "status": "PASS",
+        "measurement": {
+          "status": "MEASURED",
+          "windows_peak_bytes": 28827648,
+          "cpu_proxy_bytes": 1982170,
+          "method": "Windows PeakWorkingSetSize; tracemalloc peak proxy"
+        },
+        "failure": null,
+        "pid": 35332
+      },
+      "ledger": {
+        "mode": "syntax",
+        "status": "PASS",
+        "used": {
+          "seconds": 0.014562299998942763,
+          "writes": 263,
+          "metadata": 168934,
+          "scans": 3
+        },
+        "seconds": 0.014550500010955147,
+        "actions": [
+          {
+            "action": "read:validate.py",
+            "cost": {
+              "seconds": 0,
+              "writes": 0,
+              "metadata": 84204,
+              "scans": 1
+            },
+            "used": {
+              "seconds": 0.0001436000020476058,
+              "writes": 0,
+              "metadata": 84204,
+              "scans": 1
+            }
+          },
+          {
+            "action": "compile_source",
+            "cost": {
+              "seconds": 0,
+              "writes": 0,
+              "metadata": 84204,
+              "scans": 1
+            },
+            "used": {
+              "seconds": 0.0008938000100897625,
+              "writes": 0,
+              "metadata": 168408,
+              "scans": 2
+            }
+          },
+          {
+            "action": "write:syntax_measurement.json",
+            "cost": {
+              "seconds": 0,
+              "writes": 263,
+              "metadata": 526,
+              "scans": 1
+            },
+            "used": {
+              "seconds": 0.013421700001345016,
+              "writes": 263,
+              "metadata": 168934,
+              "scans": 3
+            }
+          }
+        ],
+        "implicit_interpreter_OS_io": null
+      },
+      "reservation": {
+        "seconds": 10,
+        "writes": 65536,
+        "metadata": 786432,
+        "scans": 12
+      },
+      "stdout_bytes": 0,
+      "stderr_bytes": 0
+    },
+    {
+      "mode": "controlled",
+      "returncode": 7,
+      "outer_seconds": 0.13197570000193082,
+      "measurement": {
+        "mode": "controlled",
+        "status": "CONTROLLED_EXCEPTION",
+        "measurement": {
+          "status": "MEASURED",
+          "windows_peak_bytes": 25362432,
+          "cpu_proxy_bytes": 98731,
+          "method": "Windows PeakWorkingSetSize; tracemalloc peak proxy"
+        },
+        "failure": {
+          "type": "ValueError",
+          "location": "child:controlled",
+          "root": "PLANNED_CONTROLLED_EXCEPTION"
+        },
+        "pid": 13940
+      },
+      "ledger": {
+        "mode": "controlled",
+        "status": "CONTROLLED_EXCEPTION",
+        "used": {
+          "seconds": 0.002135600007022731,
+          "writes": 387,
+          "metadata": 84978,
+          "scans": 2
+        },
+        "seconds": 0.00212459999602288,
+        "actions": [
+          {
+            "action": "read:validate.py",
+            "cost": {
+              "seconds": 0,
+              "writes": 0,
+              "metadata": 84204,
+              "scans": 1
+            },
+            "used": {
+              "seconds": 0.00013210000179242343,
+              "writes": 0,
+              "metadata": 84204,
+              "scans": 1
+            }
+          },
+          {
+            "action": "write:controlled_measurement.json",
+            "cost": {
+              "seconds": 0,
+              "writes": 387,
+              "metadata": 774,
+              "scans": 1
+            },
+            "used": {
+              "seconds": 0.0010212000051978976,
+              "writes": 387,
+              "metadata": 84978,
+              "scans": 2
+            }
+          }
+        ],
+        "implicit_interpreter_OS_io": null
+      },
+      "reservation": {
+        "seconds": 10,
+        "writes": 65536,
+        "metadata": 786432,
+        "scans": 12
+      },
+      "stdout_bytes": 0,
+      "stderr_bytes": 0
+    },
+    {
+      "mode": "peakfail",
+      "returncode": 0,
+      "outer_seconds": 0.1325383000075817,
+      "measurement": {
+        "mode": "peakfail",
+        "status": "PASS",
+        "measurement": {
+          "status": "FAILED_SIMULATED",
+          "windows_peak_bytes": null,
+          "cpu_proxy_bytes": 98731,
+          "error": "SyntheticPeakFailure"
+        },
+        "failure": null,
+        "pid": 8744
+      },
+      "ledger": {
+        "mode": "peakfail",
+        "status": "PASS",
+        "used": {
+          "seconds": 0.0019983000092906877,
+          "writes": 235,
+          "metadata": 84674,
+          "scans": 2
+        },
+        "seconds": 0.001987900002859533,
+        "actions": [
+          {
+            "action": "read:validate.py",
+            "cost": {
+              "seconds": 0,
+              "writes": 0,
+              "metadata": 84204,
+              "scans": 1
+            },
+            "used": {
+              "seconds": 0.00013840000610798597,
+              "writes": 0,
+              "metadata": 84204,
+              "scans": 1
+            }
+          },
+          {
+            "action": "write:peakfail_measurement.json",
+            "cost": {
+              "seconds": 0,
+              "writes": 235,
+              "metadata": 470,
+              "scans": 1
+            },
+            "used": {
+              "seconds": 0.0008764000085648149,
+              "writes": 235,
+              "metadata": 84674,
+              "scans": 2
+            }
+          }
+        ],
+        "implicit_interpreter_OS_io": null
+      },
+      "reservation": {
+        "seconds": 10,
+        "writes": 65536,
+        "metadata": 786432,
+        "scans": 12
+      },
+      "stdout_bytes": 0,
+      "stderr_bytes": 0
+    }
+  ]
+}

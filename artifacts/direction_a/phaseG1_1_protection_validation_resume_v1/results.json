@@ -1,0 +1,555 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "name": "independent_action_oracle",
+      "observed": [
+        {
+          "name": "register",
+          "cost": {
+            "ticks": 1,
+            "writes": 3,
+            "metadata": 2,
+            "scans": 1,
+            "payload": 0
+          }
+        },
+        {
+          "name": "prepare",
+          "cost": {
+            "ticks": 2,
+            "writes": 0,
+            "metadata": 5,
+            "scans": 1,
+            "payload": 55
+          }
+        },
+        {
+          "name": "main_replay",
+          "cost": {
+            "ticks": 3,
+            "writes": 1,
+            "metadata": 7,
+            "scans": 1,
+            "payload": 55
+          }
+        },
+        {
+          "name": "coverage_replay",
+          "cost": {
+            "ticks": 4,
+            "writes": 1,
+            "metadata": 11,
+            "scans": 1,
+            "payload": 55
+          }
+        },
+        {
+          "name": "failed_state",
+          "cost": {
+            "ticks": 1,
+            "writes": 13,
+            "metadata": 2,
+            "scans": 1,
+            "payload": 0
+          }
+        },
+        {
+          "name": "gradient_prepare",
+          "cost": {
+            "ticks": 2,
+            "writes": 0,
+            "metadata": 17,
+            "scans": 1,
+            "payload": 55
+          }
+        },
+        {
+          "name": "upload",
+          "cost": {
+            "ticks": 1,
+            "writes": 0,
+            "metadata": 0,
+            "scans": 1,
+            "payload": 52
+          }
+        },
+        {
+          "name": "metadata",
+          "cost": {
+            "ticks": 1,
+            "writes": 2,
+            "metadata": 3,
+            "scans": 1,
+            "payload": 0
+          }
+        },
+        {
+          "name": "seal",
+          "cost": {
+            "ticks": 2,
+            "writes": 19,
+            "metadata": 5,
+            "scans": 1,
+            "payload": 0
+          }
+        }
+      ],
+      "expected": [
+        {
+          "name": "register",
+          "cost": {
+            "ticks": 1,
+            "writes": 3,
+            "metadata": 2,
+            "scans": 1,
+            "payload": 0
+          }
+        },
+        {
+          "name": "prepare",
+          "cost": {
+            "ticks": 2,
+            "writes": 0,
+            "metadata": 5,
+            "scans": 1,
+            "payload": 55
+          }
+        },
+        {
+          "name": "main_replay",
+          "cost": {
+            "ticks": 3,
+            "writes": 1,
+            "metadata": 7,
+            "scans": 1,
+            "payload": 55
+          }
+        },
+        {
+          "name": "coverage_replay",
+          "cost": {
+            "ticks": 4,
+            "writes": 1,
+            "metadata": 11,
+            "scans": 1,
+            "payload": 55
+          }
+        },
+        {
+          "name": "failed_state",
+          "cost": {
+            "ticks": 1,
+            "writes": 13,
+            "metadata": 2,
+            "scans": 1,
+            "payload": 0
+          }
+        },
+        {
+          "name": "gradient_prepare",
+          "cost": {
+            "ticks": 2,
+            "writes": 0,
+            "metadata": 17,
+            "scans": 1,
+            "payload": 55
+          }
+        },
+        {
+          "name": "upload",
+          "cost": {
+            "ticks": 1,
+            "writes": 0,
+            "metadata": 0,
+            "scans": 1,
+            "payload": 52
+          }
+        },
+        {
+          "name": "metadata",
+          "cost": {
+            "ticks": 1,
+            "writes": 2,
+            "metadata": 3,
+            "scans": 1,
+            "payload": 0
+          }
+        },
+        {
+          "name": "seal",
+          "cost": {
+            "ticks": 2,
+            "writes": 19,
+            "metadata": 5,
+            "scans": 1,
+            "payload": 0
+          }
+        }
+      ],
+      "result": "PASS"
+    },
+    {
+      "name": "independent_total",
+      "observed": {
+        "ticks": 17,
+        "writes": 39,
+        "metadata": 52,
+        "scans": 9,
+        "payload": 272
+      },
+      "expected": {
+        "ticks": 17,
+        "writes": 39,
+        "metadata": 52,
+        "scans": 9,
+        "payload": 272
+      },
+      "result": "PASS"
+    },
+    {
+      "name": "single_definition_action_ledger",
+      "observed": {
+        "ticks": 17,
+        "writes": 39,
+        "metadata": 52,
+        "scans": 9,
+        "payload": 272
+      },
+      "expected": {
+        "ticks": 17,
+        "writes": 39,
+        "metadata": 52,
+        "scans": 9,
+        "payload": 272
+      },
+      "result": "PASS"
+    },
+    {
+      "name": "startup_and_next_action_agree",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "oracle_detects_missing_main_replay",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "oracle_detects_missing_coverage_replay",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "oracle_detects_missing_failed_state",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "oracle_detects_missing_gradient_prepare",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "equal_ticks_tail0",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "over_one_ticks_tail0",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "equal_ticks_tail2",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "over_one_ticks_tail2",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "equal_writes_tail0",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "over_one_writes_tail0",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "equal_writes_tail2",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "over_one_writes_tail2",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "equal_metadata_tail0",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "over_one_metadata_tail0",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "equal_metadata_tail2",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "over_one_metadata_tail2",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "equal_scans_tail0",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "over_one_scans_tail0",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "equal_scans_tail2",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "over_one_scans_tail2",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "equal_payload_tail0",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "over_one_payload_tail0",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "equal_payload_tail2",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "over_one_payload_tail2",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "additional_equal_seconds",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "additional_over_one_seconds",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "additional_equal_windows",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "additional_over_one_windows",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "additional_equal_cpu_proxy",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "additional_over_one_cpu_proxy",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "additional_equal_attempts",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "additional_over_one_attempts",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "additional_equal_CUDA",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "additional_over_one_CUDA",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "changing_sizes_top8",
+      "observed": 152,
+      "expected": 152,
+      "result": "PASS"
+    },
+    {
+      "name": "empty_return_keeps_preparation",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "carry_duplicate_refused",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "carry_once",
+      "observed": {
+        "ticks": 20,
+        "writes": 42,
+        "metadata": 55,
+        "scans": 12,
+        "payload": 275
+      },
+      "expected": {
+        "ticks": 17,
+        "writes": 39,
+        "metadata": 52,
+        "scans": 9,
+        "payload": 272
+      },
+      "result": "PASS"
+    },
+    {
+      "name": "failure_repeat_directory_process_no_reset",
+      "observed": {
+        "ticks": 20,
+        "writes": 42,
+        "metadata": 55,
+        "scans": 12,
+        "payload": 275
+      },
+      "expected": {
+        "ticks": 20,
+        "writes": 42,
+        "metadata": 55,
+        "scans": 12,
+        "payload": 275
+      },
+      "result": "PASS"
+    },
+    {
+      "name": "peak_is_max",
+      "observed": 19,
+      "expected": 19,
+      "result": "PASS"
+    },
+    {
+      "name": "external_missing_index",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "external_missing_tail",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "U_refused_before_side_effects",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "bootstrap_gap_registered_suite_continues",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "restricted_missing_bound_refused",
+      "observed": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    {
+      "name": "guarded_real_copy",
+      "observed": 64,
+      "expected": 64,
+      "result": "PASS"
+    },
+    {
+      "name": "controlled_exception_persisted_before_exit",
+      "result": "PASS",
+      "observed": true,
+      "expected": true
+    },
+    {
+      "name": "peak_failure_null_independent_record",
+      "result": "PASS",
+      "observed": true,
+      "expected": true
+    },
+    {
+      "name": "child_peaks_within_limits",
+      "result": "PASS",
+      "observed": true,
+      "expected": true
+    }
+  ],
+  "passed": 53,
+  "failed": 0
+}

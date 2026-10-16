@@ -1,0 +1,33 @@
+{
+  "input_task_base": "3844b817cb7bc30e31930e922994f034944d22f0",
+  "original_delivery": "76ce7f5a490be24a084fe87a666c09d308e3be01",
+  "scope": "synthetic-only standard library, no scientific module import; single suite and revision",
+  "before_restricted_start": "plan and bootstrap persisted; launch covers child syntax then suite and sealing",
+  "allocation": {"seconds": 100, "writes": 1048576, "metadata": 7340032, "scans": 192, "simulated_bytes": 0},
+  "active_seconds": 80,
+  "tail_seconds": 20,
+  "explicit_partitions": {
+    "implementation_plan_bootstrap_document_writes": {"writes": 131072},
+    "four_fixed_inputs_read_copy_check": {"metadata": 589824, "scans": 4},
+    "syntax_child_including_self_read_compile_peak_seal": {"seconds": 10, "writes": 65536, "metadata": 786432, "scans": 12},
+    "controlled_failure_child_including_self_read_peak_seal": {"seconds": 10, "writes": 65536, "metadata": 786432, "scans": 12},
+    "simulated_peak_failure_child_including_self_read_peak_seal": {"seconds": 10, "writes": 65536, "metadata": 786432, "scans": 12},
+    "parent_child_receipts_and_checks": {"metadata": 589824, "scans": 6},
+    "parent_fixture_copies_checks_serialization": {"metadata": 1048576, "writes": 131072, "scans": 48},
+    "seal_hash_readback_accounting_failures": {"metadata": 1048576, "writes": 262144, "scans": 48},
+    "outer_post_exit_receipt": {"writes": 4096, "scans": 1},
+    "unallocated_margin": {"metadata": 1048576, "writes": 196608, "scans": 9}
+  },
+  "every_action_rule": "used + next action complete bound + seal reserve <= limit; child envelope charged before launch and not refunded",
+  "runtime_parent_tail": {"seconds": 20, "writes": 131072, "metadata": 524288, "scans": 16},
+  "sealing_accounting": "immutable measured prefix plus upper for remaining hash/accounting work; observed bytes are logical operation attribution, not disk IO",
+  "input_caps": {"validate.py": 65536, "launch.ps1": 16384, "plan.json": 16384, "bootstrap.json": 32768, "child_measurement": 16384, "child_ledger": 32768},
+  "peak_limits": {"windows": 2147483648, "cpu_tracemalloc_proxy": 536870912, "CUDA_initializations": 0},
+  "workflow": "known writes and command wall time tracked separately; Git internal IO and workflow peak unknown; not scientific calls",
+  "implicit_interpreter_OS_loading": null,
+  "old_segment_actual_joint_peak": null,
+  "counters_before": {"engineering": 2, "revision": 2, "syntax": 1, "CPU": 0},
+  "counters_after": {"engineering": 3, "revision": 3, "syntax": 2, "CPU": 1},
+  "retry": false,
+  "test_oracle": "literal independent vectors; deliberate omission main/coverage/failed-state/gradient-preparation; each dimension equal and +1; virtual external index/tail omission; U startup rejection"
+}

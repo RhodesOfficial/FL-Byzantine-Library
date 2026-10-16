@@ -1,0 +1,504 @@
+{
+  "status": "PASS",
+  "measured_prefix": {
+    "seconds": 0.4406600000074832,
+    "writes": 218821,
+    "metadata": 2546758,
+    "scans": 52
+  },
+  "remaining_seal_upper": {
+    "seconds": 10,
+    "writes": 131072,
+    "metadata": 524288,
+    "scans": 24
+  },
+  "segment_guarded_upper": {
+    "seconds": 10.440660000007483,
+    "writes": 349893,
+    "metadata": 3071046,
+    "scans": 76
+  },
+  "segment_actual_total": null,
+  "explanation": "prefix includes unreclaimed child reservations; seal upper is not actual; final wall time in outer_receipt.json",
+  "child_observed": [
+    {
+      "mode": "syntax",
+      "actual": {
+        "seconds": 0.014562299998942763,
+        "writes": 263,
+        "metadata": 168934,
+        "scans": 3
+      },
+      "outer_seconds": 0.15871740000147838
+    },
+    {
+      "mode": "controlled",
+      "actual": {
+        "seconds": 0.002135600007022731,
+        "writes": 387,
+        "metadata": 84978,
+        "scans": 2
+      },
+      "outer_seconds": 0.13197570000193082
+    },
+    {
+      "mode": "peakfail",
+      "actual": {
+        "seconds": 0.0019983000092906877,
+        "writes": 235,
+        "metadata": 84674,
+        "scans": 2
+      },
+      "outer_seconds": 0.1325383000075817
+    }
+  ],
+  "explicit_IO_actions": [
+    {
+      "action": "read:validate.py",
+      "cost": {
+        "seconds": 0,
+        "writes": 0,
+        "metadata": 84204,
+        "scans": 1
+      },
+      "used": {
+        "seconds": 0.00014970000484026968,
+        "writes": 0,
+        "metadata": 84204,
+        "scans": 1
+      }
+    },
+    {
+      "action": "read:launch.ps1",
+      "cost": {
+        "seconds": 0,
+        "writes": 0,
+        "metadata": 6072,
+        "scans": 1
+      },
+      "used": {
+        "seconds": 0.0008940999978221953,
+        "writes": 0,
+        "metadata": 90276,
+        "scans": 2
+      }
+    },
+    {
+      "action": "read:plan.json",
+      "cost": {
+        "seconds": 0,
+        "writes": 0,
+        "metadata": 10980,
+        "scans": 1
+      },
+      "used": {
+        "seconds": 0.0012830000050598755,
+        "writes": 0,
+        "metadata": 101256,
+        "scans": 3
+      }
+    },
+    {
+      "action": "read:bootstrap.json",
+      "cost": {
+        "seconds": 0,
+        "writes": 0,
+        "metadata": 26444,
+        "scans": 1
+      },
+      "used": {
+        "seconds": 0.0017487000004621223,
+        "writes": 0,
+        "metadata": 127700,
+        "scans": 4
+      }
+    },
+    {
+      "action": "subprocess_reservation:syntax",
+      "cost": {
+        "seconds": 10,
+        "writes": 65536,
+        "metadata": 786432,
+        "scans": 12
+      },
+      "used": {
+        "seconds": 10.002202500007115,
+        "writes": 65536,
+        "metadata": 914132,
+        "scans": 16
+      }
+    },
+    {
+      "action": "read:syntax_measurement.json",
+      "cost": {
+        "seconds": 0,
+        "writes": 0,
+        "metadata": 1052,
+        "scans": 1
+      },
+      "used": {
+        "seconds": 0.1611689999990631,
+        "writes": 65536,
+        "metadata": 915184,
+        "scans": 17
+      }
+    },
+    {
+      "action": "read:syntax_ledger.json",
+      "cost": {
+        "seconds": 0,
+        "writes": 0,
+        "metadata": 4596,
+        "scans": 1
+      },
+      "used": {
+        "seconds": 0.16181620000861585,
+        "writes": 65536,
+        "metadata": 919780,
+        "scans": 18
+      }
+    },
+    {
+      "action": "explicit_fixture_copy",
+      "cost": {
+        "seconds": 0,
+        "writes": 0,
+        "metadata": 256,
+        "scans": 1
+      },
+      "used": {
+        "seconds": 0.1636614000017289,
+        "writes": 65536,
+        "metadata": 920036,
+        "scans": 19
+      }
+    },
+    {
+      "action": "write:fixtures.json",
+      "cost": {
+        "seconds": 0,
+        "writes": 1850,
+        "metadata": 3700,
+        "scans": 1
+      },
+      "used": {
+        "seconds": 0.1638855000055628,
+        "writes": 67386,
+        "metadata": 923736,
+        "scans": 20
+      }
+    },
+    {
+      "action": "subprocess_reservation:controlled",
+      "cost": {
+        "seconds": 10,
+        "writes": 65536,
+        "metadata": 786432,
+        "scans": 12
+      },
+      "used": {
+        "seconds": 10.165411100009806,
+        "writes": 132922,
+        "metadata": 1710168,
+        "scans": 32
+      }
+    },
+    {
+      "action": "read:controlled_measurement.json",
+      "cost": {
+        "seconds": 0,
+        "writes": 0,
+        "metadata": 1548,
+        "scans": 1
+      },
+      "used": {
+        "seconds": 0.29763610000372864,
+        "writes": 132922,
+        "metadata": 1711716,
+        "scans": 33
+      }
+    },
+    {
+      "action": "read:controlled_ledger.json",
+      "cost": {
+        "seconds": 0,
+        "writes": 0,
+        "metadata": 3508,
+        "scans": 1
+      },
+      "used": {
+        "seconds": 0.29820140000083484,
+        "writes": 132922,
+        "metadata": 1715224,
+        "scans": 34
+      }
+    },
+    {
+      "action": "subprocess_reservation:peakfail",
+      "cost": {
+        "seconds": 10,
+        "writes": 65536,
+        "metadata": 786432,
+        "scans": 12
+      },
+      "used": {
+        "seconds": 10.298661799999536,
+        "writes": 198458,
+        "metadata": 2501656,
+        "scans": 46
+      }
+    },
+    {
+      "action": "read:peakfail_measurement.json",
+      "cost": {
+        "seconds": 0,
+        "writes": 0,
+        "metadata": 940,
+        "scans": 1
+      },
+      "used": {
+        "seconds": 0.4314718000096036,
+        "writes": 198458,
+        "metadata": 2502596,
+        "scans": 47
+      }
+    },
+    {
+      "action": "read:peakfail_ledger.json",
+      "cost": {
+        "seconds": 0,
+        "writes": 0,
+        "metadata": 3436,
+        "scans": 1
+      },
+      "used": {
+        "seconds": 0.43206970000755973,
+        "writes": 198458,
+        "metadata": 2506032,
+        "scans": 48
+      }
+    },
+    {
+      "action": "write:results.json",
+      "cost": {
+        "seconds": 0,
+        "writes": 11486,
+        "metadata": 22972,
+        "scans": 1
+      },
+      "used": {
+        "seconds": 0.43253780000668485,
+        "writes": 209944,
+        "metadata": 2529004,
+        "scans": 49
+      }
+    },
+    {
+      "action": "write:failure.json",
+      "cost": {
+        "seconds": 0,
+        "writes": 5877,
+        "metadata": 11754,
+        "scans": 1
+      },
+      "used": {
+        "seconds": 0.43560989999969024,
+        "writes": 215821,
+        "metadata": 2540758,
+        "scans": 50
+      }
+    },
+    {
+      "action": "write:measurement.json",
+      "cost": {
+        "seconds": 0,
+        "writes": 1349,
+        "metadata": 2698,
+        "scans": 1
+      },
+      "used": {
+        "seconds": 0.4379341000021668,
+        "writes": 217170,
+        "metadata": 2543456,
+        "scans": 51
+      }
+    },
+    {
+      "action": "write:operations.json",
+      "cost": {
+        "seconds": 0,
+        "writes": 1651,
+        "metadata": 3302,
+        "scans": 1
+      },
+      "used": {
+        "seconds": 0.43929160000698175,
+        "writes": 218821,
+        "metadata": 2546758,
+        "scans": 52
+      }
+    },
+    {
+      "action": "read:bootstrap.json",
+      "cost": {
+        "seconds": 0,
+        "writes": 0,
+        "metadata": 26444,
+        "scans": 1
+      },
+      "used": {
+        "seconds": 0.44123450000188313,
+        "writes": 218821,
+        "metadata": 2573202,
+        "scans": 53
+      }
+    }
+  ],
+  "byte_scope": "logical explicit read/copy/check attribution upper; not physical IO",
+  "old_base_once": {
+    "seconds": 275.73515180000686,
+    "writes": 3855811,
+    "metadata": 23014556,
+    "scans": 907,
+    "simulated_bytes": 29642603849
+  },
+  "v1_risk_only": {
+    "seconds": 20,
+    "writes": 1048576,
+    "metadata": 1048576,
+    "scans": 64
+  },
+  "new_simulated_payload": 0,
+  "historical_segment_actual": null,
+  "historical_joint_upper": null,
+  "historical_windows_peak": null,
+  "historical_auxiliary_revision_exact": null,
+  "workflow": {
+    "external_calls_before_this": 6,
+    "this_call": 7,
+    "unique_existing_files": 11,
+    "command_timeout_seconds": 10,
+    "observed_seconds_before_this": 4.2021477,
+    "this_call_prefix_seconds": 1.3742675,
+    "known_file_sizes": [
+      {
+        "path": "docs/workflow/ROLE_EXECUTOR.md",
+        "attribution": "file size reference; partial reads/repeats and tool output not exact physical IO",
+        "file_size_bytes": 9012
+      },
+      {
+        "path": "docs/workflow/TO_EXECUTOR.md",
+        "attribution": "file size reference; partial reads/repeats and tool output not exact physical IO",
+        "file_size_bytes": 8069
+      },
+      {
+        "path": "docs/workflow/STATE.md",
+        "attribution": "file size reference; partial reads/repeats and tool output not exact physical IO",
+        "file_size_bytes": 13924
+      },
+      {
+        "path": "docs/DIRECTION_A_G1_1_ADJUDICATION_v7.md",
+        "attribution": "file size reference; partial reads/repeats and tool output not exact physical IO",
+        "file_size_bytes": 6769
+      },
+      {
+        "path": "docs/DIRECTION_A_PROTOCOL_FREEZE_v1.md",
+        "attribution": "file size reference; partial reads/repeats and tool output not exact physical IO",
+        "file_size_bytes": 76086
+      },
+      {
+        "path": "artifacts/direction_a/phaseG1_1_resource_closure_resume_v1/artifact_hashes.json",
+        "attribution": "file size reference; partial reads/repeats and tool output not exact physical IO",
+        "file_size_bytes": 3342
+      },
+      {
+        "path": "artifacts/direction_a/phaseG1_1_resource_closure_resume_v1/accounting.json",
+        "attribution": "file size reference; partial reads/repeats and tool output not exact physical IO",
+        "file_size_bytes": 9656
+      },
+      {
+        "path": "docs/DIRECTION_A_G1_1_QUALIFICATION_v1.md",
+        "attribution": "file size reference; partial reads/repeats and tool output not exact physical IO",
+        "file_size_bytes": 4404
+      },
+      {
+        "path": "artifacts/direction_a/phaseG1_1_formal_F_resume_v1/artifact_hashes.json",
+        "attribution": "file size reference; partial reads/repeats and tool output not exact physical IO",
+        "file_size_bytes": 1801
+      },
+      {
+        "path": "scripts/run_direction_a_formal_f.py",
+        "attribution": "file size reference; partial reads/repeats and tool output not exact physical IO",
+        "file_size_bytes": 45664
+      },
+      {
+        "path": "artifacts/direction_a/phaseG1_1_resource_closure_resume_v1/summarize.py",
+        "attribution": "file size reference; partial reads/repeats and tool output not exact physical IO",
+        "file_size_bytes": 17225
+      }
+    ],
+    "known_initial_writes": [
+      {
+        "path": "validate.py",
+        "bytes": 21051
+      },
+      {
+        "path": "launch.ps1",
+        "bytes": 1518
+      },
+      {
+        "path": "plan.json",
+        "bytes": 2745
+      }
+    ],
+    "implementation_draft_amendment_upper_bytes": 65536,
+    "read_copy_physical_IO": null,
+    "git_internal_IO": null,
+    "workflow_peak": null,
+    "reasoning_wall_seconds": null,
+    "preparation_issue": {
+      "occurrences": 1,
+      "root": "explicit repeated and partial reads / Git internal IO not reconstructable",
+      "disposition": "registered; synthetic validation allowed by current ROLE",
+      "location": "workflow preparation",
+      "type": "FiniteBootstrapAccountingGap"
+    },
+    "other_issue": {
+      "root": "rg received unexpanded docs/*CONTRACT*",
+      "type": "PowerShellWildcardPath",
+      "location": "prep call 3 rg",
+      "occurrences": 1,
+      "repaired_by": "direct known protocol filename read in call4",
+      "scientific_results": 0
+    },
+    "history_unknown_not_zero": true,
+    "new_scientific_calls": 0,
+    "implementation_revision": 1,
+    "workflow_tail": "handoff and Git separately measured; their internal IO remains null"
+  },
+  "limits": {
+    "seconds": 100,
+    "writes": 1048576,
+    "metadata": 7340032,
+    "scans": 192
+  },
+  "counters_before": {
+    "engineering": 2,
+    "revision": 2,
+    "syntax": 1,
+    "CPU": 0
+  },
+  "counters_after": {
+    "engineering": 3,
+    "revision": 3,
+    "syntax": 2,
+    "CPU": 1
+  },
+  "historical_engineering_known_after": 7,
+  "official_entries": "2/2 closed",
+  "fees": "2/2 closed",
+  "official_revision_syntax_CPU": "3/3 closed",
+  "new_process_peak_scope": "each Python process independently measured; simulated failure null retained",
+  "fail_count": 0,
+  "unexpected": null
+}

@@ -1,0 +1,116 @@
+{
+  "sizes": [
+    9,
+    1,
+    8,
+    2,
+    7,
+    3,
+    6,
+    4,
+    5,
+    10
+  ],
+  "oracle": [
+    {
+      "name": "register",
+      "cost": {
+        "ticks": 1,
+        "writes": 3,
+        "metadata": 2,
+        "scans": 1,
+        "payload": 0
+      }
+    },
+    {
+      "name": "prepare",
+      "cost": {
+        "ticks": 2,
+        "writes": 0,
+        "metadata": 5,
+        "scans": 1,
+        "payload": 55
+      }
+    },
+    {
+      "name": "main_replay",
+      "cost": {
+        "ticks": 3,
+        "writes": 1,
+        "metadata": 7,
+        "scans": 1,
+        "payload": 55
+      }
+    },
+    {
+      "name": "coverage_replay",
+      "cost": {
+        "ticks": 4,
+        "writes": 1,
+        "metadata": 11,
+        "scans": 1,
+        "payload": 55
+      }
+    },
+    {
+      "name": "failed_state",
+      "cost": {
+        "ticks": 1,
+        "writes": 13,
+        "metadata": 2,
+        "scans": 1,
+        "payload": 0
+      }
+    },
+    {
+      "name": "gradient_prepare",
+      "cost": {
+        "ticks": 2,
+        "writes": 0,
+        "metadata": 17,
+        "scans": 1,
+        "payload": 55
+      }
+    },
+    {
+      "name": "upload",
+      "cost": {
+        "ticks": 1,
+        "writes": 0,
+        "metadata": 0,
+        "scans": 1,
+        "payload": 52
+      }
+    },
+    {
+      "name": "metadata",
+      "cost": {
+        "ticks": 1,
+        "writes": 2,
+        "metadata": 3,
+        "scans": 1,
+        "payload": 0
+      }
+    },
+    {
+      "name": "seal",
+      "cost": {
+        "ticks": 2,
+        "writes": 19,
+        "metadata": 5,
+        "scans": 1,
+        "payload": 0
+      }
+    }
+  ],
+  "expected_total": {
+    "ticks": 17,
+    "writes": 39,
+    "metadata": 52,
+    "scans": 9,
+    "payload": 272
+  },
+  "U_constant": 34871421077,
+  "U_excess": 511682709,
+  "simulated_numbers_only": true
+}

@@ -1,0 +1,193 @@
+{
+  "task_base": "3844b817cb7bc30e31930e922994f034944d22f0",
+  "status": "SEALED_WITH_BLOCKERS",
+  "self_assessment": {
+    "4": "PASS",
+    "FAIL_count": 2,
+    "2": "PASS",
+    "3": "FAIL",
+    "1": "PASS",
+    "5": "FAIL",
+    "6": "PASS"
+  },
+  "precedence": "This workflow audit corrects helper self-report; original results/accounting retained unchanged",
+  "actual_implementation_mutations": [
+    {
+      "action": "create validate.py plus launcher and plan",
+      "accepted": true
+    },
+    {
+      "action": "update validate.py before syntax: missing-bound/extra dimensions/seal check",
+      "accepted": true
+    }
+  ],
+  "counters_before": {
+    "syntax": 1,
+    "revision": 2,
+    "engineering": 2,
+    "CPU": 0
+  },
+  "counters_delta": {
+    "syntax": 1,
+    "revision": 2,
+    "engineering": 2,
+    "CPU": 1
+  },
+  "counters_after": {
+    "syntax": 2,
+    "revision": 4,
+    "engineering": 4,
+    "CPU": 1
+  },
+  "counters_maximum": {
+    "syntax": 3,
+    "revision": 3,
+    "engineering": 3,
+    "CPU": 3
+  },
+  "engineering_count_basis": "Conservative: task says another implementation revision counts as another attempt, including before suite start",
+  "historical_engineering_known_after": 8,
+  "historical_auxiliary_revision_exact": null,
+  "helper_counter_report_valid": false,
+  "results_issue": {
+    "location": "synthetic.check/carry_once",
+    "type": "MutableObservationReference",
+    "next_action": "no repair or rerun; frozen counters exhausted",
+    "root": "check stores Guard.used by reference; subsequent three charge operations change recorded observed after comparison",
+    "persisted_observed": {
+      "writes": 42,
+      "payload": 275,
+      "scans": 12,
+      "ticks": 20,
+      "metadata": 55
+    },
+    "qualification_result": "FAIL",
+    "helper_row_result": "PASS",
+    "independent_expected": {
+      "writes": 39,
+      "payload": 272,
+      "scans": 9,
+      "ticks": 17,
+      "metadata": 52
+    },
+    "repetitions": 1
+  },
+  "raw_suite": {
+    "passed": 53,
+    "exit_code": 0,
+    "suite_invocations": 1,
+    "syntax_invocations": 1,
+    "failed": 0,
+    "official_module_imports": 0
+  },
+  "workflow_issues": [
+    {
+      "same_unknown_is_not_repeated_failure": true,
+      "type": "FiniteBootstrapAccountingGap",
+      "occurrences": 1
+    },
+    {
+      "zero_scientific_results": true,
+      "type": "PowerShellWildcardPath",
+      "occurrences": 1
+    },
+    {
+      "location": "handoff patch",
+      "disposition": "workflow docs written directly; no helper changes",
+      "mutation_files": 0,
+      "type": "PatchMultipleOperationsSameTarget",
+      "occurrences": 1
+    }
+  ],
+  "original_package_identity": "4 Git trees identical to 76ce7f5 and HEAD; 5 formal source/test blobs identical; source working diff=0; no event scan",
+  "normalized_source_comparison": "Git text diff handles checkout CRLF; no historical raw SHA relabeled normalized",
+  "prep_unique_old_file_upper": 15,
+  "prep_file_count_correction": "bootstrap listed 11 directly opened files; 4 additional formal source paths considered by Git diff yield at most15",
+  "prep_commands_observed_seconds": [
+    0.5881409,
+    0.539023,
+    0.7929042,
+    0.6556523,
+    0.9545257,
+    0.6721825,
+    1.7495745
+  ],
+  "later_workflow_commands_observed_seconds": [
+    1.2336192,
+    0.6619846,
+    0.5852031
+  ],
+  "workflow_physical_IO": null,
+  "workflow_Git_internal_IO": null,
+  "workflow_peak": null,
+  "implicit_interpreter_OS_IO": null,
+  "outer_process_peak": null,
+  "historical_segment_actual": null,
+  "historical_joint_upper": null,
+  "new_exact_segment_actual_total": null,
+  "observed_outer_seconds": 0.8020762,
+  "saved_windows_peak_max": 28827648,
+  "saved_CPU_proxy_peak_max": 1982170,
+  "peak_scope": "saved pre-exit samples; final stdout not persisted, outer peak null; simulated failure null is retained",
+  "workflow_seal_allocation": {
+    "metadata": 1048576,
+    "input_scope": "21 explicitly named new files and2 docs; no old package reads",
+    "writes": 32768,
+    "guard": "known length times4 + used + reserve checked before read/hash; final writes capped",
+    "scans": 64,
+    "seconds": 10
+  },
+  "new_combined_byte_scan_upper": {
+    "writes": 485061,
+    "physical_IO_claim": false,
+    "scans": 140,
+    "metadata": 4119622,
+    "implementation_and_workflow_writes_included_in_131072": true
+  },
+  "old_base_once": {
+    "writes": 3855811,
+    "scans": 907,
+    "simulated_bytes": 29642603849,
+    "metadata": 23014556,
+    "seconds": 275.73515180000686
+  },
+  "v1_risk_not_actual": {
+    "writes": 1048576,
+    "scans": 64,
+    "metadata": 1048576,
+    "seconds": 20
+  },
+  "new_scientific_calls": {
+    "gradients": 0,
+    "fitting": 0,
+    "models": 0,
+    "real_fee_summaries": 0,
+    "formal_entries": 0,
+    "events": 0,
+    "heads": 0,
+    "evaluation": 0,
+    "encoding": 0,
+    "replays": 0
+  },
+  "retained": {
+    "partial": 0,
+    "G1_3": "not released",
+    "recovery_4": "FAIL",
+    "G1_1": "not closed",
+    "not_started": 0,
+    "U_is": "replacement upper gap, not actual or necessary lower bound",
+    "F_7": "FAIL",
+    "U": 34871421077,
+    "complete": 778,
+    "U_excess": 511682709,
+    "closure_5": "FAIL",
+    "old_D3_1_to_5": "FAIL",
+    "P_full_scope": "FAIL",
+    "clients79_no_timeout": true
+  },
+  "blockers": [
+    "criterion3 persisted observation inconsistent",
+    "criterion5 frozen engineering/revision counts exceeded; no remaining automatic repair"
+  ],
+  "workflow_git_tail": "bounded explicit git stage/commit/verification only; command timings in tool receipts, internal IO null; no push"
+}

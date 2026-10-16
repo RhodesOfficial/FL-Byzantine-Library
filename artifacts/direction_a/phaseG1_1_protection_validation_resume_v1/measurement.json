@@ -1,0 +1,53 @@
+{
+  "status": "PASS",
+  "measurement": {
+    "status": "MEASURED",
+    "windows_peak_bytes": 26345472,
+    "cpu_proxy_bytes": 267488,
+    "method": "Windows PeakWorkingSetSize; tracemalloc peak proxy"
+  },
+  "all_child_peaks": [
+    {
+      "mode": "syntax",
+      "status": "PASS",
+      "measurement": {
+        "status": "MEASURED",
+        "windows_peak_bytes": 28827648,
+        "cpu_proxy_bytes": 1982170,
+        "method": "Windows PeakWorkingSetSize; tracemalloc peak proxy"
+      },
+      "failure": null,
+      "pid": 35332
+    },
+    {
+      "mode": "controlled",
+      "status": "CONTROLLED_EXCEPTION",
+      "measurement": {
+        "status": "MEASURED",
+        "windows_peak_bytes": 25362432,
+        "cpu_proxy_bytes": 98731,
+        "method": "Windows PeakWorkingSetSize; tracemalloc peak proxy"
+      },
+      "failure": {
+        "type": "ValueError",
+        "location": "child:controlled",
+        "root": "PLANNED_CONTROLLED_EXCEPTION"
+      },
+      "pid": 13940
+    },
+    {
+      "mode": "peakfail",
+      "status": "PASS",
+      "measurement": {
+        "status": "FAILED_SIMULATED",
+        "windows_peak_bytes": null,
+        "cpu_proxy_bytes": 98731,
+        "error": "SyntheticPeakFailure"
+      },
+      "failure": null,
+      "pid": 8744
+    }
+  ],
+  "CUDA_initializations": 0,
+  "implicit_interpreter_OS_io": null
+}
