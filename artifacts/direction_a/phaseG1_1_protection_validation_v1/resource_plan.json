@@ -1,0 +1,24 @@
+{
+  "status": "NOT_A_VALID_PRELAUNCH_PLAN_STOPPED",
+  "created_after": "bootstrap discovery and metadata reads; before seal-only helper",
+  "reason": "Retrospective allocation cannot repair missing prelaunch protection.",
+  "frozen_authorized_segment": {"seconds": 120, "writes": 2097152, "metadata": 8388608, "scans": 256, "simulated_bytes": 0},
+  "required_components": [
+    {"component": "rules, STATE and task reads", "count": 3, "guarded": false, "upper_bytes": null},
+    {"component": "rg file/directory discovery", "count": 1, "guarded": false, "upper_scans": null},
+    {"component": "Git status/index", "count": 1, "guarded": false, "index_size_observed": 412758, "total_upper_bytes": null},
+    {"component": "Git ancestry, HEAD, log, objects, config", "count": 3, "guarded": false, "upper_bytes": null},
+    {"component": "closure_resume metadata/source", "count": 4, "file_lengths_observed": [9656, 3342, 3667, 17225], "runtime_upper_bytes": null},
+    {"component": "auxiliary creation, syntax, interpreter", "count": 1, "upper_bytes": null},
+    {"component": "synthetic CPU suite", "count": 0, "status": "NOT_STARTED"},
+    {"component": "failed patch plus corrected patch", "count": 2, "rejected_mutations": 0, "runtime_upper_bytes": null},
+    {"component": "repeat reads and seal/hash", "count": 1, "helper_read_sublimit": 262144, "helper_write_sublimit": 262144, "external_upper_bytes": null},
+    {"component": "Git stage, commit, verification tail", "planned_count": 3, "index_bytes_observed": 412758, "object_runtime_upper_bytes": null}
+  ],
+  "requested_tail_reserve_seconds": 20,
+  "global_failure_write_reserve_reference_bytes": 2097152,
+  "tail_compliance_certified": false,
+  "next_action": "seal and commit stopped task only; no validation/scientific invocation",
+  "unknown_is_not_zero": true,
+  "no_retroactive_compliance_claim": true
+}
