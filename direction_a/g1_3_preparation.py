@@ -3,6 +3,8 @@ import ctypes
 import hashlib
 import json
 import math
+import os
+import sys
 from pathlib import Path
 import time
 
@@ -48,63 +50,63 @@ def working_peak():
 
 
 class Budget:
-    """Each explicit action reserves BEFORE access; interpreter I/O stays unknown."""
+    """No local accounting reset: all charges go to the one outer owner."""
     def __init__(self, previous=None, tiny=None):
-        self.started = time.monotonic()
-        self.prior = previous or {}
-        self.used = dict(self.prior.get('used', dict(read=0, write=0, scans=0)))
-        self.elapsed_prior = self.prior.get('elapsed_seconds', 0.)
-        self.limits = tiny or dict(read=4*1024**2, write=4*1024**2, scans=256)
-        self.active_limits = dict(read=3*1024**2, write=3*1024**2, scans=192)
-        self.operations = list(self.prior.get('operations', []))
-        self.proxy_peak = self.prior.get('cpu_proxy_peak_bytes', 0)
-        self.peak = 0
-        self.sealing = False
+        if os.environ.get('G13_RPC_ACTIVE') != 'guard-v1' or previous is not None:
+            raise Gate('shared outer accountant required; local/reset state forbidden')
+        self.limits = tiny
+        self.local = dict(read=0, write=0, scans=0)
+
+    def rpc(self, action, **values):
+        print(json.dumps(dict(action=action, **values)), flush=True)
+        line = sys.stdin.readline()
+        if not line:
+            raise Gate('outer accountant disconnected')
+        reply = json.loads(line)
+        if not reply['ok']:
+            raise Gate(reply['error'])
+        return reply['value']
 
     def check(self):
-        elapsed = self.elapsed_prior + time.monotonic()-self.started
-        if elapsed > (120 if self.sealing else 90):
-            raise Gate('cumulative time reserve')
-        self.peak = max(self.peak, working_peak())
-        if self.peak > 2*1024**3:
-            raise Gate('Windows peak')
+        self.rpc('check')
 
     def reserve(self, label, read=0, write=0, scans=0, proxy=0):
-        self.check()
-        proposed = dict(read=self.used['read']+read, write=self.used['write']+write,
-                        scans=self.used['scans']+scans)
-        for k, v in proposed.items():
-            if v > min(self.limits[k], self.limits[k] if self.sealing else self.active_limits[k]):
-                raise Gate('reserve '+k+': '+label)
-        if proxy > 256*1024**2:
-            raise Gate('reserve proxy: '+label)
-        self.used = proposed
-        self.proxy_peak = max(self.proxy_peak, proxy)
-        self.operations.append(dict(label=label, read=read, write=write, scans=scans, proxy=proxy))
+        proposed = dict(read=self.local['read']+read, write=self.local['write']+write,
+                        scans=self.local['scans']+scans)
+        if any(v < 0 for v in (read, write, scans, proxy)):
+            raise Gate('negative charge')
+        if self.limits and any(proposed[k] > self.limits[k] for k in proposed):
+            raise Gate('synthetic local quota: '+label)
+        self.rpc('reserve', label=label, read=read, write=write, scans=scans, proxy=proxy)
+        self.local = proposed
 
     def read(self, path):
-        p = ROOT / path
-        size = p.stat().st_size
-        self.reserve('read '+path, read=size, scans=1, proxy=max(8*1024**2, size*24))
-        raw = p.read_bytes()
-        if len(raw) != size:
-            raise Gate('input changed during read')
-        return raw
+        import base64
+        return base64.b64decode(self.rpc('read', path=path))
 
     def write(self, name, value):
-        # Limit BEFORE serialization, covering UTF-8 buffer and Python graph copies.
-        self.reserve('serialize '+name, proxy=16*1024**2)
-        raw = encode(value)
-        if len(raw) > 256*1024:
-            raise Gate('serialization capacity')
-        self.reserve('write '+name, write=len(raw))
-        (OUT / name).write_bytes(raw)
+        self.reserve('serialize '+name, proxy=32*1024**2)
+        self.rpc('write', name=name, value=value)
 
     def snapshot(self):
-        return dict(used=self.used.copy(), elapsed_seconds=self.elapsed_prior+time.monotonic()-self.started,
-                    operations=list(self.operations), cpu_proxy_peak_bytes=self.proxy_peak,
-                    windows_peak_working_set_bytes=self.peak, physical_io_bytes=None,
-                    interpreter_implicit_io_bytes=None, historical_peak_bytes=None)
+        return self.rpc('snapshot')
+
+
+def extract_label_mapping(metadata, budget):
+    """Bounded field lookup, followed by one reserved complete class scan."""
+    mapping = metadata['label_mapping']
+    budget.reserve('complete label_mapping traversal and copied pairs', scans=1, proxy=32*1024**2)
+    return list(mapping.items())
+
+
+def extract_nested_sources(classes, budget):
+    budget.reserve('complete class collection traversal', scans=1, proxy=32*1024**2)
+    result = []
+    for row in classes:
+        sources = row['sources']
+        budget.reserve('complete source collection traversal and list copy', scans=1, proxy=32*1024**2)
+        result.append(list(sources))
+    return result
 
 
 def norm(x):

@@ -1,46 +1,55 @@
-"""Run only under the sibling PowerShell cumulative supervisor."""
+"""Literal guard regression only; explicit I/O goes through the outer owner."""
+import json
 import os
 import sys
-from pathlib import Path
+import types
 
-if os.environ.get('G13_OUTER_ACTIVE') != '1':
-    raise SystemExit('Use scripts/prepare_direction_a_g1_3_outer.ps1; unmetered launch refused')
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from direction_a.g1_3_preparation import Budget, COMMITS, OUT, ROOT, WHITELIST, encode
-import json
-import time
+if os.environ.get('G13_RPC_ACTIVE') != 'guard-v1':
+    raise SystemExit('shared outer supervisor required')
+if sys.argv[1:] not in (['--guard-regression'], ['--continuation-probe']):
+    raise SystemExit('B/C, inspect, and unsupervised entries closed')
+
+
+def rpc(action, **values):
+    print(json.dumps(dict(action=action, **values)), flush=True)
+    reply = json.loads(sys.stdin.readline())
+    if not reply['ok']:
+        raise RuntimeError(reply['error'])
+    return reply['value']
 
 
 def main():
-    if sys.argv[1:] != ['--inspect']:
-        raise SystemExit('B/C and other entries closed')
-    OUT.mkdir(parents=True, exist_ok=True)
-    budget = Budget()
-    stats = [dict(group=g, commit=COMMITS[g], path=p, bytes=(ROOT/p).stat().st_size) for g, p in WHITELIST]
-    assert len(stats) <= 24 and sum(r['bytes'] for r in stats) <= 1024**2
-    budget.write('preregistration.json', dict(stage='A', whitelist=stats, real_entries=0,
-        allocations=dict(time_seconds=[50,40,30], read_bytes=[2097152,1048576,1048576],
-                         write_bytes=[2097152,1048576,1048576], scans=[128,64,64]),
-        counts=dict(engineering=1, revisions=1, syntax=0, cpu=0),
-        estimator='metadata bytes from stat; parse copies <=24*bytes; runtime risk allocation, not proved time bound',
-        unknowns=dict(interpreter_io=None, physical_io=None), synthetic_only=True))
-    schemas = []
-    for r in stats:
-        value = json.loads(budget.read(r['path']))
-        def schema(v, depth=0):
-            if depth > 2:
-                return type(v).__name__
-            if isinstance(v, dict):
-                return {k:schema(x, depth+1) for k,x in list(v.items())[:16]}
-            if isinstance(v, list):
-                return dict(length=len(v), first=schema(v[0],depth+1) if v else None)
-            return v
-        schemas.append(dict(path=r['path'], schema=schema(value)))
-    budget.write('input_index.json', dict(whitelist=stats, schemas=schemas, binary_reverified=False))
-    budget.sealing = True
-    budget.write('resource_ledger.json', budget.snapshot())
-    print(json.dumps(schemas, ensure_ascii=False))
+    import base64
+    if sys.argv[1] == '--continuation-probe':
+        before = rpc('snapshot')
+        rpc('reserve', label='second interpreter continuation marker', scans=1,
+            read=0, write=0, proxy=33554432)
+        after = rpc('snapshot')
+        assert after['used']['scans'] == before['used']['scans'] + 1
+        assert before['used']['scans'] > 0
+        rpc('result', value=dict(probe='PASS', before=before['used'], after=after['used']))
+        return
+    rpc('syntax_start')
+    compiled = {}
+    for path in ('direction_a/g1_3_preparation.py', 'scripts/prepare_direction_a_g1_3.py',
+                 'tests/test_direction_a_g1_3_preparation.py'):
+        raw = base64.b64decode(rpc('read', path=path))
+        compiled[path] = compile(raw, path, 'exec')
+    rpc('syntax_pass')
+    module = types.ModuleType('guard_under_test')
+    module.__file__ = os.path.abspath('direction_a/g1_3_preparation.py')
+    exec(compiled['direction_a/g1_3_preparation.py'], module.__dict__)
+    tests = {'__name__': 'guard_regression_only'}
+    exec(compiled['tests/test_direction_a_g1_3_preparation.py'], tests)
+    rpc('cpu_start')
+    results = tests['run_guard_regressions'](module)
+    rpc('result', value=results)
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as exc:
+        rpc('failure', value=dict(type=type(exc).__name__, location='guard regression',
+            root_cause=str(exc), new_scientific_results=0))
+        raise
