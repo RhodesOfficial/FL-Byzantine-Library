@@ -1,4 +1,4 @@
-"""Cached-code D4 child; started by outer.ps1, never a free-standing entry."""
+"""Cached-code child of the D5 owner; the original nonrenewable RPC interface."""
 import base64
 import json
 import os
@@ -57,7 +57,7 @@ def main():
     lease = rpc('lease')
     budget = api.Budget(lease)
     api.ACTIVE = budget
-    bundle = dict(schema='G13-D4-v1', action_id='A02-A05', status='NOT_COMPLETED',
+    bundle = dict(schema='G13-D5-v1', action_id='A02-A05', status='NOT_COMPLETED',
                   inputs=[], bindings=[], assertions=[], B_requirements=[], failures=[],
                   completed=[], partial=[], not_started=['A02', 'A03', 'A04'],
                   counters=dict(real_probability_calculations=0, gradient_binary_reads=0,

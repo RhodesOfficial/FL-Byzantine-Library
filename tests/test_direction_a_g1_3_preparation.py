@@ -22,6 +22,32 @@ def root_oracle(r, coefficient=F(1)):
     return (lo, hi) if coefficient >= 0 else (hi, lo)
 
 
+def paired_error_oracle(budget):
+    # Scalar oracle only: integer square inequalities and rational floor/ceil.
+    # No use of the tested interval, sqrt, radius, or summary implementation.
+    budget.reserve('D5 independent paired error scalar graph', scans=16,
+                   ops=32768, proxy=33554432)
+    q = ORACLE_Q
+    floor = lambda x: x.numerator//x.denominator
+    ceil = lambda x: -((-x.numerator)//x.denominator)
+    def sqrt_endpoints(nlo, nhi):
+        a, b = math.isqrt(nlo*q), math.isqrt(nhi*q)
+        assert a*a <= nlo*q < (a+1)*(a+1)
+        assert b*b <= nhi*q < (b+1)*(b+1)
+        return a, b+(b*b != nhi*q)
+    tlo, thi = sqrt_endpoints(floor(F(722*q, 39)), ceil(F(722*q, 39)))
+    slo, shi = sqrt_endpoints(3*q, 3*q)
+    hlo, hhi = floor(F(tlo*q, shi)), ceil(F(thi*q, slo))
+    r = F(hhi-hlo, 2*q)
+    rlo, rhi = floor(r*q), ceil(r*q)
+    assert F(rlo, q) <= r <= F(rhi, q)
+    elo, ehi = root_oracle(F(361, 39), F(1, 64))
+    a, b = F(1, 64)+elo, F(1, 64)+ehi
+    assert b-a <= F(1, 2**262)
+    assert max(tlo.bit_length(), thi.bit_length(), (722*q*q).bit_length()) < 4096
+    return a, b, r, rlo, rhi
+
+
 def run_suite(api, budget, results):
     def full(h, x, y=0):
         budget.reserve('A03 full coordinate fixture', scans=1, ops=3*h)
@@ -188,10 +214,18 @@ def run_suite(api, budget, results):
             c('E_mean', r['E_mean'], F(1, 64))
             c('E_SD', r['E_SD'], root_oracle(F(3, 2), F(1, 64)))
             c('E_R', r['E_R'], F(1, 128))
-            elo, ehi = root_oracle(F(361, 39), F(1, 64))
-            c('E_I_independent_endpoint_budget',
-              F(r['E_I'].lo, ORACLE_Q) >= F(1, 64)+elo and
-              F(r['E_I'].hi, ORACLE_Q) <= F(1, 64)+ehi+F(1, 2**96), True)
+            a, b, rad, rlo, rhi = paired_error_oracle(budget)
+            lower, upper = F(r['E_I'].lo, ORACLE_Q), F(r['E_I'].hi, ORACLE_Q)
+            c('E_I_contains_independent_J_T', lower <= a+rad and upper >= b+rad, True)
+            c('E_I_frozen_32q_lower', lower >= a-F(32, ORACLE_Q), True)
+            c('E_I_frozen_32q_upper', upper <= b+F(32, ORACLE_Q), True)
+            c('radius_half_grid_outward', F(rlo, ORACLE_Q) <= rad <= F(rhi, ORACLE_Q), True)
+            c('independent_J_width_2^-262', b-a <= F(1, 2**262), True)
+            # Persist exact independent endpoints, including the half-grid radius.
+            results[-1]['independent_error_oracle'] = dict(
+                a=str(a), b=str(b), r=str(rad), radius_Q192=[rlo, rhi],
+                J_T=[str(a+rad), str(b+rad)], q='1/2^192', width_limit='1/2^262',
+                outer_margin_q=32, independent=True)
         invoke('14', h, 'S3', lambda: api.paired_summary([5, 6, 7], [1, 1, 1], 5, 1, budget,
                seed_errors=[F(1, 64)]*3, analytic_error=F(1, 128)), pairedck)
         invoke('14', h, 'S3', lambda: api.paired_summary([5, 6, 7], [1, 1, 1], 5, 'L', budget), lambda r, c: c('strict_L_equal_FAIL', r['passed'], False))
