@@ -1,58 +1,59 @@
-# 交付单：G1.3 D4 A元数据、合成实施首验
+# 交付单：G1.3 D4原周期V2复验未完成
 
-- 对应任务单基准：b60af37456c70ea12028f996489380ba827d1323。
-- 开工HEAD：aeef05f773f4bc6884ac243272bfff4189eb4703；基准是其祖先（merge-base退出0）。
-- 本次交付commit：见本提交；未push。
+- 对应任务单基准：1055174751001e99c5ab6cb02bb62a6113d44a44。
+- 开工HEAD：ba35578c9813009f3299734534be75496a5e1461；基准为其祖先（Git检查退出0）。
+- 本次交付commit：见本提交；不push。
 
 ## 做了什么（≤5条）
-- 改造既有五文件，在Job进程树保护下用指定解释器完成一次语法→CPU→第二进程→S1封存。
-- 15原白名单327534 B、D计数/尾4/34、四参考及80消息SHA索引实际校验；二进制NOT_RUN。
-- 完整1290/12900维各46调用，92条程序断言PASS，覆盖14组；独立性缺口另列FAIL。
-- 由D/G生成220类B符号工作表；真实入口、拟合、真实p/指标/费用、注册轨迹均0。
-- 生成V1独立证据包；发现验收差距如实交审，不以程序PASS宣称整单通过。
+- 针对V1的POST_RUN_AUDIT进行一次修订：独立端点oracle、四误差/传播、逐调用事件记录。
+- 修正V2独立900秒截止、owner冻结租额/结算、精确授权的V1 PASS续接及小字节注入finally。
+- 运行唯一预留V2（指定E:\anaconda3\python.exe）；语法通过，CPU在第37调用失败。
+- 保留V2四文件及同次运行源码；S2封存再遇计数字符串拼接，未伪补缺失文件。
+- 保留V1九文件、旧账/真实头与220行B工作表；覆盖本交接并更新实现规范。
 
 ## 产出文件
-- direction_a/g1_3_preparation.py、scripts/prepare_direction_a_g1_3.py、tests/test_direction_a_g1_3_preparation.py：Q192/独立对照及元数据/工作表。
-- scripts/prepare_direction_a_g1_3_outer.ps1、scripts/prepare_direction_a_g1_3_seal.ps1：单owner、D4六子账、Job、缓存入口/回读。
-- artifacts/direction_a/phaseG1_3_A_d4_v1/V1/：bundle、checkpoint、ledger、receipt、manifest、failure及plan/authorization/carry共9文件。
-- docs/DIRECTION_A_G1_3_IMPLEMENTATION_SPEC_v1.md：逐条差距、原A映射、完成/部分/未开始与后续取得方式。
+- artifacts/direction_a/phaseG1_3_A_d4_v1/V2/：plan、authorization、carry、bundle，共218558 B。
+- direction_a/g1_3_preparation.py、scripts/prepare_direction_a_g1_3.py：内核/误差和受限运行器。
+- scripts/prepare_direction_a_g1_3_outer.ps1、prepare_direction_a_g1_3_seal.ps1及tests/test_direction_a_g1_3_preparation.py：保护、封存、独立oracle。
+- docs/DIRECTION_A_G1_3_IMPLEMENTATION_SPEC_v1.md：保留V1历史，逐缺口映射、独立依据、部分/未开始、原A与B缺项。
 
 ## 判据自评
-|本单|结果|证据位置 / 关键数字|
+|编号|PASS/FAIL|证据/关键数字|
 |---|---|---|
-|1|FAIL|bundle.inputs/bindings有15/4项；denominator_binding误写binding.input_versions，实际核验是source_files/split_identity，逐字段路径尚未全准确。|
-|2|FAIL|bundle.assertions 92/92程序PASS；tests第151行两处残差预期复用被测I.of/ZERO；不能称全部oracle独立。|
-|3|FAIL|kernel error_envelope与runner error_objects：缺E_d/E_τ/E_u/E_P各自字段/完整传播；配对未接完整误差预算。|
-|4|FAIL|Job/三次拒绝零访问/两子进程继承通过；V独立计时器是1020而非900秒；小字节故障finally注入未实现。未观察实际超限或Job失效。|
-|5|FAIL|ledger.kernel含固定扫描包络扣账；owner未显式冻结活动租额，末端实际时间未知；账面used不能冒充全量精确实耗。|
-|6|PASS|bundle.B_requirements 220行，m×h/pairs×h、两遍读/哈希/副本寿命；平台/解码/参照/连续界/ε缺项及取得方法见实现规范。|
-|7|PASS|旧账carry_once=1、旧包/真实头保全；科学计数全0，未新增额度或开B/C，未启轮保持NOT_RUN。|
+|1|FAIL|plan.counts_before=4/1/2/2，精确V1授权/4引导Git身份、carry_once=1已承接；V2最终累计ledger/receipt未闭合。|
+|2|PASS|bundle：15白名单327534 B、4绑定、20端/标签/split/尾4和34/80消息索引；真实路径已改正，binary_qualification=NOT_RUN。|
+|3|FAIL|37调用=36 PASS+1 NOT_COMPLETED；其余55未运行（含12900全46）；末尾位宽见证未执行，不能称92条通过。|
+|4|FAIL|第13组有理误差传播已测；首个S3的E_I独立界断言失败，后续配对/八项未验证；连续/真实ε仍null。|
+|5|FAIL|独立截止、租额拒绝、小字节finally路径已执行；主子失败使第二子未启，S2/receipt不完整，保护全判据证据不足。|
+|6|FAIL|owner冻结租额及单次结算已实现；总实际扫描仍null；S2继承字符串计数发生拼接并拒绝封存，缺5个必需证据文件。|
+|7|PASS|旧包/真实头保持，220行B表，科学计数全0；本交接明确动作与验收，A/B/C门禁保持，不启动V3/I/S3。|
 
-## 实际资源消耗与计次
-- 唯一运行：outer.ps1 -Run V1；工程增量1，语法1/CPU1，两个Python共用owner；无运行异常，failure.json为空。
-- 工程/修订/语法/CPU：3/1/1/1→4/1/2/2，全局余2/5/4/4；本单余2/2/1/1。首次实现不计修订，首验后未改实现。
-- V1：21.1115274秒，读933621/写754722 B/6249扫描；S1末端前0.1269284秒，读275065/写41434 B/2710扫描。
-- 总账面读1208686/写796156 B/8959扫描；扫描含上界扣账，真实完整扫描未知；整段外层末端输出观测21.34276秒。
-- 合计工作集观测261308416 B，CPU已知代理59973632 B，CUDA0；108帧/双端1038800 B；新增证据磁盘276756 B。
-- 20秒S尾耗是预留，终端实际耗时null；物理/隐式I/O、历史峰及准备/Git全墙钟null；未以风险补实耗或旧null。
-- 旧120秒块完整隔离；80秒风险、guard已记2.6099713秒/46589读/15184写/27扫描、旧余及0.0007893秒差全部原值carry一次。
-- 原始3/3/0/0→既有裁决更正2/0/0/0→c35ae78后3/1/1/1→本次4/1/2/2；D3/F/P关闭账不重算。
-- 启动准备全文唯一字节下界140004 B；已知命令秒选列0.6134578/0.5431852/0.7551154/0.5996127/0.5516118/0.6423754/0.6333829/0.723237/0.8536871/0.7163656/1.6125623；并非全段总耗时。
-- 交接读取含V1证据三文件269377 B及定向历史任务/Git；总I/O/索引/编辑/Git尾耗仍null，准备未知局部登记一次，不算第二次异常。
-- POST_RUN_AUDIT定位实现规范自评1–5：属于一次首验交接发现的实现缺口，不虚增为五次运行/异常；无科学方案失败。
+## 异常签名与计次
+- 触发本轮修订：1055174的V1/bundle、旧源码及本任务逐条裁决中的POST_RUN_AUDIT，合一轮问题。
+- V2首次异常：AssertionError / 1290/14/S3/E_I_independent_endpoint_budget / False vs True，见bundle.failures。
+- 同轮finally异常：outer/S2 / quota before access S2/read；前驱未用S2的字符串计数被+=拼接。
+- 静态分析：E_I的Q192向外下端直接与2^-256 oracle下界比较，未容纳向外舍入；未经复验，不声称已证修复。
+- 上述两个签名发生于同一轮；没有第二次同签名实际尝试，无新增科学结果。
+- 累计工程/修订/语法/CPU：4/1/2/2→5/2/3/3，增量1/1/1/1；全局上限各6，余额1/4/3/3。
+- 原冻结两验证槽已用尽，剩余工程1仅条件性独封；S2完整累计不可核，I/S3条件不成立，保持NOT_RUN。
 
-## 完成、部分、未开始及原A
-- 完整：15输入读取与身份、计数/参考实际核验、92程序记录、220符号行、V1/S1独立回读；receipt闭合、manifest排除自身。
-- 部分：A02字段定位、A03 oracle独立性/误差传播、A00保护接口及计量闭合；bundle.completed仅表示动作执行完成。
-- 未开始：V2/S2/I/S3、B/C二进制资格/真实τ/p/ε/轨迹/拟合/真实指标/费用；未覆盖任何既有真实头。
-- ff31cff原A：1–5仍FAIL、6 PASS；本次推进计数/完整合成/符号表，不撤销旧A或守卫局部3 FAIL/null。
-- 首次程序验证返回PASS后按本单“首次成功即交审”停止，未为追求整单PASS再启V2；本次提交保留与首验哈希相符的源码。
+## 实际资源消耗
+- 外层失败输出：V2=4.1817488秒/979727 B读/739809 B写/4083扫描扣账；命令外层观测4.7335112秒。
+- V1/S1原读1208686/写796156/8959扫描保留；加V2已记为2188413读/1535965写/13042扫描。
+- S2至少成功读bundle214680 B，总已知读下界2403093 B；完整S2读写/扫描/秒及终端尾耗null。
+- S2输出read=000…21468000、scans=000…12884是拼接污染，不是实际21 MB读取；下一写动作前被拒，未证明实际硬限触顶。
+- V2四文件218558 B；failure/checkpoint/ledger/receipt/manifest未生成，不能补造来源、哈希或闭合PASS。
+- 本轮峰null；硬限Job进程树2 GiB/CPU代理256 MiB/CUDA0；物理/隐式I/O、平台完成证明仍null。
+- V2/S2本轮冻结1020秒/16777216读/8388608写/80384扫描；使用事实保留，差额不回收；S2整块隔离。
+- I/S3原预留130秒/8912896读/4194304写/16396扫描未使用；旧120秒块/风险/FAIL/null不变。
+- 准备：10次有限读取/Git命令观测约7.055秒，非全墙钟；其中源码长度已知下界88558 B、bundle两次读取429360 B，另规则/文档/Git读。
+- 准备/人工累计、全量I/O、编辑与提交尾耗、历史峰均null；未把未知补0或重领一工作日；不存在独立预检/CPU/封存程序启动。
 
-## 阻塞（没有写“无”）
-- 本单1–5实现缺口阻塞局部验收；完整A另缺真实平台/解码/独立参照/连续投影证明及真实ε，不开放B/C；无科学否定结论。
+## 阻塞
+- V2验证槽耗尽且S2封存未闭合；前驱完整累计不可核，不满足I/S3启动条件，需审查者核查后续处置。
 
-## 异议（没有写“无”）
+## 异议
 - 无。
 
-## 需要审查者裁决的问题（≤3条，没有写“无”）
-- 审查一次首验的程序PASS与本单5条验收FAIL，确定同任务后续修复分配/前驱接续；现余额不自动增加、不自动重跑。
+## 需要审查者裁决的问题（≤3条）
+- 核查最后复验失败、S2计数污染及不完整证据包；不得把现有程序记录视为92项独立通过或科学假设失败。

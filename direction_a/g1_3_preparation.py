@@ -67,6 +67,9 @@ class Budget:
         self.ops = 0
         self.max_bits = 0
         self.max_live = 0
+        self.actual = dict(interval_add=0, interval_multiply=0, interval_divide=0,
+                           sqrt_steps=0, packed_get=0, packed_set=0, coordinates=0,
+                           json_nodes=0, integer_checks=0)
         self.by_action = {}
         self.start = time.monotonic()
         self.seconds = (lease or {}).get('seconds', 900)
@@ -96,11 +99,15 @@ class Budget:
 
     def report(self):
         return dict(used=self.used, actions=self.by_action, integer_operation_upper_charges=self.ops,
+                    actual_instrumented=self.actual, exact_total_scans=None,
+                    actual_count_scope='named events only; upper debits are not exact actual scans',
                     max_integer_bits=self.max_bits, cpu_proxy_peak=self.max_live,
                     seconds=time.monotonic()-self.start)
 
 
 def bits(n):
+    if ACTIVE:
+        ACTIVE.actual['integer_checks'] += 1
     if n.bit_length() > CAP:
         raise Gate('PRECISION_CAP')
     if ACTIVE:
@@ -144,6 +151,8 @@ class I:
         return I(n//v.denominator, -((-n)//v.denominator))
 
     def __add__(self, other):
+        if ACTIVE:
+            ACTIVE.actual['interval_add'] += 1
         o = I.of(other)
         return I(bits(self.lo+o.lo), bits(self.hi+o.hi))
 
@@ -159,6 +168,8 @@ class I:
         return I.of(other)+-self
 
     def __mul__(self, other):
+        if ACTIVE:
+            ACTIVE.actual['interval_multiply'] += 1
         o = I.of(other)
         vals = (product(self.lo, o.lo), product(self.lo, o.hi),
                 product(self.hi, o.lo), product(self.hi, o.hi))
@@ -167,6 +178,8 @@ class I:
     __rmul__ = __mul__
 
     def __truediv__(self, other):
+        if ACTIVE:
+            ACTIVE.actual['interval_divide'] += 1
         o = I.of(other)
         if o.lo <= 0 <= o.hi:
             raise Unresolved('divisor contains zero')
@@ -184,6 +197,8 @@ class I:
         def root(n):
             left, right = 0, 1 << ((n.bit_length()+1)//2)
             for _ in range(4096):
+                if ACTIVE:
+                    ACTIVE.actual['sqrt_steps'] += 1
                 if left >= right:
                     return left
                 mid = (left+right+1)//2
@@ -219,10 +234,14 @@ class Packed:
         Packed.peak = max(Packed.peak, Packed.live)
 
     def set(self, j, v):
+        if ACTIVE:
+            ACTIVE.actual['packed_set'] += 1
         self.data[j*1024:j*1024+512] = v.lo.to_bytes(512, 'little', signed=True)
         self.data[j*1024+512:(j+1)*1024] = v.hi.to_bytes(512, 'little', signed=True)
 
     def get(self, j):
+        if ACTIVE:
+            ACTIVE.actual['packed_get'] += 1
         start = j*1024
         return I(int.from_bytes(self.data[start:start+512], 'little', signed=True),
                  int.from_bytes(self.data[start+512:start+1024], 'little', signed=True))
@@ -268,12 +287,13 @@ def metric(counts, gradients, probabilities, h, budget, shape=None, dtype='float
     target, delta = Packed(h, budget), Packed(h, budget)
     norm2 = [ZERO for _ in range(m)]
     pairs = {(i, j): ZERO for i in range(m) for j in range(i)}
-    tg2 = dd2 = ZERO
+    tg2 = dd2 = dgerr2 = dderr2 = ZERO
     exact_g0 = exact_d0 = structural = True
     try:
         budget.reserve('A03 M coordinates/norms/pairs/exact-zero', scans=6+3*m+len(pairs),
                        ops=h*(128*m+32*len(pairs)+64)+256)
         for j in range(h):
+            budget.actual['coordinates'] += 1
             # All weight rows, then all bias coordinates; no two-coordinate shortcut.
             values = [f32(g[j]) for g in gradients]
             structural &= all(v == 0 for v in values)
@@ -284,6 +304,8 @@ def metric(counts, gradients, probabilities, h, budget, shape=None, dtype='float
             exact_d0 &= ed == 0
             gi = sum((I.of(a[i])*I.of(values[i]) for i in range(m)), ZERO)
             di = sum((I.of(b[i]-a[i])*I.of(values[i]) for i in range(m)), ZERO)
+            dgerr2 = dgerr2 + radius(gi)*radius(gi)
+            dderr2 = dderr2 + radius(di)*radius(di)
             target.set(j, gi); delta.set(j, di)
             tg2 = tg2+gi*gi
             dd2 = dd2+di*di
@@ -309,11 +331,18 @@ def metric(counts, gradients, probabilities, h, budget, shape=None, dtype='float
         else:
             rho, tau = amp/s, diameter/(I.of(total)*s)
         pair_rms = norm(sum((v*v for v in distances), ZERO)/len(distances)) if distances else ZERO
+        ed, eg = norm(dderr2), norm(dgerr2)
+        errors = dict(E_d=ed, E_G=eg, E_S=radius(s), E_A=radius(amp),
+                      E_D=radius(diameter), E_rho=radius(rho), E_tau=radius(tau),
+                      E_u=ZERO if exact_d0 else (2*ed/I(amp.lo) if amp.lo > 0 else None),
+                      E_target_relative=None if exact_g0 else radius(amp/gnorm))
         return dict(a=a, b=b, Z=z, G=target, d=delta, S=s, A=amp, rho=rho, tau=tau,
                     D=diameter, pair_rms=pair_rms, target_relative=None if exact_g0 else amp/gnorm,
                     structural_zero=structural, d_zero=exact_d0, G_zero=exact_g0,
                     u_zero=exact_d0, cancellation=exact_g0 and not exact_d0,
-                    gradients=gradients, h=h, n=total, source_norms=source_norms)
+                    gradients=gradients, h=h, n=total, source_norms=source_norms,
+                    errors=errors, error_target='exact sealed binary32; source perturbations zero',
+                    denominator_status='STRUCTURAL_ZERO' if structural else 'POSITIVE')
     except BaseException:
         target.close(); delta.close()
         raise
@@ -321,6 +350,11 @@ def metric(counts, gradients, probabilities, h, budget, shape=None, dtype='float
 
 def release(row):
     row['G'].close(); row['d'].close()
+
+
+def radius(value):
+    """Error of the rational midpoint of an enclosing Q192 interval."""
+    return I.of(F(value.hi-value.lo, 2*Q))
 
 
 def replacement(row, positive, budget):
@@ -349,14 +383,19 @@ def projection(row, masks, uniform_masks, p0, budget, fixed=False):
     # Mean masks are exact sums, sharing the same literal stream/attempt order.
     coeff = [row['a'][i]*F(sum(mask[i] for mask in masks), 32)/row['Z'] for i in range(m)]
     coeff0 = [row['a'][i]*F(sum(mask[i] for mask in uniform_masks), 32)/p0 for i in range(m)]
-    y = y0 = r2 = r02 = ZERO
+    y = y0 = r2 = r02 = ew2 = ex2 = ex02 = eu2 = ZERO
     fixed_unit = I.of(1)/I.of(h).sqrt() if fixed else None
     residual_first = residual_last = None
     for j in range(h):
+        budget.actual['coordinates'] += 1
         x = sum((I.of(coeff[i])*I.of(f32(row['gradients'][i][j])) for i in range(m)), ZERO)
         x0 = sum((I.of(coeff0[i])*I.of(f32(row['gradients'][i][j])) for i in range(m)), ZERO)
         r, r0 = x-row['G'].get(j), x0-row['G'].get(j)
         u = fixed_unit if fixed else (ZERO if row['d_zero'] else row['d'].get(j)/row['A'])
+        ew2 = ew2+radius(x-x0)*radius(x-x0)
+        ex2 = ex2+radius(x)*radius(x)
+        ex02 = ex02+radius(x0)*radius(x0)
+        eu2 = eu2+radius(u)*radius(u)
         y, y0, r2, r02 = y+u*r, y0+u*r0, r2+r*r, r02+r0*r0
         if j == 0:
             residual_first = r.text()
@@ -365,10 +404,14 @@ def projection(row, masks, uniform_masks, p0, budget, fixed=False):
         y = y0 = ZERO
     else:
         y, y0 = y/row['S'], y0/row['S']
+    # Direct enclosing operation graph includes weights, direction, scale and
+    # dot products; its midpoint radii are absolute arithmetic error budgets.
+    errors = dict(E_X=ex2.sqrt(), E_X0=ex02.sqrt(), E_W=ew2.sqrt(),
+                  E_u=eu2.sqrt(), E_Y=radius(y), E_Y0=radius(y0), E_P=radius(y-y0))
     return dict(Y=y, Y0=y0, P=y-y0, residual=I(max(0, r2.lo), r2.hi).sqrt(),
                 residual0=I(max(0, r02.lo), r02.hi).sqrt(),
                 residual_first=residual_first, residual_last=residual_last,
-                attempts=32, same_stream=True)
+                attempts=32, same_stream=True, errors=errors)
 
 
 def probability_bound(a, eta, maximum, z, budget):
@@ -379,14 +422,28 @@ def probability_bound(a, eta, maximum, z, budget):
     return dict(t=I.of(t), bound=I.of(2*maximum*t)/I.of(z-t))
 
 
-def error_envelope(s, es, amplitude, ea, budget):
+def error_envelope(s, es, amplitude, ea, budget, propagation=None):
     budget.reserve('A03 E scalar propagation', scans=1, ops=512)
     if s <= es:
-        return dict(status='UNRESOLVED', rho_error=None)
-    return dict(status='RESOLVED', rho_error=I.of(ea)/I.of(s-es)+I.of(abs(amplitude)*es)/I.of(s*(s-es)))
+        return dict(status='UNRESOLVED', rho_error=None, E_tau=None, E_u=None, E_P=None)
+    rho = I.of(ea)/I.of(s-es)+I.of(abs(amplitude)*es)/I.of(s*(s-es))
+    result = dict(status='RESOLVED', rho_error=rho, E_S=I.of(es), E_A=I.of(ea),
+                  E_d=None, E_tau=None, E_u=None, E_P=None)
+    if propagation is not None:
+        p = propagation
+        ed, ediam, diameter, n = (I.of(p[k]) for k in ('E_d', 'E_D', 'D', 'N'))
+        etau = ediam/(n*I.of(s-es))+diameter*I.of(es)/(n*I.of(s*(s-es)))
+        eu = None if amplitude <= ea else 2*ed/I.of(amplitude-ea)+I.of(p['E_normalize'])
+        ep = None
+        if eu is not None:
+            et = (1+eu)*I.of(p['E_W'])+eu*I.of(p['R_W'])+I.of(p['E_dot'])
+            ep = et/I.of(s-es)+I.of(abs(p['T'])*es)/I.of(s*(s-es))+I.of(p['E_div'])
+        result.update(E_d=ed, E_tau=etau, E_u=eu, E_P=ep)
+    return result
 
 
-def paired_summary(main, uniform, analytic, threshold, budget):
+def paired_summary(main, uniform, analytic, threshold, budget, seed_errors=None,
+                   analytic_error=F(0), continuous_error=F(0)):
     budget.reserve('A03 S3 paired delta mean sd ci', scans=7, ops=1024)
     if len(main) != 3 or len(uniform) != 3:
         raise ValueError('three paired seeds required')
@@ -397,17 +454,26 @@ def paired_summary(main, uniform, analytic, threshold, budget):
     t = (I.of(722)/39).sqrt()
     half = t*sd/I.of(3).sqrt()
     lower, upper = mean-half, mean+half
+    errors = [I.of(v) for v in (seed_errors if seed_errors is not None else [0]*3)]
+    if len(errors) != 3 or any(e.lo < 0 for e in errors):
+        raise ValueError('three nonnegative seed errors')
+    emean = sum(errors, ZERO)/3
+    esd = sum((e*e for e in errors), ZERO).sqrt()/I.of(2).sqrt()
+    ei = emean+t*esd/I.of(3).sqrt()+radius(half)+radius(mean)
+    er = I.of(analytic_error)
+    ec = None if continuous_error is None else I.of(continuous_error)
     # Endpoint tokens represent the exact algebraic L/U for boundary tests;
     # same-expression equality is proved symbolically, not by interval overlap.
     equal_endpoint = analytic in ('L', 'U') if isinstance(analytic, str) else False
     ai = lower if analytic == 'L' else upper if analytic == 'U' else I.of(analytic)
-    included = equal_endpoint or (ai.lo >= lower.hi and ai.hi <= upper.lo)
+    included = equal_endpoint or (ai.lo >= (lower-ei-er).hi and ai.hi <= (upper+ei+er).lo)
     threshold_equal_lower = threshold == 'L'
     th = lower if threshold_equal_lower else I.of(threshold)
-    strict = not threshold_equal_lower and lower.lo > th.hi and ai.lo > th.hi
+    strict = ec is not None and not threshold_equal_lower and (lower-ei-ec).lo > th.hi and (ai-er-ec).lo > th.hi
     return dict(mean=mean, sd=sd, L=lower, U=upper, t=t, included=included,
                 passed=included and strict, endpoint_equality=equal_endpoint,
-                df=2, same_seed_difference_first=True)
+                df=2, same_seed_difference_first=True, E_mean=emean, E_SD=esd,
+                E_I=ei, E_R=er, E_cont=ec)
 
 
 def macro(rows, indices, budget):
@@ -421,7 +487,11 @@ def intersection(statuses, budget):
     budget.reserve('A03 Ag eight-way intersection', scans=1, ops=256)
     if len(statuses) != 8:
         raise ValueError('four references times all/tail')
-    return all(statuses)
+    def eligible(row):
+        if isinstance(row, bool):
+            return row
+        return (row['passed'] and all(row[k] is not None for k in ('E_I', 'E_R', 'E_cont')))
+    return all(eligible(row) for row in statuses)
 
 
 class StreamJSON:
@@ -438,6 +508,8 @@ class StreamJSON:
 
     def value(self, keep=True, depth=0, selected=None):
         self.nodes += 1
+        if ACTIVE:
+            ACTIVE.actual['json_nodes'] += 1
         if depth > 16 or self.nodes > 65536:
             raise Gate('JSON depth/node capacity')
         self.ws()
@@ -597,7 +669,8 @@ def metadata(root, identities, budget, bundle):
                                  message_index_sha256=hashlib.sha256(''.join(hashes).encode()).hexdigest(),
                                  message_locator=f"messages/{ref['reference_id']}/client_{{000..019}}.pt",
                                  denominator_source=f"D/{ds}/counts.json:n_ic[0:20],N_c[0:{C}]",
-                                 denominator_binding='G references[].binding.input_versions/counts + D n_ic/N_c',
+                                 denominator_binding='reference_acceptance.json:references[].binding.source_files["counts.json"].sha256 + binding.split_identity.counts_source.sha256 == info.json:artifact_sha256["counts.json"]; counts.json:n_ic/N_c',
+                                 field_sources='reference_acceptance.json:references[].reference.{reference_id,dataset,task_identity,checkpoint_path,state_sha256,training_progress}; backbone_preparation_v1/manifest.json:references[] equals reference; binding.{class_groups,label_mapping,split_identity}; phaseG1_2_full_v1/artifact_hashes.json:files[message_locator]',
                                  tail_denominator=len(tail), metadata_binding_status='PASS',
                                  binary_qualification='NOT_RUN'))
             for c in range(C):

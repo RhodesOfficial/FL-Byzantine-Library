@@ -1,4 +1,4 @@
-param([ValidateSet('V1','V2','S3')][string]$Run='V1')
+param([ValidateSet('V2','S3')][string]$Run='V2')
 $ErrorActionPreference='Stop'
 # A00: immutable authorization, time and all six accounts exist before data reads.
 $g13Clock=[Diagnostics.Stopwatch]::StartNew()
@@ -7,12 +7,13 @@ $g13Base='artifacts/direction_a/phaseG1_3_A_d4_v1'
 $g13Rel="$g13Base/$Run"
 $g13Out=Join-Path $g13Root $g13Rel
 $g13Utf8=[Text.UTF8Encoding]::new($false,$true)
-$g13Auth=@{commit='aeef05f773f4bc6884ac243272bfff4189eb4703';base='b60af37456c70ea12028f996489380ba827d1323';decision='docs/DIRECTION_A_G1_3_ADJUDICATION_v3.md';contract='docs/DIRECTION_A_PROTOCOL_FREEZE_v1.md section seven D4';task='docs/workflow/TO_EXECUTOR.md';D4='author approved option A 2026-10-19';real_entries=0}
+$g13Auth=@{commit='ba35578c9813009f3299734534be75496a5e1461';base='1055174751001e99c5ab6cb02bb62a6113d44a44';decision='docs/workflow/TO_EXECUTOR.md at ba35578';contract='docs/DIRECTION_A_PROTOCOL_FREEZE_v1.md section seven D4';task='docs/workflow/TO_EXECUTOR.md';D4='author approved option A 2026-10-19; original V2 repair only';real_entries=0;predecessor_program_status='PASS';predecessor_acceptance='1-5 FAIL,6-7 PASS';repair_signature='POST_RUN_AUDIT: independent oracle/error propagation/protection/accounting';predecessor_nine_git_objects='d84bac4c2b4062fa821e2fadf5d77ae29cfa8be0,6ea0b150db5ff4a5eaf47a1cc3b7d1086b2d5ae3,81578a0f070b59fb731e4e2d0cc66bf2c950ea81,fae44b86919ff623e57ddb3f436634dc739c885b,51e21ac60affd5ac4b55beb1ee46df495bb46269,cd5f8ad95f8b9bc3571761a0cb9cd17199e47502,ca2e35c136e71ddeb5cc795f8d70e01cb44363b9,2602f910301252ebc2f7fe1cb045ca0090c12275,d12cc90c2838624ce2231a3ade8b4f93cd8e7279';predecessor_five_source_objects='a9dd6b69a2657069d674e8c6fec74122681e2471,ce5623cf33845b772c37a9636fceae09ad62f0f3,adf30493962c5e1d2441741f6df09f8cc645b412,94834d61325d4465e9557423849209c34bc83bd1,4899a4160f984059c8ec11b7e81ed89e572c240f'}
 $g13Limits=@{}
 foreach($g13Name in @('V1','V2')){$g13Limits[$g13Name]=@{seconds=900;read=8388608L;write=4194304L;scans=64000L}}
 foreach($g13Name in @('S1','S2','S3')){$g13Limits[$g13Name]=@{seconds=120;read=8388608L;write=4194304L;scans=16384L}}
 $g13Limits.I=@{seconds=10;read=524288L;write=0L;scans=12L}
 $g13Used=@{};foreach($g13Name in $g13Limits.Keys){$g13Used[$g13Name]=@{read=0L;write=0L;scans=0L;seconds=0.0}}
+$g13Reserved=@{};foreach($g13Name in $g13Limits.Keys){$g13Reserved[$g13Name]=@{read=0L;write=0L;scans=0L}}
 $g13Phase=if($Run -eq 'S3'){'I'}else{$Run}
 $g13PhaseStart=0.0
 $g13Cache=@{}
@@ -61,15 +62,15 @@ public static class G13D4Job {
  [DllImport("kernel32.dll")] static extern bool TerminateJobObject(IntPtr j,uint code);
  [DllImport("kernel32.dll",SetLastError=true)] static extern bool IsProcessInJob(IntPtr p,IntPtr j,out bool value);
  static IntPtr job; static Timer timer; static long deadline; public static long Peak;
- public static void Start(int seconds) {
+ public static void Start(int milliseconds) {
   job=CreateJobObject(IntPtr.Zero,null); if(job==IntPtr.Zero) throw new Exception("CreateJobObject");
   Extended e=new Extended(); e.B.Flags=0x200|0x2000; e.Job=(UIntPtr)2147483648UL;
   if(!SetInformationJobObject(job,9,ref e,(uint)Marshal.SizeOf(e))) throw new Exception("Set Job memory "+Marshal.GetLastWin32Error());
   if(!AssignProcessToJobObject(job,Process.GetCurrentProcess().Handle)) throw new Exception("Assign owner Job "+Marshal.GetLastWin32Error());
-  Deadline(seconds);
-  timer=new Timer(_=> { if(Environment.TickCount64>Interlocked.Read(ref deadline)) TerminateJobObject(job,124); },null,100,100);
+  deadline=Environment.TickCount64+milliseconds;
+  timer=new Timer(_=>TerminateJobObject(job,124),null,Math.Max(1,milliseconds),Timeout.Infinite);
  }
- public static void Deadline(int seconds) { Interlocked.Exchange(ref deadline,Environment.TickCount64+seconds*1000L); }
+ public static void Deadline(int seconds) { Interlocked.Exchange(ref deadline,Environment.TickCount64+seconds*1000L); timer.Change(seconds*1000,Timeout.Infinite); }
  public static long Sample() {
   IntPtr b=Marshal.AllocHGlobal(8+64*IntPtr.Size); try {
    uint used; if(!QueryInformationJobObject(job,3,b,(uint)(8+64*IntPtr.Size),out used)) throw new Exception("Job tree query");
@@ -82,7 +83,8 @@ public static class G13D4Job {
  public static bool Contains(int id) { bool value; using(Process p=Process.GetProcessById(id)) { if(!IsProcessInJob(p.Handle,job,out value)) throw new Exception("IsProcessInJob"); } return value; }
 }
 '@
-[G13D4Job]::Start($(if($Run -eq 'S3'){130}else{1020}))
+$g13InitialLimit=if($Run -eq 'S3'){10}else{900}
+[G13D4Job]::Start([Math]::Max(1,[int][Math]::Floor(($g13InitialLimit-$g13Clock.Elapsed.TotalSeconds)*1000)))
 
 function Check-G13 {
  [void][G13D4Job]::Sample()
@@ -96,7 +98,7 @@ function Capacity-G13([long]$Read=0,[long]$Write=0,[long]$Scans=0) {
  Check-G13
  foreach($g13K in @('read','write','scans')){
   $g13D=@{read=$Read;write=$Write;scans=$Scans}[$g13K]
-  if($g13D -lt 0 -or $g13Used[$g13Phase][$g13K]+$g13D -gt $g13Limits[$g13Phase][$g13K]){throw "quota before access $g13Phase/$g13K"}
+  if($g13D -lt 0 -or [long]$g13Used[$g13Phase][$g13K]+[long]$g13Reserved[$g13Phase][$g13K]+$g13D -gt $g13Limits[$g13Phase][$g13K]){throw "quota before access $g13Phase/$g13K"}
  }
 }
 function Charge-G13([string]$Label,[long]$Read=0,[long]$Write=0,[long]$Scans=0) {
@@ -155,7 +157,8 @@ function Write-G13([string]$Name,$Value,[long]$Max=2097152) {
  $g13Cache["$g13Rel/$Name"]=$g13Raw
 }
 function Snapshot-G13 {
- return @{phase=$g13Phase;used=@{read=$g13Used[$g13Phase].read;write=$g13Used[$g13Phase].write;scans=$g13Used[$g13Phase].scans};job='inherited non-breakaway 2GiB';counts=$g13Counters}
+ $g13Available=@{};foreach($g13K in @('read','write','scans')){$g13Available[$g13K]=[long]$g13Limits[$g13Phase][$g13K]-[long]$g13Used[$g13Phase][$g13K]-[long]$g13Reserved[$g13Phase][$g13K]}
+ return @{phase=$g13Phase;used=@{read=$g13Used[$g13Phase].read;write=$g13Used[$g13Phase].write;scans=$g13Used[$g13Phase].scans};reserved=$g13Reserved[$g13Phase];available=$g13Available;job='inherited non-breakaway 2GiB';counts=$g13Counters}
 }
 function Pipe-G13([string]$Text,[bool]$Send) {
  $g13Length=$g13Utf8.GetByteCount($Text)+1
@@ -215,6 +218,13 @@ function Child-G13([string]$Mode) {
      if($null -ne $g13Lease){throw 'kernel lease cannot renew'}
      Capacity-G13 -Read 1048576 -Write 2097152 -Scans 40000
      $script:g13Lease=@{limits=@{read=1048576L;write=2097152L;scans=40000L};seconds=[Math]::Max(1,875-($g13Clock.Elapsed.TotalSeconds-$g13PhaseStart))}
+     foreach($g13K in @('read','write','scans')){$g13Reserved[$g13Phase][$g13K]=$g13Lease.limits[$g13K]}
+     $g13LeaseAccess=0;$g13LeaseRefused=$false
+     $g13OwnerSnapshot=Snapshot-G13
+     try {Capacity-G13 -Read ([long]$g13OwnerSnapshot.available.read+1);$g13LeaseAccess++}catch{if($_.Exception.Message -notlike 'quota before access*'){throw};$g13LeaseRefused=$true}
+     if(-not $g13LeaseRefused -or $g13LeaseAccess -ne 0){throw 'owner reserved lease accessible to IPC'}
+     Charge-G13 'owner reserved lease refusal witness' -Scans 1
+     $g13Witness.owner_reservation=@{status='PASS';zero_accesses=$g13LeaseAccess;reserved_read=$g13Reserved[$g13Phase].read;available_read_before_probe=$g13OwnerSnapshot.available.read;settlement='one report only; reservations retained on missing report'}
      $g13Value=$g13Lease
     }
     cache_chunk {
@@ -227,6 +237,7 @@ function Child-G13([string]$Mode) {
     settle {
      if($null -eq $g13Lease -or $null -ne $g13LeaseReport){throw 'invalid lease settlement'}
      foreach($g13K in @('read','write','scans')){if($g13Req.report.used[$g13K] -gt $g13Lease.limits[$g13K]){throw 'lease exceeded'}}
+     foreach($g13K in @('read','write','scans')){$g13Reserved[$g13Phase][$g13K]=0L}
      Charge-G13 'kernel settled explicit read/write/traversal debits' -Read $g13Req.report.used.read -Write $g13Req.report.used.write -Scans $g13Req.report.used.scans
      $script:g13LeaseReport=$g13Req.report;$script:g13Status=$g13Req.status
      $script:g13Complete=$g13Req.completed;$script:g13Partial=$g13Req.partial;$script:g13NotStarted=$g13Req.not_started
@@ -263,7 +274,10 @@ try {
   $g13Raw=Raw-G13 $g13Path 262144
   $g13BootstrapBytes+=$g13Raw.Length
   if($g13BootstrapBytes -gt 524288){throw 'A00 bootstrap bytes'}
-  if($Run -eq 'V1'){GitIdentity-G13 $g13Raw $g13OldObjects[$g13Index]}else{[void](Hash-G13 $g13Raw $g13Path)}
+  if($Run -eq 'V2'){
+   $g13LockedObjects=@('cd5f8ad95f8b9bc3571761a0cb9cd17199e47502','2602f910301252ebc2f7fe1cb045ca0090c12275','ca2e35c136e71ddeb5cc795f8d70e01cb44363b9','d84bac4c2b4062fa821e2fadf5d77ae29cfa8be0')
+   GitIdentity-G13 $g13Raw $g13LockedObjects[$g13Index]
+  }else{[void](Hash-G13 $g13Raw $g13Path)}
   Charge-G13 'A00 predecessor parse/account traversal' -Scans 1
   $g13Prior[$g13Names[$g13Index]]=ConvertFrom-Json -InputObject $g13Utf8.GetString($g13Raw) -AsHashtable
  }
@@ -272,7 +286,10 @@ try {
   $g13Carry=@{commit='c35ae78';complete_predecessor=$g13Prior;old_block_limit=@{seconds=120;read=4194304;write=4194304;scans=256};old_risk=@{seconds=80;read=3145728;write=3145728;scans=192};old_guard_recorded=@{seconds_upper=2.6099713;read=46589;write=15184;scans=27};isolated_unused=@{seconds=37.3900287;read=1001987;write=1033392;scans=37};time_discrepancy=0.0007893;old_schema_scans=$null;old_FAIL='preserved';times_carried=1}
  } else {
   $g13Prev=$g13Prior['resource_ledger.json']
-  if(-not $g13Prior['receipt.json'].terminal_readback_required -or $g13Prev.status -eq 'PASS' -or $g13Prev.carry_once.times_carried -ne 1){throw 'closed/foreign/incomplete predecessor'}
+  $g13CountsBefore=@([int]$g13Prev.counters.engineering,[int]$g13Prev.counters.implementation_revisions,[int]$g13Prev.counters.syntax,[int]$g13Prev.counters.cpu)
+  if(-not $g13Prior['receipt.json'].terminal_readback_required -or $g13Prev.carry_once.times_carried -ne 1){throw 'foreign/incomplete predecessor'}
+  if($Run -eq 'V2' -and (($g13CountsBefore -join ',') -ne '4,1,2,2' -or $g13Prev.status -ne 'PASS' -or $g13Prior['plan.json'].authorization.commit -ne 'aeef05f773f4bc6884ac243272bfff4189eb4703')){throw 'only explicitly authorized V1 acceptance repair may resume'}
+  foreach($g13K in @('read','write','scans')){if($g13Prev.used[$g13K] -ne $g13Prior['receipt.json'].used[$g13K]){throw 'prior ledger/receipt totals mismatch'}}
   $g13Carry=$g13Prev.carry_once
   foreach($g13K in $g13Prev.counters.Keys){$g13Counters[$g13K]=[int]$g13Prev.counters[$g13K]}
   foreach($g13Name in $g13Prev.accounts.Keys){if($g13Name -ne $g13Phase){$g13Used[$g13Name]=$g13Prev.accounts[$g13Name]}}
@@ -281,7 +298,7 @@ try {
  }
  $g13Counters.engineering++
  if($g13Counters.engineering -gt 6 -or $g13Counters.implementation_revisions -gt 3){throw 'cumulative attempt/revision cap'}
- $g13Plan=@{schema='G13-D4-plan-v1';authorization=$g13Auth;run=$Run;limits=$g13Limits;predecessor=$g13PriorDir;counts_before=@(3,1,1,1);two_rounds_and_independent_seal_frozen=@{seconds=2170;read=42467328;write=20971520;scans=177164};real_entries=0;unknowns=@{physical_io=$null;implicit_interpreter_io=$null;platform_completion_seconds=$null;platform_peak_proof=$null};lease='A02-A05 nonrenewable; unused reservation is not used';bootstrap_bytes=$g13BootstrapBytes}
+ $g13Plan=@{schema='G13-D4-plan-v1';authorization=$g13Auth;run=$Run;limits=$g13Limits;predecessor=$g13PriorDir;counts_before=$g13CountsBefore;two_rounds_and_independent_seal_frozen=@{seconds=2170;read=42467328;write=20971520;scans=177164};this_round_frozen=@{seconds=1020;read=16777216;write=8388608;scans=80384};independent_seal_untouched=@{seconds=130;read=8912896;write=4194304;scans=16396};operation_derivation='A_BUDGET_PROPOSAL sections 2-4; additional radius graph <= 32h per M/Pj; detailed actual named events separate from conservative scan debits';real_entries=0;unknowns=@{physical_io=$null;implicit_interpreter_io=$null;platform_completion_seconds=$null;platform_peak_proof=$null};lease='A02-A05 nonrenewable; owner reserves atomically, IPC sees available only, settle once';bootstrap_bytes=$g13BootstrapBytes;bootstrap_scans=12;V_absolute_seconds=900;V_startup_seconds_included=$true;S_active_seconds=100;S_terminal_seconds=20}
  Write-G13 'plan.json' $g13Plan 65536
  Write-G13 'authorization.json' $g13Auth 16384
  Write-G13 'carry.json' @{predecessor=$g13PriorDir;times_carried=1;old_block='isolated';full_record='resource_ledger.json/carry_once/complete_predecessor'} 65536
@@ -307,7 +324,27 @@ try {
   try {Pipe-G13 ('x'*16384) $false;$g13Access++} catch {$g13Rejections++}
   Charge-G13 'changed interface actual refusal witnesses' -Scans 3
   if($g13Access -ne 0 -or $g13Rejections -ne 3){throw 'changed interface accepted forbidden access'}
-  $g13Witness=@{authorization_refusal_zero_access=$g13Access;byte_cap_refusal_zero_access=$g13Access;actual_rejections=$g13Rejections;status='PASS';dispatch='same Admit-G13 and Pipe-G13 as actual child requests';small_byte_seal='see terminal readback'}
+  $g13Witness=@{authorization_refusal_zero_access=$g13Access;byte_cap_refusal_zero_access=$g13Access;actual_rejections=$g13Rejections;status='PASS';dispatch='same Admit-G13 and Pipe-G13 as actual child requests'}
+  # An actual injected failure with a finally read, separately from happy-path S2.
+  $g13TinyPath="$g13Rel/_finally_probe.json";$g13TinyBytes=[byte[]]@(123,125)
+  $g13TinyFinally=$false;$g13TinyCaught=$false
+  try {
+   try {
+    Charge-G13 'small-byte fault witness write' -Write 2 -Scans 1
+    [IO.File]::WriteAllBytes((Join-Path $g13Root $g13TinyPath),$g13TinyBytes)
+    throw 'INJECTED_SMALL_BYTE_FAULT'
+   } finally {
+    $g13TinyRead=Raw-G13 $g13TinyPath 2
+    Charge-G13 'small-byte finally byte comparison/hash' -Scans 2
+    $g13TinyHash=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($g13TinyRead)).ToLowerInvariant()
+    if(-not [Linq.Enumerable]::SequenceEqual[byte]($g13TinyRead,$g13TinyBytes)){throw 'small-byte finally mismatch'}
+    $g13TinyFinally=$true
+   }
+  }catch{if($_.Exception.Message -ne 'INJECTED_SMALL_BYTE_FAULT'){throw};$g13TinyCaught=$true}
+  if(-not $g13TinyFinally -or -not $g13TinyCaught){throw 'fault did not execute finally'}
+  Charge-G13 'small-byte witness cleanup' -Scans 1
+  [IO.File]::Delete((Join-Path $g13Root $g13TinyPath));$g13Cache.Remove($g13TinyPath)
+  $g13Witness.small_byte_seal=@{status='PASS';injected='INJECTED_SMALL_BYTE_FAULT';finally_executed=$g13TinyFinally;independent_readback='PASS';sha256=$g13TinyHash;read=2;write=2;scans=5;scientific_results=0}
   Child-G13 'validate'
   Child-G13 'probe'
   if($g13Probe.status -ne 'PASS'){throw 'second subprocess inheritance witness missing'}
@@ -347,7 +384,7 @@ try {
    if($g13Rows.Count -gt 64){throw 'manifest file cap'}
    $g13Manifest=@{schema='G13-D4-manifest';files=$g13Rows;excluded=@('artifact_hashes.json self');terminal=@{ledger=('0'*64);receipt=('0'*64)}}
    $g13FinalUsed=@{};foreach($g13K in @('read','write','scans')){$g13FinalUsed[$g13K]='0'*20}
-   $g13Ledger=@{schema='G13-D4-ledger';run=$Run;status=$g13Status;authorization=$g13Auth;carry_once=$g13Carry;accounts=$g13Used;limits=$g13Limits;counters=$g13Counters;actions=$g13Actions;kernel=$g13LeaseReport;kernel_reserved=$g13Lease;failures=$g13Failures;used=$g13FinalUsed;old_history_FAIL_null='preserved';unknowns=@{physical_io=$null;implicit_interpreter_io=$null;startup_total_io=$null;startup_whole_wall=$null;historical_peak=$null;external_kill_tail=$null};process_tree=@{job_memory_limit=2147483648L;peak_combined_working_set=[G13D4Job]::Peak;CPU_proxy_limit=268435456;CUDA=0};cost_quality='kernel declared scan/operation envelopes are upper debits; exact primitive count not proved';terminal=@{fixed_width=20;readback_required=$true;seconds_used_before_terminal=0.0;tail_seconds_reserved=20}}
+   $g13Ledger=@{schema='G13-D4-ledger';run=$Run;status=$g13Status;authorization=$g13Auth;carry_once=$g13Carry;accounts=$g13Used;reserved=$g13Reserved;limits=$g13Limits;counters=$g13Counters;actions=$g13Actions;kernel=$g13LeaseReport;kernel_reserved=$g13Lease;failures=$g13Failures;used=$g13FinalUsed;old_history_FAIL_null='preserved';unknowns=@{physical_io=$null;implicit_interpreter_io=$null;startup_total_io=$null;startup_whole_wall=$null;historical_peak=$null;external_kill_tail=$null;actual_total_scans=$null};process_tree=@{job_memory_limit=2147483648L;peak_combined_working_set=[G13D4Job]::Peak;CPU_proxy_limit=268435456;CUDA=0;V_absolute_limit_seconds=900;startup_included=$true;independent_timer='one-shot Job termination timer, reset only at transition to S'};cost_quality='file/IPC logical bytes counted; scan/operation upper debits distinct from named event actuals; exact total traversal/primitive count remains null';terminal=@{fixed_width=20;readback_required=$true;seconds_used_before_terminal=0.0;tail_seconds_reserved=20;seconds_after_final_readback=$null;observation_boundary='ledger serialized before final writes/readbacks; tool stdout observes later total; no exact end-to-end terminal seconds persisted'}}
    $g13Receipt=@{schema='G13-D4-receipt';run=$Run;status=$g13Status;counters=$g13Counters;used=$g13FinalUsed;syntax=$g13Syntax;cpu=$g13CPU;probe=$g13Probe;changed_interfaces=$g13Witness;terminal_readback_required=$true;closure='success exit after byte, semantic, hash checks';unsettled_kernel=($null -ne $g13Lease -and $null -eq $g13LeaseReport);ipc_frames=$g13Frames;ipc_both_endpoint_bytes=$g13PipeBytes}
    $g13Ledger.terminal.seconds_used_before_terminal=$g13Clock.Elapsed.TotalSeconds-$g13PhaseStart
    $g13Used[$g13Phase].seconds=$g13Ledger.terminal.seconds_used_before_terminal

@@ -65,7 +65,11 @@ def main():
                                 real_metrics=0, real_fee_calculations=0, registered_trajectories=0),
                   continuous_projection_bound=None, continuous_bound_reason='independent proof missing; B/C closed',
                   epsilon_bias=None, epsilon_num=None,
-                  error_objects='sealed binary32 target perturbation=0 by definition; Q192 arithmetic width; historical sqrt(129C)*2e-6*Ri only implementation difference with Ri/vi unknown; continuous eta separate',
+                  error_objects=dict(sealed_target='exact binary32 full head; source perturbation=0 by definition, identity required',
+                     arithmetic='Q192 outward operation graph; rational midpoint radii plus explicit d/S/rho/tau/u/P propagation',
+                     historical_difference='sqrt(129C)*2e-6*Ri bounds implementation difference only',
+                     historical_Ri=None, ideal_vi=None, continuous_eta=None,
+                     continuous_random_projection=None, epsilon_total=None),
                   old_guard_reference='c35ae78:phaseG1_3_A_guard_v1/receipt.json; five prior successful cases not rerun')
     try:
         rpc('cpu_start')
@@ -98,6 +102,8 @@ def main():
                                            outer_authorization='see receipt', subprocess='see receipt',
                                            small_byte_seal='see receipt')
         bundle['status'] = 'PASS'
+        bundle['action_execution_status'] = 'COMPLETE'
+        bundle['acceptance_status'] = 'REQUIRES_POST_RUN_AUDIT'
     except Exception as exc:
         bundle['failures'].append(dict(type=type(exc).__name__, location='A02-A05',
                                       root_cause=str(exc)[:512], new_scientific_results=0))

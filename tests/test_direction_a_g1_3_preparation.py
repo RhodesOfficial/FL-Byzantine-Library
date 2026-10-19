@@ -2,6 +2,15 @@
 import math
 from fractions import Fraction as F
 
+# Independently specified endpoint format, never computed with the tested API.
+ORACLE_Q = 1 << 192
+
+
+def endpoint_oracle(value):
+    numerator = F(value).numerator*ORACLE_Q
+    denominator = F(value).denominator
+    return f'{numerator//denominator}:{-((-numerator)//denominator)}:192'
+
 
 def root_oracle(r, coefficient=F(1)):
     r, scale = F(r), 1 << 256
@@ -23,15 +32,18 @@ def run_suite(api, budget, results):
                        scans=1,
                        ops=dict(M=544*h+256, Pj=1648*h+256, Rj=16*h+64, E=128*h+512,
                                 Bnd=128*h+512, S3=1024, Ag=256)[kind])
-        record = dict(group=group, h=h, kind=kind, status='NOT_COMPLETED', expected='', observed='', checks='')
+        before = dict(budget.actual)
+        ops_before, scans_before = budget.ops, budget.used['scans']
+        record = dict(group=group, h=h, kind=kind, status='NOT_COMPLETED', expected='', observed='', checks='',
+                      oracle_basis='independent rational identities / squared 2^-256 radical enclosure; endpoint grid explicitly 2^192')
         results.append(record)
         checks, expected, observed = [], [], []
         def ck(name, got, want):
             if isinstance(want, tuple):
-                passed = F(got.lo, api.Q) <= want[0] and F(got.hi, api.Q) >= want[1]
+                passed = F(got.lo, ORACLE_Q) <= want[0] and F(got.hi, ORACLE_Q) >= want[1]
                 actual = got.text()
             elif isinstance(got, api.I):
-                passed = F(got.lo, api.Q) <= F(want) <= F(got.hi, api.Q)
+                passed = F(got.lo, ORACLE_Q) <= F(want) <= F(got.hi, ORACLE_Q)
                 actual = got.text()
             else:
                 passed, actual = got == want, str(got)
@@ -39,6 +51,8 @@ def run_suite(api, budget, results):
             expected.append(name+'='+str(want)); observed.append(name+'='+actual)
             if not passed:
                 raise AssertionError(f'{h}/{group}/{kind}/{name}: {actual} vs {want}')
+            if isinstance(got, api.I):
+                assert got.lo <= got.hi and got.hi-got.lo < ORACLE_Q//(1 << 96)
         try:
             try:
                 value = fn()
@@ -51,10 +65,19 @@ def run_suite(api, budget, results):
                 if reject:
                     raise AssertionError('expected rejection did not occur')
                 verify(value, ck)
+                if isinstance(value, dict) and 'errors' in value:
+                    record['error_fields'] = ';'.join(k+'='+('null' if v is None else v.text()) for k, v in value['errors'].items())
+                    assert all(v is None or v.lo >= 0 for v in value['errors'].values())
             record['status'] = 'PASS'
             return value
         finally:
             record.update(expected=';'.join(expected), observed=';'.join(observed), checks=';'.join(checks))
+            record['actual_events'] = ';'.join(k+'='+str(budget.actual[k]-before[k]) for k in before)
+            record['operation_upper_debit'] = budget.ops-ops_before
+            record['scan_upper_debit'] = budget.used['scans']-scans_before
+            record['max_integer_bits_observed_so_far'] = budget.max_bits
+            record['subassertion_count'] = len(checks)
+            record['actual_total_scans'] = None
 
     for h in (1290, 12900):
         v, w = full(h, 1), full(h, 0, 1)
@@ -87,7 +110,7 @@ def run_suite(api, budget, results):
             budget.scan('A03 independent ordered full-coordinate comparison')
             for j in range(h):
                 got = r['G'].get(j)
-                assert got.lo == got.hi == (j+1)*api.Q//16384
+                assert got.lo == got.hi == (j+1)*ORACLE_Q//16384
             c('all_coordinate_order', True, True)
             c('S', r['S'], root_oracle(F(h*(h+1)*(2*h+1), 6*2**28)))
             c('exact_d_zero', r['d_zero'], True)
@@ -126,7 +149,7 @@ def run_suite(api, budget, results):
         def near(r, c):
             c('S', r['S'], root_oracle(h, 1+d/2)); c('rho', r['rho'], d/(4+2*d))
             c('tau', r['tau'], d/(2+d)); c('d', r['d'].get(0), -d/4)
-            c('near_synthetic_threshold', (r['D']/r['S']).hi <= api.I.of(F(1, 100)).lo, True)
+            c('near_synthetic_threshold', (r['D']/r['S']).hi <= ORACLE_Q//100, True)
         row = invoke('10', h, 'M', lambda: M(g=(v, full(h, 1+d))), near); api.release(row)
         row = invoke('11', h, 'M', M, qcheck)
         empty = [[0, 0] for _ in range(32)]
@@ -144,11 +167,15 @@ def run_suite(api, budget, results):
         invoke('13', h, 'Bnd', lambda: api.probability_bound([F(1, 2)]*2, [F(1, 16)]*2, F(1), F(1, 2), budget),
                lambda r, c: (c('t', r['t'], F(1, 16)), c('bound', r['bound'], F(2, 7))))
         invoke('13', h, 'Bnd', lambda: api.probability_bound([F(1, 2)]*2, [F(1, 16)]*2, F(1), F(1, 16), budget), reject=True)
-        invoke('13', h, 'E', lambda: api.error_envelope(F(1), F(1, 4), F(1, 2), F(1, 8), budget), lambda r, c: c('rho_error', r['rho_error'], F(1, 3)))
+        propagation = dict(E_d=F(1, 8), E_D=F(1, 4), D=1, N=2, E_normalize=0,
+                           E_W=F(1, 16), R_W=2, E_dot=0, T=F(1, 2), E_div=0)
+        invoke('13', h, 'E', lambda: api.error_envelope(F(1), F(1, 4), F(1, 2), F(1, 8), budget, propagation),
+               lambda r, c: (c('rho_error', r['rho_error'], F(1, 3)), c('E_d', r['E_d'], F(1, 8)),
+                             c('E_tau', r['E_tau'], F(1, 3)), c('E_u', r['E_u'], F(2, 3)), c('E_P', r['E_P'], F(25, 12))))
         row = invoke('14', h, 'M', lambda: M(pp=[F(1, 2)]*2), lambda r, c: qcheck(r, c, uniform=True))
         invoke('14', h, 'Pj', lambda: api.projection(row, masks, masks, F(1, 2), budget, fixed=True),
                lambda r, c: (c('Y0', r['Y0'], F(1, 2)), c('residual', r['residual'], root_oracle(F(h, 2))),
-                              c('residual_even', r['residual_first'], api.I.of(1).text()), c('residual_bias_last', r['residual_last'], api.ZERO.text())))
+                              c('residual_even', r['residual_first'], endpoint_oracle(1)), c('residual_bias_last', r['residual_last'], endpoint_oracle(0))))
         invoke('14', h, 'Pj', lambda: api.projection(row, masks, masks, F(1, 2), budget),
                lambda r, c: (c('P', r['P'], 0), c('u_zero_Y', r['Y'], 0), c('nonzero_residual', r['residual'], root_oracle(F(h, 2))))); api.release(row)
         def pairedck(r, c):
@@ -156,7 +183,17 @@ def run_suite(api, budget, results):
             lo, hi = root_oracle(F(722, 117))
             c('L', r['L'], (5-hi, 5-lo)); c('U', r['U'], (5+lo, 5+hi))
             c('included', r['included'], True); c('pass', r['passed'], True)
-        invoke('14', h, 'S3', lambda: api.paired_summary([5, 6, 7], [1, 1, 1], 5, 1, budget), pairedck)
+            # e_s=1/64: E_mean=1/64, E_SD=sqrt(3/2)/64,
+            # E_I=(1+t/sqrt(2))/64 plus the enclosing endpoint arithmetic.
+            c('E_mean', r['E_mean'], F(1, 64))
+            c('E_SD', r['E_SD'], root_oracle(F(3, 2), F(1, 64)))
+            c('E_R', r['E_R'], F(1, 128))
+            elo, ehi = root_oracle(F(361, 39), F(1, 64))
+            c('E_I_independent_endpoint_budget',
+              F(r['E_I'].lo, ORACLE_Q) >= F(1, 64)+elo and
+              F(r['E_I'].hi, ORACLE_Q) <= F(1, 64)+ehi+F(1, 2**96), True)
+        invoke('14', h, 'S3', lambda: api.paired_summary([5, 6, 7], [1, 1, 1], 5, 1, budget,
+               seed_errors=[F(1, 64)]*3, analytic_error=F(1, 128)), pairedck)
         invoke('14', h, 'S3', lambda: api.paired_summary([5, 6, 7], [1, 1, 1], 5, 'L', budget), lambda r, c: c('strict_L_equal_FAIL', r['passed'], False))
         invoke('14', h, 'S3', lambda: api.paired_summary([5, 6, 7], [1, 1, 1], 100, 1, budget), lambda r, c: (c('outside', r['included'], False), c('pass', r['passed'], False)))
         invoke('14', h, 'S3', lambda: api.paired_summary([5, 6], [1, 1], 5, 1, budget), reject=True)
@@ -166,7 +203,9 @@ def run_suite(api, budget, results):
                    lambda r, c: (c('endpoint_included', r['included'], True), c('symbolic_equality', r['endpoint_equality'], True)))
         for ix, want in (([0, 1], 2), ([1], 3)):
             invoke('14', h, 'Ag', lambda ids=ix: api.macro([[1]*3, [3]*3], ids, budget), lambda r, c, v=want: [c('macro'+str(s), r[s], v) for s in range(3)])
-        invoke('14', h, 'Ag', lambda: api.intersection([True]*7+[False], budget), lambda r, c: c('eight_intersection', r, False))
+        eight = [dict(passed=True, E_I=F(1, 64), E_R=F(1, 128), E_cont=0) for _ in range(8)]
+        eight[-1]['E_cont'] = None
+        invoke('14', h, 'Ag', lambda: api.intersection(eight, budget), lambda r, c: c('eight_intersection_missing_error_FAIL', r, False))
     assert len(results) == 92 and all(r['status'] == 'PASS' for r in results)
     assert api.f32(-0.0) == 0 and api.f32(2**-149) == F(1, 2**149)
     assert (api.I.of(F(1, 2**200)).lo, api.I.of(F(1, 2**200)).hi) == (0, 1)
@@ -176,4 +215,5 @@ def run_suite(api, budget, results):
         assert 'PRECISION_CAP' in str(exc)
     else:
         raise AssertionError('4096-bit preflight absent')
+    results[-1]['precision_witness'] = 'PASS: independent signed-zero=0; binary32 minimum subnormal=1/2^149; 2^-200 outward endpoints=0:1:192; 4096-bit shift actually rejected before multiply/shift; sqrt loop hard cap4096'
     return results
