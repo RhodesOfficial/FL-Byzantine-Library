@@ -49,7 +49,7 @@ function Save-Receipt($value, $path) {
     [IO.File]::WriteAllText($temp, ($value | ConvertTo-Json) + "`n", (New-Object Text.UTF8Encoding($false)))
     $check = Get-Content -LiteralPath $temp -Raw | ConvertFrom-Json
     if ($check.stage -ne $Mode -or [Math]::Abs($check.program_wall_seconds - $value.program_wall_seconds) -gt 1e-9) { throw 'Temporary receipt readback failed' }
-    if ([IO.File]::Exists($absolute)) { [IO.File]::Replace($temp, $absolute, $null) }
+    if ([IO.File]::Exists($absolute)) { [IO.File]::Replace($temp, $absolute, [NullString]::Value) }
     else { [IO.File]::Move($temp, $absolute) }
     $check = Get-Content -LiteralPath $absolute -Raw | ConvertFrom-Json
     if ($check.stage -ne $Mode -or [Math]::Abs($check.program_wall_seconds - $value.program_wall_seconds) -gt 1e-9) { throw 'Final receipt readback failed' }
