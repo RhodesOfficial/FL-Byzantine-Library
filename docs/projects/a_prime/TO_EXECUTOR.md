@@ -1,6 +1,6 @@
 # 执行任务：E01 固定梯度的场景资格与代表成本
 
-状态：S00 满足 `PROTOCOL.md` §4 后即可执行；否则停止并报告对应原因。**本单不训练骨干或分类头。**
+状态：**READY，S00 已满足 `PROTOCOL.md` §4 的最低结构条件，可执行。** 本单不训练骨干或分类头；不是完整方法效果实验。
 
 ## 本单改变什么决定
 
@@ -11,6 +11,7 @@
 - 工作分支 `codex/direction-a-prime`；以任务交接时的 `git rev-parse HEAD` 记执行输入提交，不填 `master` 或猜未来提交号。
 - 当前协议 `APRIME-EXP-v1`；先读 STATE、PROTOCOL、本单，角色只按 `docs/RESEARCH_WORKFLOW_v1.md`。
 - S00 证据 `artifacts/a_prime/s00/startup_check.json`，元数据来自 `e2d2b81` 的已接纳任务。
+- 启动协议/检查代码的运行前提交为 `f473304`；S00 一次运行通过。尾类跨组 C10 3/4、C100 30/34，只代表允许出现差异，绝不保证梯度偏差非零。
 - 历史输入固定 `ba9b542:artifacts/direction_a/phaseG1_2_full_v1/`。先只读其中 `reference_acceptance.json`、`preregistration.json` 和 `artifact_hashes.json` 所需条目，定位 C100 r80 的身份、20 端类梯度消息及目标定义；路径若不在其中，用该包一层目录清单定位，不扫描其他文献/历史包。
 - 梯度已由 `86c0d64` 验收，本次只核验实际提取文件身份及受影响的解码/类索引，不重造整套验收。不要直接运行旧生产脚本或覆盖旧目录。二进制用安全的字节读取保存方式，不能经 PowerShell 文本重定向转存。
 

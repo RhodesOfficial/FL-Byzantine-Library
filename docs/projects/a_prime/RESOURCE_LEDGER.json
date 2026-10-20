@@ -8,20 +8,40 @@
       "cumulative_program_wall_limit_seconds": 60,
       "output_limit_bytes": 1048576,
       "device": "CPU",
-      "status": "ready"
+      "status": "complete"
     },
     "E01": {
       "cumulative_program_wall_limit_seconds": 1200,
       "monitored_single_process_working_set_limit_bytes": 8589934592,
       "new_local_files_limit_bytes": 268435456,
       "device": "CPU",
-      "status": "conditional_on_S00_minimum_structure"
+      "status": "ready_not_started"
     }
   },
-  "runs": [],
+  "runs": [
+    {
+      "run_id": "APRIME-S00-20261020-01",
+      "input_commit": "f4733046e87f0c4fd66095d076b7c102e46adaa6",
+      "program_wall_seconds": 0.3961099,
+      "program_wall_source": "PowerShell Stopwatch enclosing the Python invocation, including startup and receipt write",
+      "inner_compute_and_evidence_io_seconds": 0.017098299984354526,
+      "inner_time_add_to_total": false,
+      "python_tracemalloc_peak_bytes": 331349,
+      "process_peak_bytes": null,
+      "evidence_and_receipt_bytes": 8957,
+      "gpu_used": false,
+      "external_paid_cost": 0,
+      "complete_units": ["exact_examples", "CIFAR10_count_support", "CIFAR100_count_support", "evidence_save_readback"],
+      "partial_units": [],
+      "repairs": 0,
+      "status": "complete_within_limit",
+      "evidence": "artifacts/a_prime/s00/startup_check.json",
+      "resource_receipt": "artifacts/a_prime/s00/resource_receipt.json"
+    }
+  ],
   "totals": {
-    "recorded_program_wall_seconds": 0,
-    "recorded_program_run_count": 0,
+    "recorded_program_wall_seconds": 0.3961099,
+    "recorded_program_run_count": 1,
     "gpu_runs": 0,
     "paid_external_cost": 0,
     "human_time": null
