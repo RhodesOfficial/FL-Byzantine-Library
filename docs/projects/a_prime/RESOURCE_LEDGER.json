@@ -15,7 +15,11 @@
       "monitored_single_process_working_set_limit_bytes": 8589934592,
       "new_local_files_limit_bytes": 268435456,
       "device": "CPU",
-      "status": "ready_not_started"
+      "status": "complete_with_partial_resource_observation",
+      "complete_remaining_plan_seconds": 670.9508135562903,
+      "remaining_metered_seconds": 1153.6113921,
+      "remaining_after_60s_unmetered_setup_allowance_seconds": 1093.6113921,
+      "remaining_local_artifact_bytes": 113923455
     }
   },
   "runs": [
@@ -31,20 +35,176 @@
       "evidence_and_receipt_bytes": 8957,
       "gpu_used": false,
       "external_paid_cost": 0,
-      "complete_units": ["exact_examples", "CIFAR10_count_support", "CIFAR100_count_support", "evidence_save_readback"],
+      "complete_units": [
+        "exact_examples",
+        "CIFAR10_count_support",
+        "CIFAR100_count_support",
+        "evidence_save_readback"
+      ],
       "partial_units": [],
       "repairs": 0,
       "status": "complete_within_limit",
       "evidence": "artifacts/a_prime/s00/startup_check.json",
       "resource_receipt": "artifacts/a_prime/s00/resource_receipt.json"
+    },
+    {
+      "run_id": "APRIME-E01-20261020-01",
+      "input_commit": "b9e83363e5d74589454a26f812b13ece839f8d36",
+      "initial_implementation_commit": "4695ee8855df0aa0b5635c9a72e96a9eab0370f7",
+      "launcher_fix_commit": "a064cf33ea0770b679c60dd5419219820c58617c",
+      "sealing_recovery_commit": "98a026ed2c997a727eba32ef76dda1d243028d31",
+      "result_commit": "436ccad40f1c53bfef1db1a024dbcb32aa7164f1",
+      "program_wall_seconds": 46.388607900000004,
+      "program_wall_source": "sum disjoint outer Stopwatch intervals, including failure attempt; final meter updates excluded; never add inner timings",
+      "stage_receipts": [
+        {
+          "path": "artifacts/a_prime/e01/full_outer_receipt.json",
+          "stage": "full",
+          "exit_code": 1,
+          "timed_out": false,
+          "program_wall_seconds": 20.3462913,
+          "clock_scope": "PowerShell Stopwatch enclosing interpreter startup, computation, save/readback, inner receipt and first outer receipt write/readback; final meter update excluded",
+          "cumulative_metered_seconds_before_stage": 4.9209602,
+          "unmetered_setup_planning_allowance_seconds": 60,
+          "outer_receipt_write_readback_seconds": 0.0287519
+        },
+        {
+          "path": "artifacts/a_prime/e01/full_outer_receipt_2.json",
+          "stage": "full",
+          "exit_code": 0,
+          "timed_out": false,
+          "program_wall_seconds": 18.1650478,
+          "clock_scope": "PowerShell Stopwatch enclosing interpreter startup, computation, save/readback, inner receipt and first outer receipt write/readback; final meter update excluded",
+          "cumulative_metered_seconds_before_stage": 25.2672515,
+          "unmetered_setup_planning_allowance_seconds": 60,
+          "outer_receipt_write_readback_seconds": 0.027144699999999997
+        },
+        {
+          "path": "artifacts/a_prime/e01/representative_outer_receipt.json",
+          "stage": "representative",
+          "exit_code": 0,
+          "timed_out": false,
+          "program_wall_seconds": 2.1610679,
+          "clock_scope": "PowerShell Stopwatch enclosing interpreter startup, computation, save/readback, inner receipt and first outer receipt write/readback; final meter update excluded",
+          "cumulative_metered_seconds_before_stage": 2.7598923,
+          "unmetered_setup_planning_allowance_seconds": 60,
+          "outer_receipt_write_readback_seconds": 0.029195199999999998
+        },
+        {
+          "path": "artifacts/a_prime/e01/test_outer_receipt.json",
+          "stage": "test",
+          "exit_code": 0,
+          "timed_out": false,
+          "program_wall_seconds": 1.9421344999999999,
+          "clock_scope": "PowerShell Stopwatch enclosing interpreter startup, computation, save/readback, inner receipt and first outer receipt write/readback; final meter update excluded",
+          "cumulative_metered_seconds_before_stage": 0.8177578,
+          "unmetered_setup_planning_allowance_seconds": 60,
+          "outer_receipt_write_readback_seconds": 0.0610087
+        },
+        {
+          "path": "artifacts/a_prime/e01/verify_outer_receipt.json",
+          "stage": "verify",
+          "exit_code": 0,
+          "timed_out": false,
+          "program_wall_seconds": 2.1560919,
+          "clock_scope": "PowerShell Stopwatch enclosing interpreter startup, computation, save/readback, inner receipt and first outer receipt write/readback; final meter update excluded",
+          "cumulative_metered_seconds_before_stage": 43.432299300000004,
+          "unmetered_setup_planning_allowance_seconds": 60,
+          "outer_receipt_write_readback_seconds": 0.019320999999999998
+        }
+      ],
+      "other_disjoint_metered_operations": [
+        {
+          "stage": "fixed_metadata_extraction",
+          "program_wall_seconds": 0.8177578
+        },
+        {
+          "stage": "test_receipt_finalization_only",
+          "program_wall_seconds": 0.1045265
+        },
+        {
+          "stage": "representative_receipt_finalization_and_plan",
+          "program_wall_seconds": 0.0912393
+        },
+        {
+          "stage": "saved_vector_descriptive_summary",
+          "program_wall_seconds": 0.6044509
+        }
+      ],
+      "unmetered_setup_actual_seconds": null,
+      "unmetered_setup_planning_allowance_seconds": 60,
+      "setup_note": "dependency/Git/path probes and pre-launch failure were not metered; 60s is allowance, not invented actual. ACL incident before resume is unmetered environment work, not scientific compute. Ordinary documentation/Git/human work excluded from program totals.",
+      "outer_final_meter_update_time_seconds": null,
+      "inner_time_add_to_total": false,
+      "sampled_current_working_set_max_bytes_recorded": 681443328,
+      "windows_process_peak_working_set_bytes_recorded": 875196416,
+      "complete_cycle_peak_working_set_bytes": null,
+      "memory_note": "OS process peaks recorded for successful test/representative/full-recovery/verify. First failed full process had a live 50ms monitor but no persisted final peak; that peak is unknown, not zero or a Job/GPU peak.",
+      "scientific_artifact_live_bytes_after_seal": 154512001,
+      "artifact_byte_scope": "artifacts/a_prime/e01 plus necessary artifacts_local/a_prime/e01; ordinary docs/Git size not measured byte by byte",
+      "gpu_used": false,
+      "external_paid_cost": 0,
+      "scientific_workload": {
+        "source_clients": 20,
+        "source_class_units": 593,
+        "class_count": 100,
+        "tail_class_count": 34,
+        "registered_conditions": 5,
+        "models_trained": 0,
+        "optimizer_steps": 0,
+        "images_or_predictions_read": 0,
+        "raw_source_bytes": 30921618,
+        "scientific_vector_generations": 1,
+        "scientific_vectors_recomputed_on_resume": false,
+        "summary_and_independent_checks_resumed_after_sealing_error": true
+      },
+      "full_attempts": 2,
+      "engineering_notes": [
+        "Pre-launch Unicode default path failed; no Python scientific run launched; fixed environment-based path.",
+        "Successful checks retained: floating-second exact comparison and null backup-path finalization were repaired without repeating checks or representative.",
+        "Static review partial-save gaps fixed before first gradient read.",
+        "First full attempt computed and saved all vectors; NumPy bool/int JSON serialization failed. One repair resumed saved vectors; no completed source or scientific vector regenerated."
+      ],
+      "complete_units": [
+        "implementation_checks",
+        "representative_save_readback_and_partial_recovery",
+        "20_fixed_sources",
+        "5_registered_conditions",
+        "scientific_vectors",
+        "summary_seal",
+        "complete_identity_and_vector_readback"
+      ],
+      "partial_units": [],
+      "not_started_units": [
+        "E02_representation_and_solver_qualification",
+        "deployable_probability_estimator",
+        "cache_utility",
+        "head_training",
+        "independent_confirmation"
+      ],
+      "scientific_claim_status": "supports measurable controlled fixed-gradient mismatch only; all downstream utility claims untested",
+      "measurement_status": "valid_for_fixed_encoded_gradients",
+      "engineering_status": "complete",
+      "resource_status": "partially_unknown; all metered time and recorded artifacts/memory within limits",
+      "status": "complete_with_partial_resource_observation",
+      "evidence": "artifacts/a_prime/e01/results.json",
+      "summary": "artifacts/a_prime/e01/summary.json",
+      "recovery_evidence": "artifacts/a_prime/e01/recovery_verification.json",
+      "plan": "artifacts/a_prime/e01/plan.json"
     }
   ],
   "totals": {
-    "recorded_program_wall_seconds": 0.3961099,
-    "recorded_program_run_count": 1,
+    "recorded_program_wall_seconds": 46.7847178,
+    "recorded_program_run_count": 2,
     "gpu_runs": 0,
     "paid_external_cost": 0,
-    "human_time": null
+    "human_time": null,
+    "resource_unknowns": [
+      "unmetered environment/setup time",
+      "failed first full process peak",
+      "final meter update serialization time",
+      "human work time"
+    ]
   },
   "historical_A_cost": "Not reset or transferred; cite the historical records when reporting total research investment."
 }
