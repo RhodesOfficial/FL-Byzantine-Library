@@ -33,3 +33,8 @@
 # Preserve Windows receipts and the intentionally incomplete serializer output byte-for-byte.
 /artifacts/a_prime/e01/*.json whitespace=cr-at-eol
 /artifacts/a_prime/e01/results_attempt_01.partial.txt whitespace=-blank-at-eol
+# E02 sources are stable text; Windows outer receipts remain byte-preserved evidence.
+/scripts/check_a_prime_e02.py text eol=lf
+/scripts/a_prime_e02_events.py text eol=lf
+/scripts/run_a_prime_e02.ps1 text eol=lf
+/artifacts/a_prime/e02/*.json whitespace=cr-at-eol
