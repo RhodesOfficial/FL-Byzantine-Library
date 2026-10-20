@@ -22,11 +22,27 @@
 - 失败尝试留原回执并以新 attempt 续作；成功阶段拒绝静默重复。JSON 使用同目录临时文件、读回及原子替换；完整来源只查身份，部分文件只修复未完成项；已有结果只能封存或读取，不因低分重算。
 - 新增本地产物 ≤256 MiB；主要数组写前检查已知大小，工作集监测限 8 GiB。实际、暂估和未知成本见唯一 [资源账](RESOURCE_LEDGER.json)，不将内部和外层时间相加。
 
-已完成运行不应再次调用 `full`。可用下面的**只读身份恢复检查**确认当前本地产物仍可读取（不计算新偏差、不训练、不覆盖回执）：
+已完成运行不应再次调用 `full`。当前协议已经增加 E02 条款，不能把 live 协议哈希当 E01 运行输入，否则会错误拒绝未变的封存证据。下列**只读身份恢复检查**使用 E01 输入提交的协议字节校验固定哈希；其他身份仍从实际元数据／来源验证，不计算新偏差、不训练、不改当前协议或回执：
 
 ```powershell
 $py = Join-Path $env:LOCALAPPDATA 'Programs/Python/Python310/python.exe'
-& $py -c "import sys; sys.path.insert(0,'scripts'); import check_a_prime_e01 as e; identity=e.inputs()[-1]; s=e.read_json(e.OUT/'state.json'); assert e.verify_state(s,identity)==list(range(20)); r=e.read_json(e.OUT/'results.json'); assert r['identity']==identity and e.sha(e.OUT/'results.json')==s['result_sha256']; assert e.sha(e.ROOT/r['vectors']['path'])==s['vectors_sha256']==r['vectors']['sha256']; assert all(c['status']=='complete' for c in s['conditions']); print('identities and complete local artifacts verified; no scientific recomputation')"
+$check = @'
+import sys
+sys.path.insert(0, 'scripts')
+import check_a_prime_e01 as e
+identity = e.inputs()[-1]
+frozen = e.subprocess.run(['git', 'show', 'b9e83363e5d74589454a26f812b13ece839f8d36:docs/projects/a_prime/PROTOCOL.md'], stdout=e.subprocess.PIPE, check=True).stdout
+identity['protocol_sha256'] = e.hashlib.sha256(frozen).hexdigest()
+s = e.read_json(e.OUT/'state.json')
+assert identity['protocol_sha256'] == s['identity']['protocol_sha256']
+assert e.verify_state(s, identity) == list(range(20))
+r = e.read_json(e.OUT/'results.json')
+assert r['identity'] == identity and e.sha(e.OUT/'results.json') == s['result_sha256']
+assert e.sha(e.ROOT/r['vectors']['path']) == s['vectors_sha256'] == r['vectors']['sha256']
+assert all(c['status'] == 'complete' for c in s['conditions'])
+print('frozen input identities and complete local artifacts verified; no scientific recomputation')
+'@
+& $py -c $check
 ```
 
 本地大文件保留在 `artifacts_local/a_prime/e01/`，不纳入 Git；精确路径、字节和哈希在 [状态](../../../artifacts/a_prime/e01/state.json) 与 [结果](../../../artifacts/a_prime/e01/results.json)。这不是仅靠 Git 就能离线恢复全部大文件的声明。若本地文件丢失/哈希改变，检查会明确失败；不得改写 complete 或自动重跑。按固定 Git 来源恢复缺失的原始字节，并经 Reviewer 说明必要的缓存/向量重建范围后再继续；不会恢复为图像训练或旧 P 实验。

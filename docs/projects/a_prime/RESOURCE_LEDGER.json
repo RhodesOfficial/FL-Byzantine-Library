@@ -17,9 +17,31 @@
       "device": "CPU",
       "status": "complete_with_partial_resource_observation",
       "complete_remaining_plan_seconds": 670.9508135562903,
-      "remaining_metered_seconds": 1153.6113921,
-      "remaining_after_60s_unmetered_setup_allowance_seconds": 1093.6113921,
-      "remaining_local_artifact_bytes": 113923455
+      "remaining_metered_seconds": 1151.9443843,
+      "remaining_after_60s_unmetered_setup_allowance_seconds": 1091.9443843,
+      "remaining_local_artifact_bytes": 113810191,
+      "balance_does_not_authorize_E02": true,
+      "executor_and_reviewer_recorded_seconds": 48.0556157
+    },
+    "E02": {
+      "status": "ready_authorized_complete_package_unmeasured",
+      "authorization": "Author selected one complete additional qualification package during Reviewer session 2026-10-20; AP-D04",
+      "cumulative_program_wall_limit_seconds": 1800,
+      "monitored_single_process_working_set_limit_bytes": 8589934592,
+      "new_local_files_limit_bytes": 536870912,
+      "human_workday_limit": 1,
+      "device": "CPU",
+      "gpu_allowed": false,
+      "external_paid_cost_allowed": false,
+      "representative_cycle_limit_seconds": 300,
+      "first_remaining_compute_evaluation_save_plan_seconds": 900,
+      "complete_recovery_and_repair_reserve_seconds": 600,
+      "initial_static_artifact_estimate_bytes_range": [130000000, 140000000],
+      "measured_complete_cycle_seconds": null,
+      "measured_closure_seconds": null,
+      "complete_remaining_plan_seconds": null,
+      "complete_cycle_peak_working_set_bytes": null,
+      "plan_note": "Implementation limits and tentative allocation, not a measured completion bound. Measure representative complete lifecycle and freeze remaining full package once; do not start if the remaining minimum complete work cannot fit. No E03 authorization."
     }
   },
   "runs": [
@@ -191,11 +213,38 @@
       "summary": "artifacts/a_prime/e01/summary.json",
       "recovery_evidence": "artifacts/a_prime/e01/recovery_verification.json",
       "plan": "artifacts/a_prime/e01/plan.json"
+    },
+    {
+      "run_id": "APRIME-E01-REVIEW-20261020-01",
+      "input_commit": "3253a89063637836f0dcabcd95f9169da05cfb26",
+      "program_wall_seconds": 1.6670078,
+      "program_wall_source": "PowerShell Stopwatch enclosing bundled Python directed reduction, evidence save and readback; inner compute not added",
+      "inner_compute_save_readback_seconds": 1.579062099976,
+      "inner_time_add_to_total": false,
+      "evidence_bytes": 113264,
+      "complete_cycle_peak_working_set_bytes": null,
+      "memory_note": "Directed NumPy review reduction was not OS-peak metered; keep unknown, not zero. Existing sealed local decoded vectors read; no extraction or training.",
+      "gpu_used": false,
+      "external_paid_cost": 0,
+      "scientific_workload": {
+        "fixed_conditions_reduced": 2,
+        "classes": 100,
+        "maximum_class_holders": 12,
+        "exact_holder_subset_enumeration": true,
+        "models_trained": 0,
+        "images_or_predictions_read": 0,
+        "events_resampled": 0
+      },
+      "status": "complete_directed_review_time_and_artifact_within_E01_limit_memory_unknown",
+      "evidence": "artifacts/a_prime/e01/reviewer_check.json",
+      "implementation": "scripts/review_a_prime_e01.py"
     }
   ],
   "totals": {
-    "recorded_program_wall_seconds": 46.7847178,
-    "recorded_program_run_count": 2,
+    "recorded_program_wall_seconds": 48.4517256,
+    "recorded_program_run_count": 3,
+    "authorized_program_wall_limit_seconds": 3060,
+    "authorized_limit_not_actual_or_completion_bound": true,
     "gpu_runs": 0,
     "paid_external_cost": 0,
     "human_time": null,
@@ -203,6 +252,8 @@
       "unmetered environment/setup time",
       "failed first full process peak",
       "final meter update serialization time",
+      "Reviewer directed reduction complete process peak",
+      "E02 complete CPU lifecycle, memory peak and temporary artifact overhead (not started)",
       "human work time"
     ]
   },
