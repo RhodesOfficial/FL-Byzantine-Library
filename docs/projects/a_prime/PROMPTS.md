@@ -1,6 +1,8 @@
 # A′ 固定提示词
 
-复制对应整段即可。角色定义、权限和止损统一引用 `docs/RESEARCH_WORKFLOW_v1.md`；本文件仅固定入口、交付动作，不增加角色规则。因此不新写 `ROLE_EXECUTOR.md` / `ROLE_REVIEWER.md`。两角色串行写仓库，不要求新建会话或子代理。
+**当前状态（2026-10-20，AP-D06）：A′ 已封存，E03 关闭。** 下列提示词保留作历史入口，不再用于重复执行旧 E02。旧 PROTOCOL、TO_EXECUTOR、TO_REVIEWER 的字节为运行身份保留，其中 READY/待审不代表当前权限。当前裁决见 [v2 复盘](../../DIRECTION_A_POSTMORTEM_AND_NEXT_STEP_v2.md)；下一工作项见 [B-Q00 只读交接](../../DIRECTION_B_QUALIFICATION_HANDOFF_v1.md)，角色仍只按通用工作流，不另创规则。
+
+以下是封存前使用的固定文本，供历史引用；当前下一工作请使用 B-Q00 交接，不复制旧任务运行。角色定义、权限和止损统一引用 `docs/RESEARCH_WORKFLOW_v1.md`；本文件仅固定入口、交付动作，不增加角色规则。因此不新写 `ROLE_EXECUTOR.md` / `ROLE_REVIEWER.md`。两角色串行写仓库，不要求新建会话或子代理。
 
 ## Executor
 
