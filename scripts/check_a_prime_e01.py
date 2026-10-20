@@ -293,9 +293,9 @@ def tests():
             'layout_and_dtype': True, 'bad_count_reference_class_rejections': rejected}
 
 
-def diagnostic(g, n, totals, tail, s00, probabilities, guard):
+def diagnostic(g, n, totals, tail, s00, probabilities, guard, saved_vectors=None):
     a = n / totals
-    targets = np.sum(a[:, :, None] * g, axis=0)
+    targets = saved_vectors['G_c'].copy() if saved_vectors is not None else np.sum(a[:, :, None] * g, axis=0)
     # Independent scalar math.fsum for every stored target coordinate, not a vectorized duplicate.
     target_residual_max = 0.0
     target_tolerance_max = 0.0
@@ -315,7 +315,7 @@ def diagnostic(g, n, totals, tail, s00, probabilities, guard):
     for (mapping, deadline), p in zip(CONDITIONS, probabilities):
         z = np.sum(a*p[:, None], axis=0)
         weights = a*p[:,None]/z
-        d = np.sum(weights[:,:,None]*g, axis=0)-targets
+        d = saved_vectors['d_c'][len(reports)].copy() if saved_vectors is not None else np.sum(weights[:,:,None]*g, axis=0)-targets
         classes = []
         for c in range(100):
             holders = np.flatnonzero(n[:,c])
@@ -327,7 +327,7 @@ def diagnostic(g, n, totals, tail, s00, probabilities, guard):
             bound = gamma*np.sum((np.abs(weights[:,c])+a[:,c])[:,None]*np.abs(g[:,c]), axis=0)
             linf_tol = float(np.max(bound))
             norm = float(np.linalg.norm(d[c]))
-            l2_tol = float(np.linalg.norm(bound)) + (2*K*EPS)*norm
+            l2_tol = float(np.linalg.norm(bound) + (2*K*EPS)*norm)
             assert residual <= linf_tol
             structure_zero = len(set(p[holders].tolist())) == 1
             if structure_zero:
@@ -341,7 +341,7 @@ def diagnostic(g, n, totals, tail, s00, probabilities, guard):
                             'd_c_L2': norm, 'arithmetic_Linf_tolerance': linf_tol,
                             'arithmetic_L2_tolerance': l2_tol, 'scalar_reference_max_abs_residual': residual,
                             'structural_zero_same_probability_sources': structure_zero,
-                            'arithmetic_resolved_nonzero': norm > l2_tol})
+                            'arithmetic_resolved_nonzero': bool(norm > l2_tol)})
             guard.check()
         norms = np.array([r['d_c_L2'] for r in classes])
         def summary(ids):
@@ -412,7 +412,7 @@ def main(args):
             assert plan['identity'] == identity and plan['budget_covers_complete_remaining_cycle']
             state = read_json(state_path)
             completed = verify_state(state, identity)
-            before = {i: state['sources'][i]['record']['decoded_sha256'] for i in completed}
+            before = {str(i): state['sources'][i]['record']['decoded_sha256'] for i in completed}
             for i in range(20):
                 if i in completed:
                     continue
@@ -432,10 +432,17 @@ def main(args):
             for cond in state['conditions']:
                 cond['status'] = 'partial'
             save_json(state_path, state, exclusive=False)
-            t = time.perf_counter()
-            targets, biases, reports, target_checks = diagnostic(g,n,totals,tail,s00,probabilities,guard)
-            computation = time.perf_counter()-t
             vectors = LOCAL/'result_vectors.npz'
+            saved_vectors = None
+            checkpoint_hash = None
+            if vectors.exists():
+                checkpoint_hash = sha(vectors)
+                with np.load(vectors, allow_pickle=False) as previous:
+                    assert previous['G_c'].shape == (100,K) and previous['d_c'].shape == (5,100,K)
+                    saved_vectors = {'G_c': previous['G_c'].copy(), 'd_c': previous['d_c'].copy()}
+            t = time.perf_counter()
+            targets, biases, reports, target_checks = diagnostic(g,n,totals,tail,s00,probabilities,guard,saved_vectors)
+            computation = time.perf_counter()-t
             if vectors.exists():
                 # An unpublished partial condition is resumable; preserve matching saved vectors.
                 with np.load(vectors, allow_pickle=False) as prior:
@@ -468,7 +475,10 @@ def main(args):
                          'tolerance_scope': 'current encoded-float arithmetic only; not error versus true gradients',
                          'diagnostic_compute_seconds': computation, **target_checks},
                        'recovery': {'completed_at_resume': completed, 'new_sources_computed': [i for i in range(20) if i not in completed],
-                                    'preserved_decoded_hashes': before, 'completed_sources_recomputed': False},
+                                    'preserved_decoded_hashes': before, 'completed_sources_recomputed': False,
+                                    'saved_scientific_vectors_reused': saved_vectors is not None,
+                                    'scientific_vector_sha256_before_resume': checkpoint_hash,
+                                    'scientific_vector_sha256_after_resume': sha(vectors)},
                        'scientific_scope': 'controlled fixed-gradient source mismatch only; not random-ratio expectation, deployable estimates, representation or utility'}
             save_json(OUT/'results.json', payload)
             for cond in state['conditions']:
