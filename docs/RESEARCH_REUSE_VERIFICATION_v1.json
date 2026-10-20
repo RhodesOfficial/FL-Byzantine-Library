@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-20",
+  "source_commit": "ba9b542",
+  "kind": "reuse_acceptance_not_science_experiment",
+  "status": "PASS",
+  "tests": {
+    "run_data_oracles": [
+      "LT constants, exact largest-remainder allocation and tie rules",
+      "scalar accuracy/recall/client/worst-decile/missing denominators",
+      "hand-label fixture conservation and validation-leakage negative control"
+    ],
+    "run_model_oracles": [
+      "uint8 transform scalar references",
+      "head=19 hand calculation",
+      "uniform-logits CE=ln(10)"
+    ],
+    "run_guard_oracles": [
+      "count bound stops before action",
+      "phase-time bound",
+      "total-time bound"
+    ]
+  },
+  "task_reader_hash_checks": [
+    "artifacts/direction_a/phase0_2_v1/tasks/FedPCC-0.2-candidate-CIFAR10-N20-v1",
+    "artifacts/direction_a/phase0_2_v1/tasks/FedPCC-0.2-candidate-CIFAR100-N20-v1",
+    "artifacts/direction_a/phase0_2_v1/tasks/FedPCC-0.2-smoke-CIFAR10-v1",
+    "artifacts/direction_a/phase0_2_v1/tasks/FedPCC-0.2-smoke-CIFAR100-v1"
+  ],
+  "scans": 13,
+  "head_forward_calls": 1,
+  "device": "CPU",
+  "real_images_loaded": false,
+  "training": false,
+  "historical_files_modified": false,
+  "elapsed_seconds": 9.154113,
+  "scope_limit": "Existing fixture tests and sealed task hash loading only; does not re-certify historical resource compliance or scientific effectiveness."
+}
