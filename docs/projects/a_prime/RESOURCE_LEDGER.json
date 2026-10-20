@@ -24,7 +24,7 @@
       "executor_and_reviewer_recorded_seconds": 48.0556157
     },
     "E02": {
-      "status": "representative_complete_remaining_plan_frozen",
+      "status": "primary_cycle_complete_with_auxiliary_missing_and_partial_resource_observation",
       "authorization": "Author selected one complete additional qualification package during Reviewer session 2026-10-20; AP-D04",
       "cumulative_program_wall_limit_seconds": 1800,
       "monitored_single_process_working_set_limit_bytes": 8589934592,
@@ -47,7 +47,12 @@
       "plan_note": "Implementation limits and tentative allocation, not a measured completion bound. Measure representative complete lifecycle and freeze remaining full package once; do not start if the remaining minimum complete work cannot fit. No E03 authorization.",
       "representative_os_peak_working_set_bytes": 741044224,
       "plan_evidence": "artifacts/a_prime/e02/plan.json",
-      "remaining_metered_seconds": 1788.4056366
+      "remaining_metered_seconds": 1761.3029631,
+      "actual_program_wall_seconds": 38.6970369,
+      "unused_balance_does_not_authorize_new_work": true,
+      "recorded_os_process_peak_working_set_bytes": 919511040,
+      "live_artifacts_bytes": 200355439,
+      "remaining_local_artifact_bytes": 336515473
     }
   },
   "runs": [
@@ -249,10 +254,20 @@
       "run_id": "APRIME-E02-20261020-01",
       "input_commit": "a2284d267ec757418ba105ab3f1fe033490d7322",
       "initial_implementation_commit": "cadebf9618880828597fa97be206354ef405717c",
-      "program_wall_seconds": 11.594363399999999,
+      "program_wall_seconds": 38.6970369,
       "program_wall_source": "Disjoint outer stage Stopwatches; interpreter startup and child work included; final receipt serialization excluded. Inner timing not added.",
       "inner_time_add_to_total": false,
       "stage_receipts": [
+        {
+          "stage": "full",
+          "attempt": 1,
+          "exit_code": 0,
+          "timed_out": false,
+          "program_wall_seconds": 23.778042799999998,
+          "cumulative_before_seconds": 11.5943634,
+          "clock_scope": "Outer Stopwatch includes interpreter startup and child work; final receipt serialization excluded, not added to internal timings",
+          "windows_process_peak_working_set_bytes": null
+        },
         {
           "stage": "representative",
           "attempt": 1,
@@ -262,39 +277,113 @@
           "cumulative_before_seconds": 0,
           "clock_scope": "Outer Stopwatch includes interpreter startup and child work; final receipt serialization excluded, not added to internal timings",
           "windows_process_peak_working_set_bytes": null
+        },
+        {
+          "stage": "verify",
+          "attempt": 1,
+          "exit_code": 0,
+          "timed_out": false,
+          "program_wall_seconds": 3.3246306999999997,
+          "cumulative_before_seconds": 35.3724062,
+          "clock_scope": "Outer Stopwatch includes interpreter startup and child work; final receipt serialization excluded, not added to internal timings",
+          "windows_process_peak_working_set_bytes": null
         }
       ],
       "complete_units": [
-        "implementation_checks",
-        "trusted_inputs",
+        "input_objects",
         "validation_features",
-        "representative_save_readback_optimizer_restore",
-        "representative_node0"
+        "real_head_optimization",
+        "shuffled_head_optimization",
+        "head_optimizer_states",
+        "dynamic_nodes_events",
+        "registered_evaluations",
+        "save_readback",
+        "implementation_checks",
+        "representative_cross_process_optimizer_resume",
+        "independent_identity_and_evidence_readback"
       ],
-      "partial_units": [
-        "real_head_3_accepted_iterations",
-        "shuffled_head_3_accepted_iterations"
-      ],
+      "partial_units": [],
       "not_started_units": [
-        "remaining_dynamic_nodes_events",
-        "registered_head_evaluations",
-        "final_independent_readback",
         "E03_method_utility",
-        "independent_confirmation"
+        "new_references",
+        "CIFAR10",
+        "independent_confirmation",
+        "FedStale_full_algorithm_probability_assumptions",
+        "returned_mean_exact_conditional_variance_MSE"
       ],
       "repairs_after_failed_runs": 0,
-      "status": "representative_complete_full_pending",
+      "status": "primary_cycle_complete_with_auxiliary_missing_and_partial_resource_observation",
       "gpu_used": false,
       "external_paid_cost": 0,
-      "evidence": "artifacts/a_prime/e02/representative.json",
+      "evidence": "artifacts/a_prime/e02/summary.json",
       "plan": "artifacts/a_prime/e02/plan.json",
       "scientific_artifact_live_bytes_at_representative": 160440883,
-      "windows_process_peak_working_set_bytes_recorded": 741044224,
-      "complete_cycle_peak_working_set_bytes": null
+      "windows_process_peak_working_set_bytes_recorded": 919511040,
+      "complete_cycle_peak_working_set_bytes": null,
+      "formal_implementation_and_frozen_plan_commit": "eb979220543e8b36b4896ca4ff6b7546fd80e50d",
+      "result_commit": "6f49bc5d54c97802854eb3ffa07c710b5496dd0a",
+      "raw_estimator_evidence": "artifacts/a_prime/e02/event_results.json",
+      "head_evidence": "artifacts/a_prime/e02/head_results.json",
+      "recovery_evidence": "artifacts/a_prime/e02/recovery_verification.json",
+      "scientific_artifact_live_bytes_after_seal": 200355439,
+      "artifact_byte_scope": "artifacts/a_prime/e02 plus necessary artifacts_local/a_prime/e02; docs/Git excluded",
+      "memory_note": "Windows GetProcessMemoryInfo OS process peaks through recorded snapshots; not Job/GPU peaks. Outer final peak unavailable; unobserved final tail kept unknown.",
+      "scientific_claim_status": "representation exploratory qualification supported; predefined joint >=10% increment against IPW and cache-only rejected on this fixed pressure path; method utility untested",
+      "measurement_status": "valid for fixed exposed reference/path; returned-mean conditional variance/MSE remain unmeasured",
+      "engineering_status": "primary lifecycle complete; representative optimizer resume and independent readback verified; auxiliary returned-mean exact conditional second moments not started",
+      "resource_status": "partially_unknown; all metered time, live artifacts and recorded process working sets within limits",
+      "head_results": {
+        "real": {
+          "iteration": 124,
+          "value_gradient_calls": 256,
+          "objective": 2.8032333289081364,
+          "gradient_norm": 0.00034941021608413694,
+          "strong_convex_gap_bound": 6.104374955198163e-05,
+          "sufficient": true
+        },
+        "shuffled": {
+          "iteration": 94,
+          "value_gradient_calls": 192,
+          "objective": 3.8767079957548742,
+          "gradient_norm": 0.0004220373862247746,
+          "strong_convex_gap_bound": 8.905777768571979e-05,
+          "sufficient": true
+        }
+      },
+      "scientific_workload": {
+        "references": 1,
+        "classes": 100,
+        "tail_classes": 34,
+        "clients": 20,
+        "training_features_reused_samples": 9754,
+        "training_images_encoded": 0,
+        "unique_previously_exposed_validation_images_encoded": 1000,
+        "registered_validation_head_evaluations": 5,
+        "head_fits": 2,
+        "total_accepted_LBFGS_iterations": 218,
+        "total_training_value_gradient_calls": 448,
+        "public_head_nodes": 15,
+        "client_gradient_node_computations": 15,
+        "representative_node0_recomputed": false,
+        "independent_event_seeds": 32,
+        "deltas": 2,
+        "history_groups": 2,
+        "base_uniform_draws": 102400,
+        "used_history_rounds_per_seed_per_delta": 64,
+        "used_future_rounds_per_seed_per_delta": 15,
+        "backbone_optimizer_steps": 0,
+        "method_branching_FL_training_runs": 0,
+        "test_image_prediction_accesses": 0
+      },
+      "unmetered_setup_actual_seconds": null,
+      "outer_final_receipt_serialization_seconds": null,
+      "human_active_work_seconds": null,
+      "human_work_scope": "One session on 2026-10-20, within one-workday task window; exact active effort unmetered",
+      "static_fixes_not_repeated_scientific_runs": true
     }
   ],
   "totals": {
-    "recorded_program_wall_seconds": 60.046089,
+    "recorded_program_wall_seconds": 87.1487625,
     "recorded_program_run_count": 4,
     "authorized_program_wall_limit_seconds": 3060,
     "authorized_limit_not_actual_or_completion_bound": true,
@@ -306,8 +395,8 @@
       "failed first full process peak",
       "final meter update serialization time",
       "Reviewer directed reduction complete process peak",
-      "E02 formal CPU lifecycle and peak until completion; representative measured",
-      "human work time"
+      "human work time",
+      "E02 unmetered dependency/Git setup, outer receipt serialization and complete final-tail process peak"
     ]
   },
   "historical_A_cost": "Not reset or transferred; cite the historical records when reporting total research investment."
