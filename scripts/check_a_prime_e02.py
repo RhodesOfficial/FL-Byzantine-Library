@@ -164,7 +164,7 @@ def initialize():
               'data_access':'Trusted official train container hash/decode; only 1000 previously exposed validation images encoded; no official test file/images/predictions read; training features reused',
               'environment':{'python':sys.version,'torch':torch.__version__,'numpy':np.__version__,
                              'platform':platform.platform(),'threads':torch.get_num_threads(),'device':'CPU'},
-              'full_checkpoint_schema':list(saved) if 'saved' in locals() else 'model_state accepted'}
+              'full_checkpoint_schema':'state_dict plus metadata (trusted historical checkpoint)'}
     save_json(OUT/'input_identity.json',manifest)
     TIMINGS['initialize_seconds']=time.perf_counter()-t
     return load_inputs()

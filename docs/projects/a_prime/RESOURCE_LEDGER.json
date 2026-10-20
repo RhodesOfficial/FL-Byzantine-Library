@@ -24,7 +24,7 @@
       "executor_and_reviewer_recorded_seconds": 48.0556157
     },
     "E02": {
-      "status": "ready_authorized_complete_package_unmeasured",
+      "status": "representative_complete_remaining_plan_frozen",
       "authorization": "Author selected one complete additional qualification package during Reviewer session 2026-10-20; AP-D04",
       "cumulative_program_wall_limit_seconds": 1800,
       "monitored_single_process_working_set_limit_bytes": 8589934592,
@@ -36,12 +36,18 @@
       "representative_cycle_limit_seconds": 300,
       "first_remaining_compute_evaluation_save_plan_seconds": 900,
       "complete_recovery_and_repair_reserve_seconds": 600,
-      "initial_static_artifact_estimate_bytes_range": [130000000, 140000000],
-      "measured_complete_cycle_seconds": null,
-      "measured_closure_seconds": null,
-      "complete_remaining_plan_seconds": null,
+      "initial_static_artifact_estimate_bytes_range": [
+        130000000,
+        140000000
+      ],
+      "measured_complete_cycle_seconds": 11.594363399999999,
+      "measured_closure_seconds": 0.00992733125895029,
+      "complete_remaining_plan_seconds": 724.4354280728076,
       "complete_cycle_peak_working_set_bytes": null,
-      "plan_note": "Implementation limits and tentative allocation, not a measured completion bound. Measure representative complete lifecycle and freeze remaining full package once; do not start if the remaining minimum complete work cannot fit. No E03 authorization."
+      "plan_note": "Implementation limits and tentative allocation, not a measured completion bound. Measure representative complete lifecycle and freeze remaining full package once; do not start if the remaining minimum complete work cannot fit. No E03 authorization.",
+      "representative_os_peak_working_set_bytes": 741044224,
+      "plan_evidence": "artifacts/a_prime/e02/plan.json",
+      "remaining_metered_seconds": 1788.4056366
     }
   },
   "runs": [
@@ -238,11 +244,58 @@
       "status": "complete_directed_review_time_and_artifact_within_E01_limit_memory_unknown",
       "evidence": "artifacts/a_prime/e01/reviewer_check.json",
       "implementation": "scripts/review_a_prime_e01.py"
+    },
+    {
+      "run_id": "APRIME-E02-20261020-01",
+      "input_commit": "a2284d267ec757418ba105ab3f1fe033490d7322",
+      "initial_implementation_commit": "cadebf9618880828597fa97be206354ef405717c",
+      "program_wall_seconds": 11.594363399999999,
+      "program_wall_source": "Disjoint outer stage Stopwatches; interpreter startup and child work included; final receipt serialization excluded. Inner timing not added.",
+      "inner_time_add_to_total": false,
+      "stage_receipts": [
+        {
+          "stage": "representative",
+          "attempt": 1,
+          "exit_code": 0,
+          "timed_out": false,
+          "program_wall_seconds": 11.594363399999999,
+          "cumulative_before_seconds": 0,
+          "clock_scope": "Outer Stopwatch includes interpreter startup and child work; final receipt serialization excluded, not added to internal timings",
+          "windows_process_peak_working_set_bytes": null
+        }
+      ],
+      "complete_units": [
+        "implementation_checks",
+        "trusted_inputs",
+        "validation_features",
+        "representative_save_readback_optimizer_restore",
+        "representative_node0"
+      ],
+      "partial_units": [
+        "real_head_3_accepted_iterations",
+        "shuffled_head_3_accepted_iterations"
+      ],
+      "not_started_units": [
+        "remaining_dynamic_nodes_events",
+        "registered_head_evaluations",
+        "final_independent_readback",
+        "E03_method_utility",
+        "independent_confirmation"
+      ],
+      "repairs_after_failed_runs": 0,
+      "status": "representative_complete_full_pending",
+      "gpu_used": false,
+      "external_paid_cost": 0,
+      "evidence": "artifacts/a_prime/e02/representative.json",
+      "plan": "artifacts/a_prime/e02/plan.json",
+      "scientific_artifact_live_bytes_at_representative": 160440883,
+      "windows_process_peak_working_set_bytes_recorded": 741044224,
+      "complete_cycle_peak_working_set_bytes": null
     }
   ],
   "totals": {
-    "recorded_program_wall_seconds": 48.4517256,
-    "recorded_program_run_count": 3,
+    "recorded_program_wall_seconds": 60.046089,
+    "recorded_program_run_count": 4,
     "authorized_program_wall_limit_seconds": 3060,
     "authorized_limit_not_actual_or_completion_bound": true,
     "gpu_runs": 0,
@@ -253,7 +306,7 @@
       "failed first full process peak",
       "final meter update serialization time",
       "Reviewer directed reduction complete process peak",
-      "E02 complete CPU lifecycle, memory peak and temporary artifact overhead (not started)",
+      "E02 formal CPU lifecycle and peak until completion; representative measured",
       "human work time"
     ]
   },
