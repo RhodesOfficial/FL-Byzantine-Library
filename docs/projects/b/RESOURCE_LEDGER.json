@@ -8,7 +8,7 @@
   "result_commit": "5dad4535fc21d02cf9610fd911069e0bd80bd054",
   "readback_commit": "d5045d2c46a152ce1907781dfe6e25cb08e3ba12",
   "raw_byte_preservation_commit": "7d38506c2a5dc3b35886f30d3c33f4364aed49af",
-  "status": "B_E01_DELIVERED_NEGATIVE_AWAITING_REVIEWER_NO_NEW_SCIENTIFIC_RUN",
+  "status": "B_E01_REVIEWED_SCIENCE_STOP_CURRENT_CANDIDATE_NO_NEW_SCIENTIFIC_RUN",
   "scope": {
     "time": "sum of unique scientific Python invocation external wall-clock increments; startup, dependency probe, recovery and validation included; preparation plus formal once only",
     "memory": "maximum sampled OS Python process working set; startup, between-sample and tail full peak unknown; not Windows Job bytes or GPU memory",
@@ -26,9 +26,9 @@
     "paid_external_resources": false,
     "active_scientific_python_processes": 1,
     "cpu_compute_threads_maximum": 4,
-    "E01": {"wall_seconds":1200,"representative_included_max_seconds":180,"recovery_repair_reserved_seconds":300,"phase_new_artifact_bytes":1073741824,"state":"DELIVERED_MAIN_FALSE_PENDING_REVIEWER"},
-    "E02": {"wall_seconds":1800,"representative_included_max_seconds":300,"recovery_repair_reserved_seconds":480,"cumulative_new_artifact_bytes":2147483648,"state":"CONDITIONAL_ON_E01_PASS_AND_REVIEWER_HANDOFF_NOT_STARTED"},
-    "E03": {"wall_seconds":2400,"representative_included_max_seconds":300,"recovery_repair_reserved_seconds":600,"cumulative_new_artifact_bytes":4294967296,"state":"CONDITIONAL_ON_E02_PASS_AND_CONFIRMATION_FREEZE_NOT_STARTED"}
+    "E01": {"wall_seconds":1200,"representative_included_max_seconds":180,"recovery_repair_reserved_seconds":300,"phase_new_artifact_bytes":1073741824,"state":"REVIEWED_SCIENCE_STOP_COMPLETE"},
+    "E02": {"wall_seconds":1800,"representative_included_max_seconds":300,"recovery_repair_reserved_seconds":480,"cumulative_new_artifact_bytes":2147483648,"state":"STOPPED_E01_SCIENTIFIC_PRECONDITION_FALSE_NOT_STARTED"},
+    "E03": {"wall_seconds":2400,"representative_included_max_seconds":300,"recovery_repair_reserved_seconds":600,"cumulative_new_artifact_bytes":4294967296,"state":"STOPPED_UPSTREAM_SCIENTIFIC_PRECONDITION_FALSE_NOT_STARTED"}
   },
   "new_project_scientific_runs": [
     {"run_id":"e01-001-probe","task":"B-E01","mode":"probe","receipt":"artifacts/b/e01/processes/e01-001-probe.json","external_wall_seconds_increment":4.6943022,"sampled_peak_OS_process_working_set_bytes":359403520,"exit_code":null,"exit_code_status":"unknown in original Start-Process observation; valid environment JSON and warning-only stderr retained; no repeated probe"},
@@ -95,11 +95,60 @@
   "evidence":{"summary":"artifacts/b/e01/summary.json","raw_buffers":"artifacts/b/e01/buffers/","binary_manifest":"artifacts/b/e01/artifact_hashes.json","readback":"artifacts/b/e01/audit_readback.json","git_bytes":"artifacts/b/e01/git_blob_readback.json"},
   "four_columns": {
     "science":"negative current real-gradient qualification: R=C=ABS mean MSE 1.7809342723130015; R vs CACHE improves 28.6700592443 percent only; nonzero 0/64",
-    "measurement":"valid task/reference/encoding/source-order/recovery and 83 manifest entries; 63 tracked evidence files byte-equal Git",
+    "measurement":"valid main task/reference/encoding/source-order/recovery and full denominators; existing 83-entry manifest and 63-file Git seal retained; Reviewer independently recomputed all 256 raw-buffer MSE denominators/fallback equalities; terminal-source reporting scope clarified in same review without rerun",
     "engineering":"complete single task lifecycle; no re-run of completed gradients or method buffers; ordinary process-handle/CRLF persistence fixes in commits",
     "resource":"recorded time/sample working set/retained disk within caps; full startup/tail memory, transient disk peak and manual/historical total partly unknown"
   },
-  "next_decision_suggestion":"Reviewer checks negative E01 and stops current candidate per protocol; Executor neither closes direction itself nor opens E02 or redirects to another candidate",
+  "next_decision_suggestion":"Reviewer adjudicated B-E01 SCIENCE_STOP per frozen protocol; current candidate stopped, E02/E03 not started and not executable; no parameter/reference rescue, strong-control removal or automatic redirect to C",
+  "reviewer_disposition": {
+    "date": "2026-10-21",
+    "review_input_commit": "be91af41461b8a67a83639b337f4a1a57276316e",
+    "decision_record": "docs/projects/b/DECISIONS.md#b-d032026-10-21reviewer-审结科学停止当前候选",
+    "direction_state": "STOPPED_CURRENT_CANDIDATE",
+    "stop_category": "SCIENCE_STOP",
+    "scientific_protocol_identity_unchanged": "B-EXP-v1",
+    "next_ready_task": null,
+    "e02_e03_conditional_execution_enabled": false,
+    "prior_caps_retained_as_historical_plan_not_actual_use": true,
+    "recorded_time_headroom_not_authorization": true,
+    "additional_scientific_production_invocations": 0,
+    "completed_scientific_objects_recomputed": 0,
+    "ordinary_review_document_git_wall_seconds": null,
+    "ordinary_review_cost_status": "not_completely_measured_not_zero; read-only JSON validation and compatibility fixes are ordinary same-cycle review, not new scientific runs or resource gates",
+    "resource_shortfall_seconds": null,
+    "resource_shortfall_status": "not_applicable_scientific_stop; unknown full peaks remain unknown, not zero or automatically over cap",
+    "independent_raw_json_review": {
+      "buffers": 256,
+      "effective_returns": 1024,
+      "methods_per_buffer": 9,
+      "all_trajectory_MSE_means_match_within_frozen_epsilon": true,
+      "R_C_ABS_squared_errors_equal_all_buffers": true,
+      "R_correction_squared_zero_all_buffers": true,
+      "all_R_partitions_more_than_B_and_missing_groups": true,
+      "main_positive_pairs_C_CACHE_ABS": [0,4,0],
+      "main_relative_improvements_C_CACHE_ABS": [0,0.28670059244325252,0]
+    },
+    "terminal_source_scope_clarification": {
+      "original_11_to_15_applies_only_to": "equal_k0.10_s2026102104 final rolling state",
+      "all_matrix_inflight_source_minimum": 5,
+      "all_matrix_inflight_source_maximum": 15,
+      "main_trajectory_source_minima_in_seed_order": [6,7,5,7],
+      "inflight_tasks_per_trajectory": 16,
+      "total_terminal_inflight_tasks": 256,
+      "raw_records_unchanged": true,
+      "report_corrected_in_same_review_without_new_run": true
+    },
+    "retained_artifact_census_independently_checked": {
+      "tracked_evidence_files": 64,
+      "tracked_evidence_bytes": 12856276,
+      "local_binary_files": 37,
+      "local_binary_bytes": 685439466,
+      "total_bytes": 698295742,
+      "full_transient_peak_measured": false
+    },
+    "closure_and_handoff_completed_in_this_review": true,
+    "historical_evidence_and_raw_bytes_preserved": true
+  },
   "historical_references_not_added_again": [
     {"project":"old_B_R01","commit":"d35871b392b46528666b0f00f93b81aa3708b061","ledger":"artifacts/direction_b/r01_v1/ledger.json","delivery":"docs/projects/direction_b/R01_RESULT.md","recorded_process_wall_seconds":1.3655257,"recorded_maximum_peak_working_set_bytes":25731072,"reported_artifact_bytes":575616,"included_in_new_project_increment":false,"manual_work_seconds":null,"scope_note":"historical limited measurement retained by fixed source reference; not rerun or a claim of complete historical cost"},
     {"project":"A_and_A_prime","source_index":"docs/RESEARCH_REUSE_CATALOG_v1.md","included_in_new_project_increment":false,"recomputed":false,"scope_note":"historical costs and exposure remain in their source records; A-prime stays closed"}
@@ -110,6 +159,6 @@
     "All five training source hashes and designated checkpoint file/state hashes match; 583 fixed selected train images, no validation/test predictions.",
     "Recovery envelope separates deployable state from evaluator truth-derived error sums; methods receive only past cache and returned source messages.",
     "Risk reserve is not actual use; unique run increments summed once. Remaining budget cannot override scientific stop.",
-    "E01 qualification is not B completion or a thesis-success verdict; Reviewer dispatches E02 only on all conditions passing."
+    "Reviewer reviewed the negative E01 and stopped this fixed candidate under the authorized conditional chain; E02/E03 scientific preconditions are false, not a lack of prior conditional authorization. Interface/negative evidence is not a thesis-success verdict."
   ]
 }
