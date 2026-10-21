@@ -96,3 +96,5 @@ Executor 以实际输入 `e2aa349`、B-EXP-v1 完成固定真实梯度/连续状
 新增 [DIRECTION_B_POSTMORTEM_AND_NEXT_STEP_v1.md](../../DIRECTION_B_POSTMORTEM_AND_NEXT_STEP_v1.md) 留在结果分支；原始矩阵、运行定义、资源账和实现保持原版本。通用教训、复用索引、寻找说明及工作流结束条款选择性接纳进 master；实际接纳以单独凭证及 master 提交为准，不把整支历史或运行许可迁入主线。本次作者已授权此项归入主线，不再请求重复确认；没有远端推送授权。
 
 导师的选题方法作为本次寻找标准，不改成中途指导安排；论文由作者寻找，本会话不检索、不读论文、不替作者筛论文对。下一步不是新的 READY 实验单。
+
+**实际接纳回执：**本地 master 的 8e7be0c5d1d67111ddaa543003e180116da4d2e0 已从 B 通用文档快照 32cabc923a120778d2aaa4f87efc88148d2da87f 选择性接纳 [凭证](../../RESEARCH_MASTER_PROMOTION_B_v1.md) 列出的五份文件；逐文件 Git blob 相同，master 未引入 B 科学历史/代码/实验包。完整复盘固定来源 a7d6a00，当前分支仍为 codex/direction-b。本轮所有新提交均未推送，远端 29b1e26 的原审结不变。这是同次资产整理的落地记录，不是新一轮科学裁决。

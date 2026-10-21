@@ -2,7 +2,7 @@
 
 2026-10-21｜**B 当前立项 CLOSED；B-E01 REVIEWED／SCIENCE_STOP**｜科学协议 B-EXP-v1 未改
 
-**最终去向（B-D04）：**关闭本轮 B 主线投入，E02/E03 不启动；选择作者自行找新论文，不启动原 C。不是对所有 B 类研究的永久否定。可直接引用的 [完整复盘](../../DIRECTION_B_POSTMORTEM_AND_NEXT_STEP_v1.md) 留本分支；通用经验与工作流选择性接纳 master，实际凭证见后续接纳记录。没有新的 READY 任务；旧提示词已标归档。
+**最终去向（B-D04）：**关闭本轮 B 主线投入，E02/E03 不启动；选择作者自行找新论文，不启动原 C。不是对所有 B 类研究的永久否定。[完整复盘](../../DIRECTION_B_POSTMORTEM_AND_NEXT_STEP_v1.md) 留本分支；五份通用文档已在本地 master@8e7be0c 接纳，见 [凭证](../../RESEARCH_MASTER_PROMOTION_B_v1.md)。下一步按 [找论文说明](../../RESEARCH_SEARCH_BRIEF_v1.md)，没有新的 READY 实验任务；旧提示词已归档。本轮未推送。
 
 分支 codex/direction-b；B-D03 审查输入 be91af41461b8a67a83639b337f4a1a57276316e，审结提交 29b1e26。新阶段输入 e2aa349，实现 1601bba，代表与整包冻结 f583019，结果 5dad453，读回 d5045d2，原始字节保存 7d38506。B-D03 当次只审查维护交接；本次 B-D04 另按作者授权整理复盘与通用资产去向，不生产或重算科学对象。
 
