@@ -2,7 +2,8 @@ param(
   [Parameter(Mandatory=$true)][string]$Python,
   [Parameter(Mandatory=$true)][string]$Mode,
   [Parameter(Mandatory=$true)][string]$RunId,
-  [Parameter(Mandatory=$true)][double]$MaxSeconds
+  [Parameter(Mandatory=$true)][double]$MaxSeconds,
+  [string]$Module='direction_b.e01'
 )
 $ErrorActionPreference='Stop'
 $root = (Get-Location).Path
@@ -16,7 +17,7 @@ $stdout = Join-Path $outDir ($RunId + '.stdout.txt')
 $stderr = Join-Path $outDir ($RunId + '.stderr.txt')
 $codeCommit = (git rev-parse HEAD).Trim()
 $clock = [Diagnostics.Stopwatch]::StartNew()
-$p = Start-Process -FilePath $Python -ArgumentList @('-u','-m','direction_b.e01',$Mode) -WorkingDirectory $root -NoNewWindow -PassThru -RedirectStandardOutput $stdout -RedirectStandardError $stderr
+$p = Start-Process -FilePath $Python -ArgumentList @('-u','-m',$Module,$Mode) -WorkingDirectory $root -NoNewWindow -PassThru -RedirectStandardOutput $stdout -RedirectStandardError $stderr
 $processHandle = $p.Handle # retain native handle so Windows exit code survives process exit
 $peak=0L; $samples=0; $stopped=$false; $reason=$null
 while (-not $p.HasExited) {
@@ -31,7 +32,7 @@ while (-not $p.HasExited) {
   if (-not $p.HasExited) { Start-Sleep -Milliseconds 100 }
 }
 $p.WaitForExit(); $clock.Stop(); $p.Refresh()
-$r=[ordered]@{run_id=$RunId;mode=$Mode;python=$Python;implementation_commit=$codeCommit;start_time_utc=(Get-Date).ToUniversalTime().AddSeconds(-$clock.Elapsed.TotalSeconds).ToString('o');external_wall_seconds=$clock.Elapsed.TotalSeconds;exit_code=$p.ExitCode;sampled_peak_os_process_working_set_bytes=$peak;sample_count=$samples;sample_period_ms=100;full_peak_coverage='unknown_startup_between_samples_and_tail';stopped=$stopped;stop_reason=$reason;stdout=$stdout;stderr=$stderr}
+$r=[ordered]@{run_id=$RunId;mode=$Mode;module=$Module;python=$Python;implementation_commit=$codeCommit;start_time_utc=(Get-Date).ToUniversalTime().AddSeconds(-$clock.Elapsed.TotalSeconds).ToString('o');external_wall_seconds=$clock.Elapsed.TotalSeconds;exit_code=$p.ExitCode;sampled_peak_os_process_working_set_bytes=$peak;sample_count=$samples;sample_period_ms=100;full_peak_coverage='unknown_startup_between_samples_and_tail';stopped=$stopped;stop_reason=$reason;stdout=$stdout;stderr=$stderr}
 $r | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $receipt -Encoding utf8
 $r | ConvertTo-Json -Depth 8
 if ($null -eq $p.ExitCode) { throw 'Exit code was not observed; inspect preserved process output and do not assume zero.' }
