@@ -1,0 +1,71 @@
+{
+  "task": "B-E01",
+  "input_commit": "e2aa3495295d8e19c3c597cb7ea1ca21cd0736a6",
+  "implementation_commit": "1601bbaff73c98be68de0f3c8f216f2a43944cbf",
+  "protocol": "B-EXP-v1",
+  "freeze_before_remaining_matrix": true,
+  "representative_completed": {
+    "runs": ["e01-001-probe", "e01-002-representative", "e01-003-restart"],
+    "external_wall_seconds": 12.2516244,
+    "complete_path_positions": 2,
+    "unique_client_gradient_evaluations": 40,
+    "complete_main_first_trajectory_buffers": 2,
+    "restart_recomputed_completed_gradients": 0,
+    "peak_sampled_OS_process_working_set_bytes": 837795840,
+    "artifact_bytes_after_restart": 335472006
+  },
+  "remaining_scientific_objects": {
+    "path_positions": 14,
+    "unique_client_gradient_evaluations": 280,
+    "trajectories_total": 16,
+    "buffers": 254,
+    "effective_returns": 1016,
+    "methods_per_buffer": 9,
+    "completed_objects_are_reused": true
+  },
+  "time_estimate_not_proven_upper_bound": {
+    "cold_reinitialization_and_state_read_seconds": 25,
+    "gradient_point_measured_max_seconds": 1.1471950999693945,
+    "remaining_gradient_points": 14,
+    "gradient_finite_margin_factor": 1.5,
+    "remaining_gradient_estimate_seconds": 24.091097099357284,
+    "buffer_evaluation_measured_seconds": 0.20599919999949634,
+    "state_save_and_hash_measured_seconds": 0.19896959996549413,
+    "buffer_finite_margin_factor": 2,
+    "remaining_buffer_save_hash_estimate_seconds": 205.7246303828552,
+    "summary_final_save_and_readback_seconds": 15,
+    "estimated_remaining_nonrepair_seconds": 269.8157274822125,
+    "limitation": "Two early buffers may be cheaper than later nonzero Top-k changes; finite margin is a planning allowance, not a rigorous upper bound. External timeout remains enforced."
+  },
+  "full_remaining_allocation_seconds": {
+    "already_used": 12.2516244,
+    "remaining_production_external_timeout": 600,
+    "separate_final_readback_external_timeout": 30,
+    "recovery_and_at_most_two_repair_verifications_reserved": 300,
+    "planned_total_allocation": 942.2516244,
+    "phase_hard_cap": 1200,
+    "unallocated_within_phase_cap": 257.7483756,
+    "chain_hard_cap": 5400
+  },
+  "storage_estimate_not_proven_upper_bound": {
+    "all_16_gradient_tables_bytes": 395074048,
+    "all_16_float32_source_model_bodies_bytes": 19753600,
+    "immutable_representative_state_bytes": 141837924,
+    "rolling_state_allowance_bytes": 160000000,
+    "one_temporary_replacement_state_allowance_bytes": 160000000,
+    "reference_fixed_BN_cursor_JSON_receipts_allowance_bytes": 24000000,
+    "estimated_including_temporary_max_bytes": 900665572,
+    "phase_cap_bytes": 1073741824,
+    "physical_E_drive_free_bytes_observed": 466188697600,
+    "state_retention": "one immutable representative envelope and one rolling envelope; no sixteen duplicated high-dimensional final states"
+  },
+  "memory": {
+    "measured_sampled_peak_working_set_bytes": 837795840,
+    "planning_allowance_bytes": 1675591680,
+    "OS_process_working_set_cap_bytes": 8589934592,
+    "full_peak_coverage": "unknown startup/between-samples/tail; not a Windows Job or GPU measurement"
+  },
+  "launch_remaining_allowed": true,
+  "scientific_stop_rule": "No threshold/reference/k/group changes; keep negative main outcome; do not start E02; Reviewer accepts and dispatches or stops.",
+  "engineering_recovery": "Restore SHA-bound rolling envelope containing deployment state separate from evaluator records/error sums; resume committed source/sequence/buffer identities; never redraw or recompute completed gradients. Same-root failure after two repair verifications stops."
+}
