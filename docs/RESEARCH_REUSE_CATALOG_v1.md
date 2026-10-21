@@ -1,4 +1,6 @@
-# 方向 A 成果复用与 master 接纳记录 v1
+# 研究成果复用与 master 接纳索引 v1
+
+第 1–6 节保留 2026-10-20 的 A 批次记录；第 7 节为 2026-10-21 的 A′/B 经验索引与 B 关闭接纳批次。旧验证清单不因后续文档更新被追溯改写。
 
 日期：2026-10-20。整理输入为 `feature/direction-a@ba9b542`；原 `master` 为 `902af7e338e976c39bebe359e9b6cf7e4d0469f1`。本次采用**选择性接纳文件快照**，不将方向 A 整条提交历史合并为 master 的祖先，不改写或删除 A 的历史。
 
@@ -86,3 +88,20 @@ task = TaskReader(
 **进入 master：R1–R7 及明确文件属性；留在 A 分支：其他 A 专用实现、模型/梯度/探针/事件大包和历史运行状态。** 这是按可独立复用、体积及误用风险作出的选择，不以结果阴阳决定是否保留。
 
 A′ 可以直接复用固定基础，再申请必要的新参考/机制资格；B 复用数据与指标，异步状态协议自己验证；C 复用数据与部分模型接口，私人模型和跨架构迁移自己验证。任何方向都不能把 A 的 PASS 状态直接改名继承。[文件] `DIRECTION_SELECTION_v1.md`；[推断]
+
+## 7. B 关闭后的新增通用经验与去向
+
+本节更新后的路线：当前 A′、B 立项均关闭，各自停止范围按原裁决；本轮选择作者自行寻找新论文，不直接开工原 C。第 6 节的方向名称和复用可能性不构成当前运行授权。[作者本轮指令]；[文件：a7d6a00 的 B 完整复盘]
+
+|资产与固定来源|可引用内容|去向与不能继承的部分|
+|---|---|---|
+|a7d6a00:docs/DIRECTION_B_POSTMORTEM_AND_NEXT_STEP_v1.md；29b1e26:docs/projects/b/DECISIONS.md 的 B-D03|全组覆盖的 J≤b 必要条件；真实门控全关；胜 CACHE 不构成胜 C；关闭范围与未检验效用。|完整复盘、原始证据和专用实现留 codex/direction-b；master 仅接纳精炼教训/索引。|
+|29b1e26:artifacts/b/e01/ 与 docs/projects/b/RESOURCE_LEDGER.json|固定公共梯度、连续事件、有限恢复、完整分母和已有费用口径。|不复制为新方向结果或通用库；本地二进制按原清单保留，不自动备份/删除。|
+|1e5257d:docs/DIRECTION_A_POSTMORTEM_AND_NEXT_STEP_v2.md|受控失配和表征资格可保留；实际校正输给仅缓存；直接强对照与偏差—方差竞争。|本次只继承已有复盘，完整结果/实现/合同留 codex/direction-a-prime；A′ E03 仍关闭。|
+|[RESEARCH_FAILURE_LESSONS_v1.md](RESEARCH_FAILURE_LESSONS_v1.md)|两条线的最小事实、跨方向检查问题和禁止泛化边界。|接纳 master；不宣称重新认证原始所有结果，不转移运行权限。|
+|[RESEARCH_SEARCH_BRIEF_v1.md](RESEARCH_SEARCH_BRIEF_v1.md)|作者自己找论文的会议/主题入口、入池/配对标准、框架和插值条件。|接纳 master；本次未检索/读论文，没有实际论文名单或已成立的新算法。|
+|RESEARCH_WORKFLOW_v1.md §8.1|每个方向结束时的方向分支/master 两处去向及实际接纳要求。|接纳 master；不为归档另跑实验，也不按提交数制造审查轮数。|
+
+准确接纳清单及凭证见 [RESEARCH_MASTER_PROMOTION_B_v1.md](RESEARCH_MASTER_PROMOTION_B_v1.md)。本批只有其中列明的五份通用文档；原 A 的 RESEARCH_MASTER_MANIFEST_v1.json 继续解释原批次，不扩成包含 B 实验包的清单。
+
+后续可按固定提交与路径读取上述未复制对象；需要引用失败经验先读精炼入口，需要实现细节再追原文件。不扫描文献目录、不恢复整个旧运行环境。
