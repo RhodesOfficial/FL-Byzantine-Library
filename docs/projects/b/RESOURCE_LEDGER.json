@@ -5,7 +5,10 @@
   "base_commit": "e2d2b8110e0d51be1ced497140c32054049ada18",
   "input_commit": "e2aa3495295d8e19c3c597cb7ea1ca21cd0736a6",
   "implementation_commit": "1601bbaff73c98be68de0f3c8f216f2a43944cbf",
-  "status": "E01_representative_complete_remaining_full_package_frozen",
+  "result_commit": "5dad4535fc21d02cf9610fd911069e0bd80bd054",
+  "readback_commit": "d5045d2c46a152ce1907781dfe6e25cb08e3ba12",
+  "raw_byte_preservation_commit": "7d38506c2a5dc3b35886f30d3c33f4364aed49af",
+  "status": "B_E01_DELIVERED_NEGATIVE_AWAITING_REVIEWER_NO_NEW_SCIENTIFIC_RUN",
   "scope": {
     "time": "sum of unique scientific Python invocation external wall-clock increments; startup, dependency probe, recovery and validation included; preparation plus formal once only",
     "memory": "maximum sampled OS Python process working set; startup, between-sample and tail full peak unknown; not Windows Job bytes or GPU memory",
@@ -23,19 +26,37 @@
     "paid_external_resources": false,
     "active_scientific_python_processes": 1,
     "cpu_compute_threads_maximum": 4,
-    "E01": {"wall_seconds":1200,"representative_included_max_seconds":180,"recovery_repair_reserved_seconds":300,"phase_new_artifact_bytes":1073741824,"state":"IN_PROGRESS_REMAINING_FROZEN"},
+    "E01": {"wall_seconds":1200,"representative_included_max_seconds":180,"recovery_repair_reserved_seconds":300,"phase_new_artifact_bytes":1073741824,"state":"DELIVERED_MAIN_FALSE_PENDING_REVIEWER"},
     "E02": {"wall_seconds":1800,"representative_included_max_seconds":300,"recovery_repair_reserved_seconds":480,"cumulative_new_artifact_bytes":2147483648,"state":"CONDITIONAL_ON_E01_PASS_AND_REVIEWER_HANDOFF_NOT_STARTED"},
     "E03": {"wall_seconds":2400,"representative_included_max_seconds":300,"recovery_repair_reserved_seconds":600,"cumulative_new_artifact_bytes":4294967296,"state":"CONDITIONAL_ON_E02_PASS_AND_CONFIRMATION_FREEZE_NOT_STARTED"}
   },
   "new_project_scientific_runs": [
     {"run_id":"e01-001-probe","task":"B-E01","mode":"probe","receipt":"artifacts/b/e01/processes/e01-001-probe.json","external_wall_seconds_increment":4.6943022,"sampled_peak_OS_process_working_set_bytes":359403520,"exit_code":null,"exit_code_status":"unknown in original Start-Process observation; valid environment JSON and warning-only stderr retained; no repeated probe"},
     {"run_id":"e01-002-representative","task":"B-E01","mode":"representative","implementation_commit":"1601bbaff73c98be68de0f3c8f216f2a43944cbf","receipt":"artifacts/b/e01/processes/e01-002-representative.json","external_wall_seconds_increment":5.0655134,"sampled_peak_OS_process_working_set_bytes":837795840,"exit_code":0,"new_unique_client_gradient_evaluations":40,"new_buffers":1},
-    {"run_id":"e01-003-restart","task":"B-E01","mode":"restart","implementation_commit":"1601bbaff73c98be68de0f3c8f216f2a43944cbf","receipt":"artifacts/b/e01/processes/e01-003-restart.json","external_wall_seconds_increment":2.4918088,"sampled_peak_OS_process_working_set_bytes":636743680,"exit_code":0,"new_unique_client_gradient_evaluations":0,"new_buffers":1,"completed_gradients_recomputed":0}
+    {"run_id":"e01-003-restart","task":"B-E01","mode":"restart","implementation_commit":"1601bbaff73c98be68de0f3c8f216f2a43944cbf","receipt":"artifacts/b/e01/processes/e01-003-restart.json","external_wall_seconds_increment":2.4918088,"sampled_peak_OS_process_working_set_bytes":636743680,"exit_code":0,"new_unique_client_gradient_evaluations":0,"new_buffers":1,"completed_gradients_recomputed":0},
+    {"run_id":"e01-004-full-package","task":"B-E01","mode":"finish","implementation_commit":"f58301991bcdbf3dfe875e9ae634ffcd156630ef","receipt":"artifacts/b/e01/processes/e01-004-full-package.json","external_wall_seconds_increment":138.3087121,"sampled_peak_OS_process_working_set_bytes":1438093312,"exit_code":0,"new_unique_client_gradient_evaluations":280,"new_buffers":254,"completed_gradients_recomputed":0},
+    {"run_id":"e01-005-readback-audit","task":"B-E01","mode":"readback_only","implementation_commit":"5dad4535fc21d02cf9610fd911069e0bd80bd054","receipt":"artifacts/b/e01/processes/e01-005-readback-audit.json","external_wall_seconds_increment":1.175108,"sampled_peak_OS_process_working_set_bytes":335400960,"exit_code":0,"new_unique_client_gradient_evaluations":0,"new_buffers":0,"completed_scientific_objects_recomputed":0}
   ],
-  "new_project_recorded_process_wall_seconds": 12.2516244,
-  "new_project_recorded_peak_working_set_bytes": 837795840,
-  "new_project_scientific_artifacts_bytes": 335472006,
-  "artifact_bytes_scope_note": "snapshot after representative restart; later receipts/frozen plan add small files; final census pending",
+  "this_executor_round_process_wall_seconds_increment": 151.7354445,
+  "new_project_recorded_process_wall_seconds": 151.7354445,
+  "new_project_recorded_peak_working_set_bytes": 1438093312,
+  "new_project_scientific_artifacts_bytes": 698295742,
+  "artifact_bytes_scope_note": "final retained census including Git-byte readback seal; artifacts/b/e01 plus artifacts_local/b/e01 only; transient replacement peak not continuously logged",
+  "resource_coverage": {
+    "recorded_wall_known_within_phase_and_chain_caps":true,
+    "sampled_OS_working_set_known_within_cap":true,
+    "retained_artifact_census_known_within_cap":true,
+    "full_memory_peak_bytes":null,
+    "full_memory_peak_status":"unknown startup/between-samples/tail; sampler is not a Windows Job measure",
+    "full_transient_artifact_peak_bytes":null,
+    "full_transient_artifact_peak_status":"not continuously measured; fixed plan included one temporary replacement; post-unit storage checks passed",
+    "all_project_historical_cost_seconds":null,
+    "all_project_historical_cost_status":"old B/A/A-prime references retain limited and unknown scopes; not recounted or added to new increments",
+    "phase_wall_remaining_seconds":1048.2645555,
+    "chain_wall_remaining_seconds":5248.2645555,
+    "unused_recovery_repair_reserve_seconds":300,
+    "unused_balance_is_not_scientific_rerun_authorization":true
+  },
   "first_representative_measurement": {
     "records":["artifacts/b/e01/representative.json","artifacts/b/e01/restart.json","artifacts/b/e01/boundary_checks.json","artifacts/b/e01/inputs.json"],
     "external_wall_seconds_including_probe":12.2516244,
@@ -59,16 +80,33 @@
     "planned_total_including_used_seconds":942.2516244,
     "estimated_artifact_max_with_temporary_bytes":900665572,
     "estimates_are_not_proven_upper_bounds":true,
-    "launch_remaining_allowed":true
+    "launch_remaining_allowed_at_freeze":true,
+    "remaining_package_now_completed":true,
+    "actual_remaining_production_plus_readback_seconds":139.4838201,
+    "new_launch_allowed_now":false
   },
-  "completion": {"complete":{"gradient_positions":2,"unique_client_gradients":40,"buffers":2,"effective_returns":8},"partial":[],"not_started":{"remaining_gradient_positions":14,"remaining_buffers":254,"stages":["B-E02","B-E03"]}},
+  "completion": {
+    "complete":{"gradient_positions":16,"unique_client_gradients":320,"trajectories":16,"buffers":256,"effective_returns":1024,"methods_per_buffer":9,"representative_save_exit_restart_continue":true,"separate_final_readback":true},
+    "partial":[],
+    "not_started":{"stages":["B-E02","B-E03"]},
+    "terminal_inflight_tasks_at_predefined_horizon":256,
+    "terminal_inflight_note":"16 per completed trajectory, intentionally unreturned when its 16th buffer is consumed; not missing planned buffers; no source-16 task spawned"
+  },
+  "evidence":{"summary":"artifacts/b/e01/summary.json","raw_buffers":"artifacts/b/e01/buffers/","binary_manifest":"artifacts/b/e01/artifact_hashes.json","readback":"artifacts/b/e01/audit_readback.json","git_bytes":"artifacts/b/e01/git_blob_readback.json"},
+  "four_columns": {
+    "science":"negative current real-gradient qualification: R=C=ABS mean MSE 1.7809342723130015; R vs CACHE improves 28.6700592443 percent only; nonzero 0/64",
+    "measurement":"valid task/reference/encoding/source-order/recovery and 83 manifest entries; 63 tracked evidence files byte-equal Git",
+    "engineering":"complete single task lifecycle; no re-run of completed gradients or method buffers; ordinary process-handle/CRLF persistence fixes in commits",
+    "resource":"recorded time/sample working set/retained disk within caps; full startup/tail memory, transient disk peak and manual/historical total partly unknown"
+  },
+  "next_decision_suggestion":"Reviewer checks negative E01 and stops current candidate per protocol; Executor neither closes direction itself nor opens E02 or redirects to another candidate",
   "historical_references_not_added_again": [
     {"project":"old_B_R01","commit":"d35871b392b46528666b0f00f93b81aa3708b061","ledger":"artifacts/direction_b/r01_v1/ledger.json","delivery":"docs/projects/direction_b/R01_RESULT.md","recorded_process_wall_seconds":1.3655257,"recorded_maximum_peak_working_set_bytes":25731072,"reported_artifact_bytes":575616,"included_in_new_project_increment":false,"manual_work_seconds":null,"scope_note":"historical limited measurement retained by fixed source reference; not rerun or a claim of complete historical cost"},
     {"project":"A_and_A_prime","source_index":"docs/RESEARCH_REUSE_CATALOG_v1.md","included_in_new_project_increment":false,"recomputed":false,"scope_note":"historical costs and exposure remain in their source records; A-prime stays closed"}
   ],
   "notes": [
     "Only existing E:/anaconda3 Python 3.12.8 / torch 2.5.1 / numpy 1.26.4; CPU four compute threads maximum, no GPU/cloud/install/download.",
-    "The original probe exit-code observation was null, not zero. Native process handle retention repaired before representative; both subsequent raw exit codes are zero. Ordinary repair is in implementation commit, not a scientific scope change.",
+    "The original probe exit-code observation was null, not zero. Native process handle retention repaired before representative; all four subsequent raw exit codes are zero. Ordinary repair is in implementation commit, not a scientific scope change.",
     "All five training source hashes and designated checkpoint file/state hashes match; 583 fixed selected train images, no validation/test predictions.",
     "Recovery envelope separates deployable state from evaluator truth-derived error sums; methods receive only past cache and returned source messages.",
     "Risk reserve is not actual use; unique run increments summed once. Remaining budget cannot override scientific stop.",
